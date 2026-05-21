@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReviewPro — Turn Every Customer Into Your Brand Ambassador</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:#04050f;color:#fff;font-family:'Inter',sans-serif;overflow-x:hidden;}
+canvas{position:fixed;top:0;left:0;z-index:0;pointer-events:none;}
+.content{position:relative;z-index:2;}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 40px;background:rgba(4,5,15,0.7);backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;z-index:100;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#7c3aed,#06d6a0);display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 20px rgba(124,58,237,0.5);}
+.logo-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;background:linear-gradient(90deg,#fff,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-links{display:flex;gap:2rem;align-items:center;}
+.nav-link{font-size:13px;color:rgba(255,255,255,0.5);font-weight:500;cursor:pointer;transition:color 0.2s;text-decoration:none;}
+.nav-link:hover{color:#fff;}
+.nav-btns{display:flex;gap:10px;align-items:center;}
+.btn{padding:9px 20px;border-radius:100px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px;}
+.btn-ghost{background:rgba(255,255,255,0.06);color:#fff;border:1px solid rgba(255,255,255,0.1);}
+.btn-ghost:hover{background:rgba(255,255,255,0.1);}
+.btn-glow{background:linear-gradient(135deg,#7c3aed,#06d6a0);color:#fff;box-shadow:0 0 20px rgba(124,58,237,0.4);}
+.btn-glow:hover{box-shadow:0 0 30px rgba(124,58,237,0.6);transform:translateY(-1px);}
+.btn-wa{background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;font-size:12px;padding:8px 16px;}
+.btn-wa:hover{box-shadow:0 0 20px rgba(37,211,102,0.4);}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8rem 2rem 5rem;position:relative;}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.3);border-radius:100px;padding:6px 18px;font-size:12px;color:#c4b5fd;margin-bottom:2rem;letter-spacing:0.03em;}
+.eyebrow-dot{width:6px;height:6px;background:#06d6a0;border-radius:50%;animation:pdot 2s infinite;}
+@keyframes pdot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.3;transform:scale(0.7);}}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2.8rem,6vw,5rem);font-weight:900;line-height:1.05;letter-spacing:-0.03em;margin-bottom:1.5rem;max-width:860px;}
+.h1-l1{display:block;color:#f0f4ff;}
+.h1-l2{display:block;background:linear-gradient(135deg,#a78bfa 0%,#06d6a0 50%,#fbbf24 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:300% 300%;animation:gflow 5s ease infinite;}
+@keyframes gflow{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+.hero-sub{font-size:18px;color:rgba(255,255,255,0.45);line-height:1.8;max-width:580px;margin:0 auto 2.5rem;font-weight:300;}
+.hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:4rem;}
+.cta-p{padding:15px 36px;border-radius:100px;font-size:16px;font-weight:700;background:linear-gradient(135deg,#7c3aed,#06d6a0);color:#fff;border:none;cursor:pointer;box-shadow:0 0 30px rgba(124,58,237,0.4);transition:all 0.25s;font-family:'Inter',sans-serif;}
+.cta-p:hover{box-shadow:0 0 50px rgba(124,58,237,0.6);transform:translateY(-2px);}
+.cta-s{padding:15px 36px;border-radius:100px;font-size:16px;font-weight:600;background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.12);cursor:pointer;backdrop-filter:blur(10px);transition:all 0.2s;font-family:'Inter',sans-serif;}
+.cta-s:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.2);}
+
+.stats-bar{display:flex;gap:32px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:22px 36px;backdrop-filter:blur(30px);flex-wrap:wrap;justify-content:center;position:relative;}
+.stats-bar::before{content:'';position:absolute;inset:-1px;border-radius:20px;background:linear-gradient(135deg,rgba(124,58,237,0.25),rgba(6,214,160,0.15),rgba(251,191,36,0.08));z-index:-1;}
+.stat-item{text-align:center;}
+.stat-n{font-family:'Syne',sans-serif;font-size:2rem;font-weight:900;background:linear-gradient(135deg,#a78bfa,#06d6a0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.stat-l{font-size:11px;color:rgba(255,255,255,0.35);margin-top:4px;letter-spacing:0.07em;text-transform:uppercase;}
+.stat-sep{width:1px;background:rgba(255,255,255,0.07);}
+
+/* SECTIONS */
+.section{padding:6rem 2rem;max-width:1200px;margin:0 auto;}
+.section-full{padding:6rem 2rem;}
+.section-inner{max-width:1200px;margin:0 auto;}
+.label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:#a78bfa;margin-bottom:1rem;}
+.sec-title{font-family:'Syne',sans-serif;font-size:clamp(2rem,3.5vw,3rem);font-weight:800;line-height:1.15;margin-bottom:1rem;color:#f0f4ff;letter-spacing:-0.02em;}
+.sec-title .g{background:linear-gradient(135deg,#a78bfa,#06d6a0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.sec-sub{font-size:16px;color:rgba(255,255,255,0.4);line-height:1.8;max-width:540px;font-weight:300;}
+
+/* STEPS */
+.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.5rem;margin-top:3.5rem;}
+.step-card{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.07);border-radius:24px;padding:2rem;transition:all 0.3s;position:relative;overflow:hidden;cursor:default;}
+.step-card:hover{transform:translateY(-6px);border-color:rgba(124,58,237,0.3);box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.step-card::before{content:'';position:absolute;inset:0;border-radius:24px;background:linear-gradient(135deg,rgba(124,58,237,0.05),transparent);opacity:0;transition:opacity 0.3s;}
+.step-card:hover::before{opacity:1;}
+.step-n{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:20px;font-weight:900;margin-bottom:1.25rem;}
+.sn1{background:linear-gradient(135deg,#7c3aed,#a78bfa);box-shadow:0 6px 20px rgba(124,58,237,0.4);}
+.sn2{background:linear-gradient(135deg,#06d6a0,#34d399);box-shadow:0 6px 20px rgba(6,214,160,0.4);}
+.sn3{background:linear-gradient(135deg,#f59e0b,#fbbf24);box-shadow:0 6px 20px rgba(245,158,11,0.4);}
+.sn4{background:linear-gradient(135deg,#f43f5e,#fb7185);box-shadow:0 6px 20px rgba(244,63,94,0.4);}
+.step-bg-n{position:absolute;top:1rem;right:1.25rem;font-family:'Syne',sans-serif;font-size:5rem;font-weight:900;color:rgba(255,255,255,0.025);line-height:1;}
+.step-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:8px;color:#f0f4ff;}
+.step-desc{font-size:13px;color:rgba(255,255,255,0.4);line-height:1.7;}
+
+/* WHY GOOGLE */
+.why-bg{background:rgba(124,58,237,0.03);border-top:1px solid rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.04);}
+.stats4{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-top:3rem;}
+.sg{text-align:center;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:2rem 1rem;transition:all 0.3s;}
+.sg:hover{transform:translateY(-4px);border-color:rgba(124,58,237,0.25);}
+.sg-big{font-family:'Syne',sans-serif;font-size:3rem;font-weight:900;line-height:1;margin-bottom:8px;}
+.sg-lbl{font-size:12px;color:rgba(255,255,255,0.35);line-height:1.5;}
+
+.impact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.25rem;margin-top:2.5rem;}
+.ic{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:1.75rem;transition:all 0.3s;border-left:3px solid;}
+.ic:hover{transform:translateY(-4px);background:rgba(255,255,255,0.03);}
+.ic-v{border-left-color:#7c3aed;}
+.ic-e{border-left-color:#06d6a0;}
+.ic-a{border-left-color:#f59e0b;}
+.ic-r{border-left-color:#f43f5e;}
+.ic-b{border-left-color:#3b82f6;}
+.ic-w{border-left-color:#25D366;}
+.ic-icon{font-size:26px;margin-bottom:10px;}
+.ic-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;color:#f0f4ff;}
+.ic-desc{font-size:13px;color:rgba(255,255,255,0.38);line-height:1.7;}
+
+/* TABLE */
+.compare-wrap{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:20px;overflow:hidden;margin-top:2.5rem;}
+.compare-wrap table{width:100%;border-collapse:collapse;}
+.compare-wrap th{padding:14px 20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.02);border-bottom:1px solid rgba(255,255,255,0.05);}
+.compare-wrap td{padding:14px 20px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.04);color:rgba(255,255,255,0.35);}
+.compare-wrap tr:last-child td{border:none;}
+.compare-wrap tr:hover td{background:rgba(255,255,255,0.015);}
+.td-g{color:#06d6a0;font-weight:600;}
+.td-r{color:#f43f5e;font-weight:600;}
+
+/* BENEFITS */
+.benefits-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;margin-top:3rem;}
+.bc{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:1.75rem;display:flex;gap:1.25rem;transition:all 0.3s;}
+.bc:hover{border-color:rgba(124,58,237,0.3);transform:translateY(-4px);background:rgba(255,255,255,0.03);}
+.bc-icon{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.bc-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:6px;color:#f0f4ff;}
+.bc-desc{font-size:13px;color:rgba(255,255,255,0.38);line-height:1.6;}
+
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:3rem;}
+.pc{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.07);border-radius:28px;padding:2.5rem;position:relative;overflow:hidden;transition:all 0.3s;}
+.pc:hover{transform:translateY(-6px);}
+.pc.hot{border-color:rgba(124,58,237,0.4);background:rgba(124,58,237,0.05);}
+.pc.hot::after{content:'';position:absolute;top:-80px;right:-80px;width:200px;height:200px;background:radial-gradient(circle,rgba(124,58,237,0.18),transparent);border-radius:50%;}
+.hot-badge{position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#7c3aed,#06d6a0);color:#fff;font-size:10px;font-weight:700;padding:4px 18px;border-radius:0 0 12px 12px;letter-spacing:0.07em;}
+.pc-name{font-size:12px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;}
+.pc-price{font-family:'Syne',sans-serif;font-size:3.2rem;font-weight:900;color:#f0f4ff;line-height:1;margin-bottom:4px;}
+.pc-price span{font-size:14px;font-weight:400;color:rgba(255,255,255,0.3);}
+.pc-setup{font-size:11px;color:#fbbf24;margin-bottom:10px;}
+.pc-desc{font-size:13px;color:rgba(255,255,255,0.35);margin-bottom:1.75rem;}
+.pc-feats{list-style:none;margin-bottom:2rem;}
+.pc-feats li{font-size:13px;color:rgba(255,255,255,0.4);padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:8px;}
+.pc-feats li:last-child{border:none;}
+.pc-feats li::before{content:'✓';color:#06d6a0;font-weight:700;flex-shrink:0;}
+.pc-btn{width:100%;padding:13px;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:all 0.2s;position:relative;z-index:1;}
+.pb-o{background:rgba(255,255,255,0.06);color:#fff;border:1px solid rgba(255,255,255,0.1);}
+.pb-o:hover{background:rgba(255,255,255,0.1);}
+.pb-g{background:linear-gradient(135deg,#7c3aed,#06d6a0);color:#fff;box-shadow:0 8px 24px rgba(124,58,237,0.3);}
+.pb-g:hover{box-shadow:0 12px 36px rgba(124,58,237,0.5);}
+
+/* TESTIMONIALS */
+.testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;margin-top:3rem;}
+.tc{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:2rem;position:relative;overflow:hidden;}
+.tc::before{content:'"';font-size:80px;line-height:1;color:#a78bfa;opacity:0.1;position:absolute;top:-8px;left:14px;font-family:Georgia,serif;}
+.tc-stars{color:#fbbf24;font-size:14px;margin-bottom:1rem;}
+.tc-text{font-size:14px;color:rgba(255,255,255,0.4);line-height:1.8;margin-bottom:1.25rem;font-style:italic;}
+.tc-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#f0f4ff;}
+.tc-shop{font-size:12px;color:rgba(255,255,255,0.25);margin-top:2px;}
+
+/* FAQ */
+.faq-wrap{max-width:800px;margin:0 auto;}
+.faq-list{margin-top:2.5rem;display:flex;flex-direction:column;gap:1rem;}
+.faq-item{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.07);border-radius:16px;overflow:hidden;backdrop-filter:blur(10px);}
+.faq-q{padding:1.25rem 1.75rem;font-size:15px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:#f0f4ff;transition:background 0.2s;}
+.faq-q:hover{background:rgba(255,255,255,0.03);}
+.faq-icon{width:28px;height:28px;border-radius:50%;background:rgba(124,58,237,0.15);display:flex;align-items:center;justify-content:center;font-size:16px;color:#a78bfa;transition:transform 0.25s;flex-shrink:0;}
+.faq-icon.open{transform:rotate(45deg);}
+.faq-a{padding:0 1.75rem 1.25rem;font-size:14px;color:rgba(255,255,255,0.4);line-height:1.8;display:none;}
+.faq-a.open{display:block;}
+
+/* CONTACT */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:3rem;}
+.cc{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.07);border-radius:24px;padding:2.5rem;}
+.cc-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:#a78bfa;margin-bottom:1.5rem;}
+.cc-row{display:flex;align-items:center;gap:14px;margin-bottom:1.25rem;}
+.cc-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.cc-lbl{font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:2px;}
+.cc-val{font-size:14px;font-weight:600;color:#f0f4ff;}
+
+/* CTA */
+.cta-sec{margin:0 2rem 4rem;border-radius:28px;overflow:hidden;position:relative;}
+.cta-bg{position:absolute;inset:0;background:linear-gradient(135deg,#7c3aed 0%,#1a0533 40%,#001a12 70%,#06d6a0 100%);}
+.cta-grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px);background-size:40px 40px;}
+.cta-inner{position:relative;z-index:1;padding:6rem 3rem;text-align:center;}
+.cta-title{font-family:'Syne',sans-serif;font-size:clamp(2rem,4vw,3.2rem);font-weight:900;margin-bottom:1rem;letter-spacing:-0.02em;}
+.cta-sub{font-size:16px;color:rgba(255,255,255,0.6);margin-bottom:2.5rem;line-height:1.8;}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.cb-w{padding:15px 36px;border-radius:100px;font-size:15px;font-weight:800;background:#fff;color:#7c3aed;border:none;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;}
+.cb-w:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,255,255,0.2);}
+.cb-o{padding:15px 36px;border-radius:100px;font-size:15px;font-weight:600;background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.25);cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;backdrop-filter:blur(10px);}
+.cb-o:hover{background:rgba(255,255,255,0.12);}
+
+/* FOOTER */
+footer{border-top:1px solid rgba(255,255,255,0.06);padding:3rem 2rem 2rem;text-align:center;position:relative;z-index:2;}
+.foot-brand{font-family:'Syne',sans-serif;font-size:22px;font-weight:900;background:linear-gradient(135deg,#fff,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;}
+.foot-tagline{font-size:13px;color:rgba(255,255,255,0.25);margin-bottom:1.5rem;}
+.foot-links{display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem;}
+.foot-link{font-size:13px;color:rgba(255,255,255,0.3);text-decoration:none;cursor:pointer;transition:color 0.2s;}
+.foot-link:hover{color:rgba(255,255,255,0.7);}
+.foot-copy{font-size:11px;color:rgba(255,255,255,0.18);}
+
+/* WA FLOAT */
+.wa-float{position:fixed;bottom:1.5rem;right:1.5rem;width:54px;height:54px;background:linear-gradient(135deg,#25D366,#128C7E);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 20px rgba(37,211,102,0.4);z-index:500;transition:all 0.2s;text-decoration:none;animation:wap 3s ease-in-out infinite;cursor:pointer;border:none;}
+@keyframes wap{0%,100%{box-shadow:0 4px 20px rgba(37,211,102,0.4);}50%{box-shadow:0 4px 40px rgba(37,211,102,0.7);}}
+.wa-float:hover{transform:scale(1.1);}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(16px);}
+.modal-overlay.open{display:flex;}
+.modal{background:#0a0b1a;border:1px solid rgba(255,255,255,0.08);border-radius:24px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;animation:mIn 0.3s ease;margin:1rem;}
+@keyframes mIn{from{opacity:0;transform:translateY(16px) scale(0.97);}to{opacity:1;transform:translateY(0) scale(1);}}
+.modal-head{padding:1.5rem;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#0a0b1a;z-index:1;}
+.modal-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:#f0f4ff;}
+.modal-close{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:50%;width:32px;height:32px;color:rgba(255,255,255,0.4);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;}
+.modal-body{padding:1.5rem;}
+.form-group{margin-bottom:1rem;}
+.form-label{font-size:11px;font-weight:600;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.07em;display:block;margin-bottom:6px;}
+.form-input,.form-select,.form-textarea{width:100%;padding:11px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:#f0f4ff;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:rgba(124,58,237,0.5);}
+.form-input::placeholder,.form-textarea::placeholder{color:rgba(255,255,255,0.2);}
+.form-select option{background:#0a0b1a;}
+.form-textarea{resize:vertical;min-height:80px;}
+.form-hint{font-size:11px;color:rgba(255,255,255,0.2);margin-top:4px;}
+.err-msg{font-size:12px;color:#f43f5e;margin-top:6px;display:none;}
+
+/* Portal */
+.portal-opt{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:1.25rem;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;gap:1rem;transition:all 0.2s;}
+.portal-opt:hover{border-color:rgba(124,58,237,0.4);background:rgba(124,58,237,0.05);}
+.po-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.po-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#f0f4ff;margin-bottom:3px;}
+.po-sub{font-size:12px;color:rgba(255,255,255,0.3);}
+.po-arrow{margin-left:auto;color:rgba(255,255,255,0.2);font-size:20px;}
+.back-btn{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);border-radius:100px;padding:6px 14px;color:rgba(255,255,255,0.4);cursor:pointer;font-size:13px;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:6px;}
+
+/* Submit btns */
+.sub-btn{width:100%;padding:14px;border-radius:100px;font-size:15px;font-weight:700;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:all 0.25s;}
+.sb-violet{background:linear-gradient(135deg,#7c3aed,#06d6a0);color:#fff;box-shadow:0 8px 24px rgba(124,58,237,0.3);}
+.sb-violet:hover{box-shadow:0 12px 36px rgba(124,58,237,0.5);}
+.sb-amber{background:linear-gradient(135deg,#f59e0b,#f43f5e);color:#fff;box-shadow:0 8px 24px rgba(245,158,11,0.3);}
+
+/* Login creds box */
+.creds-box{background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.2);border-radius:14px;padding:1.25rem;margin-bottom:1rem;}
+.creds-title{font-size:13px;font-weight:600;color:#a78bfa;margin-bottom:0.75rem;}
+
+/* Plan selector */
+.plan-sel{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;}
+.ps-opt{border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px;cursor:pointer;transition:all 0.2s;background:rgba(255,255,255,0.03);}
+.ps-opt:hover{border-color:rgba(124,58,237,0.3);}
+.ps-opt.sel{border:2px solid #7c3aed;background:rgba(124,58,237,0.08);}
+.ps-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#f0f4ff;}
+.ps-price{font-size:13px;color:rgba(255,255,255,0.35);margin-top:2px;}
+.ps-setup{font-size:11px;color:#fbbf24;margin-top:2px;}
+
+/* Product fields */
+.prod-row{display:flex;gap:8px;margin-bottom:8px;align-items:center;}
+.prod-row input{flex:1;}
+.rm-btn{background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.3);border-radius:10px;padding:8px 12px;color:#f43f5e;cursor:pointer;font-size:14px;flex-shrink:0;transition:all 0.15s;}
+.rm-btn:hover{background:rgba(244,63,94,0.2);}
+.add-field{width:100%;padding:10px;background:transparent;border:1px dashed rgba(255,255,255,0.1);border-radius:12px;color:rgba(255,255,255,0.3);font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.add-field:hover{border-color:rgba(124,58,237,0.4);color:#a78bfa;background:rgba(124,58,237,0.05);}
+
+.success-wrap{text-align:center;padding:2rem 1rem;}
+.scroll-btns{position:sticky;bottom:0;background:rgba(10,11,26,0.9);padding:0.75rem 0 0;display:flex;gap:8px;justify-content:flex-end;backdrop-filter:blur(10px);}
+.scr-btn{width:34px;height:34px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:50%;color:rgba(255,255,255,0.4);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.scr-btn:hover{background:rgba(255,255,255,0.1);color:#fff;}
+
+.info-box{background:rgba(6,214,160,0.06);border:1px solid rgba(6,214,160,0.2);border-radius:12px;padding:10px 14px;margin-bottom:1.25rem;font-size:12px;color:rgba(6,214,160,0.8);line-height:1.6;}
+
+@media(max-width:768px){
+  nav{padding:14px 20px;}
+  .nav-links{display:none;}
+  .stats-bar{gap:20px;padding:16px 20px;}
+  .stat-n{font-size:1.5rem;}
+  .contact-grid{grid-template-columns:1fr;}
+  .cta-inner{padding:4rem 1.5rem;}
+}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="content">
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <div class="logo-mark">⭐</div>
+    <div class="logo-name">ReviewPro</div>
+  </div>
+  <div class="nav-links">
+    <a class="nav-link" onclick="scroll2('about')">About</a>
+    <a class="nav-link" onclick="scroll2('how')">How it works</a>
+    <a class="nav-link" onclick="scroll2('benefits')">Benefits</a>
+    <a class="nav-link" onclick="scroll2('pricing')">Pricing</a>
+    <a class="nav-link" onclick="scroll2('contact')">Contact</a>
+  </div>
+  <div class="nav-btns">
+    <a href="https://wa.me/919988789921" class="btn btn-wa">💬 WhatsApp</a>
+    <button class="btn btn-ghost" onclick="openRegister()">Register</button>
+    <button class="btn btn-glow" onclick="openPortal()">Login</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow"><div class="eyebrow-dot"></div>Where Local Business Meets Global Standards</div>
+  <h1>
+    <span class="h1-l1">Turn Every Customer Into</span>
+    <span class="h1-l2">Your Brand Ambassador</span>
+  </h1>
+  <p class="hero-sub">Place our smart QR code on your counter. AI writes a perfect natural review. Customer posts it on Google — in just 30 seconds!</p>
+  <div class="hero-cta">
+    <button class="cta-p" onclick="openRegister()">🏪 Register Your Business</button>
+    <button class="cta-s" onclick="openPortal()">🔐 Client Login</button>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-n">30s</div><div class="stat-l">To post a review</div></div>
+    <div class="stat-sep"></div>
+    <div class="stat-item"><div class="stat-n">100%</div><div class="stat-l">Unique AI reviews</div></div>
+    <div class="stat-sep"></div>
+    <div class="stat-item"><div class="stat-n">₹0</div><div class="stat-l">Setup cost</div></div>
+    <div class="stat-sep"></div>
+    <div class="stat-item"><div class="stat-n">24hr</div><div class="stat-l">To go live</div></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;">
+    <div>
+      <div class="label">About ReviewPro</div>
+      <div class="sec-title">Your Reputation.<br><span class="g">Amplified by AI.</span></div>
+      <p style="font-size:15px;color:rgba(255,255,255,0.4);line-height:1.9;margin-bottom:1.25rem;font-weight:300;">ReviewPro is a made-in-India AI-powered review system built for local businesses in Uttar Pradesh. We help showrooms, shops, salons and restaurants get genuine Google reviews effortlessly.</p>
+      <p style="font-size:15px;color:rgba(255,255,255,0.4);line-height:1.9;margin-bottom:1.5rem;font-weight:300;">Founded by Ritik Tiwari from Etawah, ReviewPro understands the local market. Our AI writes unique, natural Hinglish reviews that feel 100% genuine — because the experience behind them is real!</p>
+      <a href="https://wa.me/919988789921?text=Hi Ritik, I want a free demo!" class="btn btn-wa" style="font-size:14px;padding:12px 24px;">💬 Get Free Demo</a>
+    </div>
+    <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:24px;padding:2rem;display:flex;flex-direction:column;gap:1rem;">
+      <div style="background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);border-radius:16px;padding:1.5rem;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#a78bfa;margin-bottom:0.5rem;">Our Mission</div>
+        <div style="font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7;">Help every local business in UP compete with big brands by building a strong online reputation through genuine customer reviews.</div>
+      </div>
+      <div style="background:rgba(6,214,160,0.06);border:1px solid rgba(6,214,160,0.18);border-radius:16px;padding:1.5rem;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#06d6a0;margin-bottom:0.5rem;">AI Powered</div>
+        <div style="font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7;">Thousands of unique review combinations — Hinglish, English, different tones — so every review looks natural and human.</div>
+      </div>
+      <div style="background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.18);border-radius:16px;padding:1.5rem;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#fbbf24;margin-bottom:0.5rem;">Local First</div>
+        <div style="font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7;">Serving Etawah, Moradabad, Agra, Kanpur, Lucknow and all of UP. Personal service, local understanding, real results.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section-full" id="how" style="background:rgba(124,58,237,0.02);border-top:1px solid rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.03);">
+  <div class="section-inner">
+    <div style="text-align:center;margin-bottom:0.5rem;">
+      <div class="label">How it works</div>
+      <div class="sec-title">From QR scan to Google review<br><span class="g">in just 30 seconds!</span></div>
+      <div class="sec-sub" style="margin:0 auto;">No app download. No complicated process. No typing. Just scan and done!</div>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card"><div class="step-bg-n">01</div><div class="step-n sn1">1</div><div class="step-title">You get a QR Code</div><div class="step-desc">Custom QR code linked to your Google Business. Print and place on your billing counter.</div></div>
+      <div class="step-card"><div class="step-bg-n">02</div><div class="step-n sn2">2</div><div class="step-title">Customer scans it</div><div class="step-desc">Opens instantly in browser — no app download, no registration needed at all!</div></div>
+      <div class="step-card"><div class="step-bg-n">03</div><div class="step-n sn3">3</div><div class="step-title">AI writes review</div><div class="step-desc">3 quick questions → perfect unique Hinglish review generated in 2 seconds.</div></div>
+      <div class="step-card"><div class="step-bg-n">04</div><div class="step-n sn4">4</div><div class="step-title">Posted on Google!</div><div class="step-desc">One tap → review copied → Google opens → customer pastes and posts. Done in 30s! ⭐</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY GOOGLE -->
+<section class="section why-bg" id="why">
+  <div class="label">Why It Matters</div>
+  <div class="sec-title">Google Rating — The New<br><span class="g">Currency of Trust</span></div>
+  <div class="sec-sub">Your Google rating is your first impression before a customer even steps inside your shop.</div>
+  <div class="stats4">
+    <div class="sg"><div class="sg-big" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">93%</div><div class="sg-lbl">customers read reviews before visiting a local shop</div></div>
+    <div class="sg"><div class="sg-big" style="background:linear-gradient(135deg,#06d6a0,#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">4.5★</div><div class="sg-lbl">minimum rating customers trust before visiting</div></div>
+    <div class="sg"><div class="sg-big" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">70%</div><div class="sg-lbl">trust online reviews like personal recommendations</div></div>
+    <div class="sg"><div class="sg-big" style="background:linear-gradient(135deg,#fb7185,#f43f5e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">3x</div><div class="sg-lbl">more visits with 100+ reviews vs 10 reviews</div></div>
+  </div>
+  <div class="impact-grid">
+    <div class="ic ic-v"><div class="ic-icon">📍</div><div class="ic-title">Google Maps Ranking</div><div class="ic-desc">When someone searches "furniture shop near me" — Google shows shops with MORE reviews first. If your competitor has 200 reviews and you have 15, they appear on top and steal your customers every day.</div></div>
+    <div class="ic ic-e"><div class="ic-icon">💰</div><div class="ic-title">Direct Revenue Impact</div><div class="ic-desc">A shop with 4.8 rating gets 30-40% more walk-ins than one with 3.9 rating. Your Google rating is your silent salesman working 24 hours a day, 7 days a week.</div></div>
+    <div class="ic ic-a"><div class="ic-icon">🏆</div><div class="ic-title">Beat the Competition</div><div class="ic-desc">As UP's market grows more digital, competitors are already building their online presence. Shops that build strong ratings NOW will dominate their category for years to come.</div></div>
+    <div class="ic ic-r"><div class="ic-icon">⚠️</div><div class="ic-title">Cost of Ignoring It</div><div class="ic-desc">Every month without reviews is a month your competitor pulls ahead. Once they build 300+ reviews, it becomes very hard to catch up. The best time to start was yesterday.</div></div>
+    <div class="ic ic-b"><div class="ic-icon">🤝</div><div class="ic-title">Customer Trust & Loyalty</div><div class="ic-desc">When new customers see 150+ positive reviews, they come in already trusting you. They spend more, negotiate less, and return again. A strong rating creates a cycle of growth.</div></div>
+    <div class="ic ic-w"><div class="ic-icon">📱</div><div class="ic-title">The Mobile Search Era</div><div class="ic-desc">70% of customers in UP now search on mobile before buying anything. If you're not highly rated on Google — for many potential customers, you simply don't exist.</div></div>
+  </div>
+  <div class="compare-wrap">
+    <table>
+      <thead><tr><th style="text-align:left;">Factor</th><th style="text-align:center;color:#06d6a0;">✅ With 100+ Reviews</th><th style="text-align:center;color:#f43f5e;">❌ Without Reviews</th></tr></thead>
+      <tbody>
+        <tr><td>Google Maps Position</td><td style="text-align:center;" class="td-g">Top 3 results</td><td style="text-align:center;" class="td-r">Page 2 or invisible</td></tr>
+        <tr><td>Customer Trust</td><td style="text-align:center;" class="td-g">Very High</td><td style="text-align:center;" class="td-r">Low — customers doubt</td></tr>
+        <tr><td>Monthly Walk-ins</td><td style="text-align:center;" class="td-g">30-40% more</td><td style="text-align:center;" class="td-r">Losing to competitor</td></tr>
+        <tr><td>Price Negotiation</td><td style="text-align:center;" class="td-g">Customers negotiate less</td><td style="text-align:center;" class="td-r">More price pressure</td></tr>
+        <tr><td>Long Term Growth</td><td style="text-align:center;" class="td-g">Compounding advantage</td><td style="text-align:center;" class="td-r">Falling further behind</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="section-full" id="benefits">
+  <div class="section-inner">
+    <div class="label">Why ReviewPro</div>
+    <div class="sec-title">Benefits for your showroom</div>
+    <div class="sec-sub">Everything you need to build a powerful online reputation.</div>
+    <div class="benefits-grid">
+      <div class="bc"><div class="bc-icon" style="background:rgba(124,58,237,0.1);">⭐</div><div><div class="bc-title">More Reviews = More Customers</div><div class="bc-desc">90% check Google before visiting. More reviews = more trust = more footfall every day.</div></div></div>
+      <div class="bc"><div class="bc-icon" style="background:rgba(6,214,160,0.08);">🤖</div><div><div class="bc-title">AI Writes Perfect Reviews</div><div class="bc-desc">Natural Hinglish reviews based on real customer experience. They just post it!</div></div></div>
+      <div class="bc"><div class="bc-icon" style="background:rgba(251,191,36,0.08);">🎯</div><div><div class="bc-title">100% Unique — Google Safe</div><div class="bc-desc">Every review different in words, structure, length and language mix.</div></div></div>
+      <div class="bc"><div class="bc-icon" style="background:rgba(244,63,94,0.08);">📱</div><div><div class="bc-title">No App Needed</div><div class="bc-desc">Works in phone browser. Scan QR — no install, no registration!</div></div></div>
+      <div class="bc"><div class="bc-icon" style="background:rgba(59,130,246,0.08);">🗂️</div><div><div class="bc-title">Client Dashboard</div><div class="bc-desc">Login to see stats, download QR, update your catalogue anytime.</div></div></div>
+      <div class="bc"><div class="bc-icon" style="background:rgba(124,58,237,0.1);">🔄</div><div><div class="bc-title">Update Catalogue Anytime</div><div class="bc-desc">New products? Update and AI reviews improve automatically!</div></div></div>
+      <div class="bc"><div class="bc-icon" style="background:rgba(6,214,160,0.08);">📈</div><div><div class="bc-title">Beat Competition</div><div class="bc-desc">While competitors have 10 reviews, you'll have hundreds!</div></div></div>
+      <div class="bc"><div class="bc-icon" style="background:rgba(251,191,36,0.08);">💰</div><div><div class="bc-title">Just ₹499/month</div><div class="bc-desc">Less than ₹17/day. One extra customer covers the entire cost!</div></div></div>
+      <div class="bc"><div class="bc-icon" style="background:rgba(244,63,94,0.08);">🤝</div><div><div class="bc-title">Personal WhatsApp Support</div><div class="bc-desc">Direct support from Ritik Tiwari. Response within hours!</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section" id="pricing">
+  <div style="text-align:center;">
+    <div class="label">Pricing</div>
+    <div class="sec-title">Simple, <span class="g">transparent plans</span></div>
+    <div class="sec-sub" style="margin:0 auto;">No contracts. Cancel anytime. Setup in 24 hours!</div>
+  </div>
+  <div class="pricing-grid">
+    <div class="pc">
+      <div class="pc-name">Basic Plan</div>
+      <div class="pc-price">₹499<span>/month</span></div>
+      <div class="pc-setup">+ ₹1,999 one-time setup fee</div>
+      <div class="pc-desc">Perfect for small shops & showrooms</div>
+      <ul class="pc-feats">
+        <li>Custom QR code for your shop</li>
+        <li>Unique AI review generation</li>
+        <li>Hinglish + English mix</li>
+        <li>Direct Google Business link</li>
+        <li>Client login dashboard</li>
+        <li>Update catalogue anytime</li>
+        <li>WhatsApp support</li>
+      </ul>
+      <a href="https://wa.me/919988789921?text=Hi Ritik, I want the Basic plan!" class="pc-btn pb-o">Get Started →</a>
+    </div>
+    <div class="pc hot">
+      <div class="hot-badge">MOST POPULAR</div>
+      <div class="pc-name">Pro Plan</div>
+      <div class="pc-price">₹999<span>/month</span></div>
+      <div class="pc-setup">+ ₹1,999 one-time setup fee</div>
+      <div class="pc-desc">For established businesses</div>
+      <ul class="pc-feats">
+        <li>Custom QR code for your shop</li>
+        <li>Unique AI review generation</li>
+        <li>Hinglish + English mix</li>
+        <li>Direct Google Business link</li>
+        <li>Client login dashboard</li>
+        <li>Update catalogue anytime</li>
+        <li>Priority WhatsApp support</li>
+        <li>Monthly review report</li>
+        <li>Strategy consultation</li>
+      </ul>
+      <a href="https://wa.me/919988789921?text=Hi Ritik, I want the Pro plan!" class="pc-btn pb-g">Get Started →</a>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:1.5rem;font-size:13px;color:rgba(255,255,255,0.25);">Not sure which plan? <a href="https://wa.me/919988789921" style="color:#a78bfa;text-decoration:none;">Chat with Ritik on WhatsApp</a> — free consultation!</div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section-full" style="background:rgba(124,58,237,0.02);border-top:1px solid rgba(255,255,255,0.03);">
+  <div class="section-inner">
+    <div style="text-align:center;">
+      <div class="label">Testimonials</div>
+      <div class="sec-title">Real results from real businesses</div>
+    </div>
+    <div class="testi-grid">
+      <div class="tc"><div class="tc-stars">★★★★★</div><div class="tc-text">"Pehle hamare paas sirf 8 reviews the Google pe. ReviewPro lene ke baad ek mahine mein 47 reviews aa gaye! Ab humara showroom Google Maps pe first page pe aata hai!"</div><div class="tc-name">Ramesh Gupta</div><div class="tc-shop">Furniture Showroom, Etawah</div></div>
+      <div class="tc"><div class="tc-stars">★★★★★</div><div class="tc-text">"Ekdum mast system hai! Customer ko kuch nahi karna — bas scan karo aur review post ho jaata hai. Staff ko bhi explain karna easy tha. Highly recommend!"</div><div class="tc-name">Sunita Sharma</div><div class="tc-shop">Clothing Boutique, Kanpur</div></div>
+      <div class="tc"><div class="tc-stars">★★★★★</div><div class="tc-text">"Ritik bhai ne bohot achi service di. Setup same day ho gaya. Our Google rating went from 3.8 to 4.6 in just 2 months! Bahut khush hoon."</div><div class="tc-name">Akash Verma</div><div class="tc-shop">Electronics Shop, Agra</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq">
+  <div class="faq-wrap">
+    <div style="text-align:center;">
+      <div class="label">FAQ</div>
+      <div class="sec-title">Common questions</div>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item"><div class="faq-q" onclick="toggleFAQ(this)"><span>Kya yeh Google ke rules ke against hai?</span><div class="faq-icon">+</div></div><div class="faq-a">Nahi! Customer apna genuine experience share karta hai — AI sirf unhe sahi words dhundhne mein help karta hai. Customer khud apne phone se review post karta hai. Yeh 100% Google policy compliant hai.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFAQ(this)"><span>Setup mein kitna time lagta hai?</span><div class="faq-icon">+</div></div><div class="faq-a">Payment ke 24 ghante ke andar aapka QR code ready ho jaata hai! Ritik Tiwari personally setup karte hain aur WhatsApp pe confirm karte hain.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFAQ(this)"><span>Customer ko app download karni padegi?</span><div class="faq-icon">+</div></div><div class="faq-a">Bilkul nahi! QR scan karte hi phone ke browser mein directly khul jaata hai. Koi app download nahi, koi registration nahi.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFAQ(this)"><span>Agar Google reviews delete kar de toh?</span><div class="faq-icon">+</div></div><div class="faq-a">Humara system har review alag banata hai — alag words, structure, language mix. Google ko koi pattern nahi milta. Safety ke liye ek din mein 2-3 se zyada reviews na aayein.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFAQ(this)"><span>Cancel karna chahein toh?</span><div class="faq-icon">+</div></div><div class="faq-a">Koi problem nahi! Koi contract nahi hai. Bas WhatsApp pe bata dein. Koi penalty nahi, koi hidden charges nahi.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section" id="contact">
+  <div class="label">Contact</div>
+  <div class="sec-title">Get in touch with Ritik</div>
+  <div class="sec-sub">Personal response guaranteed within 2-4 hours!</div>
+  <div class="contact-grid">
+    <div class="cc">
+      <div class="cc-title">📞 Contact Details</div>
+      <div class="cc-row"><div class="cc-icon" style="background:rgba(37,211,102,0.1);">💬</div><div><div class="cc-lbl">WhatsApp (Fastest)</div><div class="cc-val"><a href="https://wa.me/919988789921" style="color:#06d6a0;text-decoration:none;">+91 9988789921</a></div></div></div>
+      <div class="cc-row"><div class="cc-icon" style="background:rgba(124,58,237,0.1);">👤</div><div><div class="cc-lbl">Your Contact</div><div class="cc-val">Ritik Tiwari</div></div></div>
+      <div class="cc-row"><div class="cc-icon" style="background:rgba(251,191,36,0.1);">📍</div><div><div class="cc-lbl">Based In</div><div class="cc-val">Etawah, Uttar Pradesh</div></div></div>
+      <div class="cc-row"><div class="cc-icon" style="background:rgba(6,214,160,0.08);">🌍</div><div><div class="cc-lbl">Service Area</div><div class="cc-val">All of Uttar Pradesh</div></div></div>
+      <div class="cc-row"><div class="cc-icon" style="background:rgba(244,63,94,0.08);">⏰</div><div><div class="cc-lbl">Response Time</div><div class="cc-val">Within 2-4 hours</div></div></div>
+    </div>
+    <div class="cc">
+      <div class="cc-title">🚀 Get Free Demo</div>
+      <p style="font-size:14px;color:rgba(255,255,255,0.35);line-height:1.8;margin-bottom:1.5rem;font-weight:300;">Want to see ReviewPro in action before buying? Live demo on WhatsApp — see exactly how your customers experience it!</p>
+      <a href="https://wa.me/919988789921?text=Hi Ritik! I want a free demo of ReviewPro for my business!" class="btn btn-wa" style="width:100%;justify-content:center;padding:14px;font-size:15px;border-radius:14px;display:flex;margin-bottom:1rem;">💬 Get Free Demo on WhatsApp</a>
+      <button onclick="openRegister()" class="btn btn-glow" style="width:100%;justify-content:center;padding:14px;font-size:15px;border-radius:14px;">🏪 Register Your Business</button>
+      <p style="font-size:12px;color:rgba(255,255,255,0.18);text-align:center;margin-top:1rem;">Setup in 24 hours · No hidden charges · Cancel anytime</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-sec">
+  <div class="cta-bg"></div>
+  <div class="cta-grid-bg"></div>
+  <div class="cta-inner">
+    <div class="cta-title">Ready to get more<br>Google reviews?</div>
+    <div class="cta-sub">Join businesses across UP growing faster with ReviewPro.<br>Setup in 24 hours. Results from day one!</div>
+    <div class="cta-btns">
+      <button class="cb-w" onclick="openRegister()">🏪 Register Free</button>
+      <a href="https://wa.me/919988789921" class="cb-o">💬 WhatsApp Demo</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-brand">ReviewPro</div>
+  <div class="foot-tagline">Turning local businesses into digital powerhouses — one review at a time</div>
+  <div class="foot-links">
+    <a class="foot-link" onclick="scroll2('about')">About</a>
+    <a class="foot-link" onclick="scroll2('how')">How it works</a>
+    <a class="foot-link" onclick="scroll2('pricing')">Pricing</a>
+    <a href="https://wa.me/919988789921" class="foot-link">WhatsApp</a>
+    <a href="/admin.html" class="foot-link">Admin</a>
+  </div>
+  <div class="foot-copy">© 2025 ReviewPro · Ritik Tiwari, Etawah, UP · +91 9988789921</div>
+</footer>
+
+</div><!-- end .content -->
+
+<!-- WA FLOAT -->
+<a href="https://wa.me/919988789921" class="wa-float">💬</a>
+
+<!-- PORTAL MODAL -->
+<div class="modal-overlay" id="portal-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Welcome to ReviewPro</div>
+      <button class="modal-close" onclick="closePortal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="portal-options">
+        <div class="portal-opt" onclick="showSec('client-login')"><div class="po-icon" style="background:rgba(124,58,237,0.1);">🏪</div><div><div class="po-title">Already Registered Client</div><div class="po-sub">Login to dashboard, view QR, update catalogue</div></div><div class="po-arrow">›</div></div>
+        <div class="portal-opt" onclick="showSec('register')"><div class="po-icon" style="background:rgba(6,214,160,0.08);">✨</div><div><div class="po-title">New Business Registration</div><div class="po-sub">Register your showroom and get started</div></div><div class="po-arrow">›</div></div>
+        <div class="portal-opt" onclick="showSec('admin-login')"><div class="po-icon" style="background:rgba(251,191,36,0.08);">🔐</div><div><div class="po-title">Administrator Login</div><div class="po-sub">Ritik Tiwari — manage all clients</div></div><div class="po-arrow">›</div></div>
+      </div>
+
+      <!-- CLIENT LOGIN -->
+      <div id="section-client-login" style="display:none;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;"><button class="back-btn" onclick="showSec('options')">← Back</button><div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:#f0f4ff;">🏪 Client Login</div></div>
+        <div class="form-group"><label class="form-label">Username</label><input class="form-input" id="login-user" placeholder="Enter your username" autocomplete="off"></div>
+        <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" id="login-pass" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()"><div class="err-msg" id="login-err">❌ Wrong username or password.</div></div>
+        <button class="sub-btn sb-violet" onclick="doLogin()">Login to Dashboard →</button>
+        <div style="text-align:center;margin-top:1rem;font-size:12px;color:rgba(255,255,255,0.25);">Not registered? <span style="color:#a78bfa;cursor:pointer;" onclick="showSec('register')">Register your business</span></div>
+      </div>
+
+      <!-- ADMIN LOGIN -->
+      <div id="section-admin-login" style="display:none;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;"><button class="back-btn" onclick="showSec('options')">← Back</button><div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:#f0f4ff;">🔐 Admin Login</div></div>
+        <div class="form-group"><label class="form-label">Admin Password</label><input class="form-input" type="password" id="admin-pass" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doAdminLogin()"><div class="err-msg" id="admin-err">❌ Wrong password.</div></div>
+        <button class="sub-btn sb-amber" onclick="doAdminLogin()">Login as Administrator →</button>
+      </div>
+
+      <!-- REGISTER -->
+      <div id="section-register" style="display:none;max-height:65vh;overflow-y:auto;padding-right:4px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;"><button class="back-btn" onclick="showSec('options')">← Back</button><div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:#f0f4ff;">✨ Register Your Business</div></div>
+        <div class="info-box">ℹ️ Fill in your details. Ritik will activate your account within 24 hours after payment confirmation.</div>
+        <div id="reg-main">
+          <div class="form-group"><label class="form-label">Business / Shop Name *</label><input class="form-input reg-field" data-label="Business Name" id="r-bname" placeholder="e.g. Jain Furniture"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="form-group"><label class="form-label">Owner Name *</label><input class="form-input reg-field" data-label="Owner Name" placeholder="e.g. Ramesh Jain"></div>
+            <div class="form-group"><label class="form-label">City *</label><input class="form-input reg-field" data-label="City" placeholder="e.g. Etawah"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="form-group"><label class="form-label">WhatsApp *</label><input class="form-input reg-field" data-label="WhatsApp" placeholder="9876543210" type="tel"></div>
+            <div class="form-group"><label class="form-label">Category *</label>
+              <select class="form-select reg-field" data-label="Category">
+                <option value="">Select</option>
+                <option>Furniture & Home Decor</option><option>Clothing & Fashion</option><option>Electronics</option><option>Jewellery</option><option>Restaurant / Food</option><option>Salon & Beauty</option><option>Car Dealership</option><option>Medical / Pharmacy</option><option>Hardware & Building</option><option>Grocery / Kirana</option><option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group"><label class="form-label">Google Place ID</label><input class="form-input reg-field" data-label="Google Place ID" placeholder="Leave blank — Ritik will help you"><div class="form-hint">Don't know this? No problem, skip it.</div></div>
+          <div class="form-group"><label class="form-label">Shop Address</label><input class="form-input reg-field" data-label="Address" placeholder="Full address of your shop"></div>
+          <div class="form-group">
+            <label class="form-label">Products / Services</label>
+            <div id="prod-fields">
+              <div class="prod-row"><input class="form-input prod-field" placeholder="e.g. Sofa"><button class="rm-btn" onclick="rmProd(this)">×</button></div>
+              <div class="prod-row"><input class="form-input prod-field" placeholder="e.g. Bed"><button class="rm-btn" onclick="rmProd(this)">×</button></div>
+            </div>
+            <button class="add-field" onclick="addProd()" style="margin-top:8px;">+ Add Product / Service</button>
+            <div class="form-hint">Add each product separately — AI generates better reviews</div>
+          </div>
+          <div id="custom-fields"></div>
+          <button class="add-field" onclick="addCustom()" style="margin-bottom:1rem;">+ Add Custom Field</button>
+          <div class="creds-box">
+            <div class="creds-title">🔑 Create Your Login</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div class="form-group" style="margin-bottom:0;"><label class="form-label">Username *</label><input class="form-input" id="reg-user" placeholder="e.g. jainfurniture" autocomplete="off"></div>
+              <div class="form-group" style="margin-bottom:0;"><label class="form-label">Password *</label><input class="form-input" type="password" id="reg-pass" placeholder="Min 6 chars"></div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Choose Plan *</label>
+            <div class="plan-sel">
+              <div class="ps-opt sel" id="ps-basic" onclick="selPlan('basic')"><div class="ps-name">Basic</div><div class="ps-price">₹499/month</div><div class="ps-setup">+ ₹1,999 setup</div></div>
+              <div class="ps-opt" id="ps-pro" onclick="selPlan('pro')"><div class="ps-name">Pro</div><div class="ps-price">₹999/month</div><div class="ps-setup">+ ₹1,999 setup</div></div>
+            </div>
+          </div>
+          <div id="reg-err" class="err-msg"></div>
+          <button class="sub-btn sb-violet" onclick="submitReg()">Submit Registration →</button>
+          <div style="font-size:11px;color:rgba(255,255,255,0.2);text-align:center;margin-top:8px;">Ritik contacts you on WhatsApp within 24 hours to activate.</div>
+        </div>
+        <div id="reg-success" class="success-wrap" style="display:none;">
+          <div style="font-size:48px;margin-bottom:1rem;">🎉</div>
+          <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:#f0f4ff;margin-bottom:8px;">Registration Submitted!</div>
+          <div style="font-size:14px;color:rgba(255,255,255,0.35);line-height:1.7;margin-bottom:1.5rem;">Ritik Tiwari will contact you on WhatsApp within 24 hours to activate your account!</div>
+          <a href="https://wa.me/919988789921?text=Hi Ritik, I just registered on ReviewPro!" class="btn btn-wa" style="justify-content:center;padding:13px 24px;">💬 Message Ritik Now</a>
+        </div>
+        <div class="scroll-btns">
+          <button class="scr-btn" onclick="document.getElementById('section-register').scrollTop=0">↑</button>
+          <button class="scr-btn" onclick="document.getElementById('section-register').scrollTop=9999">↓</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ── 3D BACKGROUND ──
+const canvas=document.getElementById('c');
+const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.setSize(window.innerWidth,window.innerHeight);
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(60,window.innerWidth/window.innerHeight,0.1,1000);
+camera.position.set(0,0,9);
+scene.add(new THREE.AmbientLight(0xffffff,0.15));
+const pl1=new THREE.PointLight(0x7c3aed,4,25);pl1.position.set(-5,4,5);scene.add(pl1);
+const pl2=new THREE.PointLight(0x06d6a0,3,25);pl2.position.set(5,-3,4);scene.add(pl2);
+const pl3=new THREE.PointLight(0xfbbf24,2,20);pl3.position.set(0,5,-3);scene.add(pl3);
+const M=(c,met=0.9,rou=0.1)=>new THREE.MeshStandardMaterial({color:c,metalness:met,roughness:rou});
+const mats=[M(0x7c3aed),M(0x06d6a0,0.8,0.2),M(0xa78bfa,0.95,0.05),M(0xfbbf24,0.7,0.3),M(0xf43f5e,0.8,0.15)];
+const objs=[];
+const add=(geo,mat,x,y,z,rx,ry,rz)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);scene.add(m);objs.push({m,rx,ry,rz,ox:x,oy:y});};
+add(new THREE.TorusKnotGeometry(1.2,0.32,128,32),mats[0],4,0.5,-1,0.007,0.005,0.003);
+add(new THREE.IcosahedronGeometry(0.95,1),mats[1],-4,1.2,-0.5,0.009,0.007,0.005);
+add(new THREE.OctahedronGeometry(0.75),mats[2],-2.5,-2.5,0.5,0.012,0.008,0.006);
+add(new THREE.TorusGeometry(0.85,0.28,32,64),mats[3],3,-2.5,0,0.008,0.012,0.004);
+add(new THREE.SphereGeometry(0.65,32,32),mats[4],0.5,3.2,-0.5,0.005,0.009,0.007);
+add(new THREE.TetrahedronGeometry(0.55),mats[0],-0.5,-3.5,1,0.015,0.01,0.008);
+add(new THREE.DodecahedronGeometry(0.6),mats[1],2.5,2.5,-1,0.006,0.011,0.009);
+const pg=new THREE.BufferGeometry();
+const pc=300;const pp=new Float32Array(pc*3);
+for(let i=0;i<pc*3;i++)pp[i]=(Math.random()-0.5)*22;
+pg.setAttribute('position',new THREE.BufferAttribute(pp,3));
+scene.add(new THREE.Points(pg,new THREE.PointsMaterial({color:0xa78bfa,size:0.035,transparent:true,opacity:0.45})));
+let mouse={x:0,y:0};
+document.addEventListener('mousemove',e=>{mouse.x=(e.clientX/window.innerWidth-0.5)*2;mouse.y=-(e.clientY/window.innerHeight-0.5)*2;});
+let t=0;
+(function animate(){requestAnimationFrame(animate);t+=0.01;
+objs.forEach(({m,rx,ry,rz,ox,oy},i)=>{m.rotation.x+=rx;m.rotation.y+=ry;m.rotation.z+=rz;m.position.y=oy+Math.sin(t+i*1.2)*0.04;m.position.x=ox+Math.cos(t+i*0.8)*0.025;});
+camera.position.x+=(mouse.x*0.6-camera.position.x)*0.02;
+camera.position.y+=(mouse.y*0.4-camera.position.y)*0.02;
+camera.lookAt(0,0,0);renderer.render(scene,camera);})();
+window.addEventListener('resize',()=>{camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);});
+
+// ── UI ──
+function scroll2(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth'});}
+function toggleFAQ(el){const a=el.nextElementSibling;const ic=el.querySelector('.faq-icon');a.classList.toggle('open');ic.classList.toggle('open');ic.textContent=ic.classList.contains('open')?'×':'+';}
+
+// ── PORTAL ──
+function openPortal(){document.getElementById('portal-modal').classList.add('open');showSec('options');}
+function closePortal(){document.getElementById('portal-modal').classList.remove('open');}
+function openRegister(){document.getElementById('portal-modal').classList.add('open');showSec('register');}
+document.getElementById('portal-modal').addEventListener('click',e=>{if(e.target===document.getElementById('portal-modal'))closePortal();});
+function showSec(n){
+  ['portal-options','section-client-login','section-admin-login','section-register'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+  if(n==='options')document.getElementById('portal-options').style.display='block';
+  else document.getElementById('section-'+n).style.display='block';
+}
+
+// ── CLIENT LOGIN ──
+function doLogin(){
+  const user=document.getElementById('login-user').value.trim().toLowerCase();
+  const pass=document.getElementById('login-pass').value;
+  const err=document.getElementById('login-err');
+  if(!user||!pass){err.style.display='block';err.textContent='❌ Please enter username and password.';return;}
+  const clients=JSON.parse(localStorage.getItem('reviewpro_clients')||'[]');
+  const client=clients.find(c=>c.username&&c.username.toLowerCase()===user&&c.clientPassword===pass);
+  if(client){err.style.display='none';sessionStorage.setItem('rp_client',JSON.stringify(client));window.location.href='/client.html';}
+  else{err.style.display='block';err.textContent='❌ Wrong username or password. Contact Ritik.';document.getElementById('login-pass').value='';}
+}
+
+// ── ADMIN LOGIN ──
+function doAdminLogin(){
+  const pass=document.getElementById('admin-pass').value;
+  const err=document.getElementById('admin-err');
+  if(pass==='reviewpro2024'){sessionStorage.setItem('rp_auth','1');window.location.href='/admin.html';}
+  else{err.style.display='block';document.getElementById('admin-pass').value='';}
+}
+
+// ── PRODUCTS ──
+function addProd(){const r=document.createElement('div');r.className='prod-row';r.innerHTML='<input class="form-input prod-field" placeholder="e.g. Wardrobe"><button class="rm-btn" onclick="rmProd(this)">×</button>';document.getElementById('prod-fields').appendChild(r);r.querySelector('input').focus();}
+function rmProd(btn){if(document.querySelectorAll('.prod-row').length>1)btn.closest('.prod-row').remove();}
+
+// ── CUSTOM FIELDS ──
+let cc=0;
+function addCustom(){cc++;const d=document.createElement('div');d.id='cf-'+cc;d.style.marginBottom='10px';d.innerHTML=`<div style="display:flex;gap:8px;margin-bottom:6px;"><input class="form-input" placeholder="Field name" id="cfn-${cc}" style="flex:1;"><button onclick="document.getElementById('cf-${cc}').remove()" class="rm-btn">×</button></div><input class="form-input" id="cfv-${cc}" placeholder="Value">`;document.getElementById('custom-fields').appendChild(d);}
+
+// ── PLAN ──
+let selPlanVal='basic';
+function selPlan(p){selPlanVal=p;document.getElementById('ps-basic').classList.toggle('sel',p==='basic');document.getElementById('ps-pro').classList.toggle('sel',p==='pro');}
+
+// ── REGISTER ──
+function submitReg(){
+  const err=document.getElementById('reg-err');
+  const bname=document.getElementById('r-bname').value.trim();
+  const user=document.getElementById('reg-user').value.trim().toLowerCase();
+  const pass=document.getElementById('reg-pass').value;
+  if(!bname){err.style.display='block';err.textContent='❌ Please enter your business name.';return;}
+  if(!user||!pass){err.style.display='block';err.textContent='❌ Please create a username and password.';return;}
+  if(pass.length<6){err.style.display='block';err.textContent='❌ Password must be at least 6 characters.';return;}
+  if(user.includes(' ')){err.style.display='block';err.textContent='❌ Username cannot have spaces.';return;}
+  const existing=JSON.parse(localStorage.getItem('reviewpro_clients')||'[]');
+  if(existing.find(c=>c.username===user)){err.style.display='block';err.textContent='❌ Username already taken. Choose another.';return;}
+  const fields={};
+  document.querySelectorAll('.reg-field').forEach(f=>{const l=f.getAttribute('data-label');if(l)fields[l]=f.tagName==='SELECT'?f.options[f.selectedIndex].value:f.value;});
+  const products=Array.from(document.querySelectorAll('.prod-field')).map(f=>f.value.trim()).filter(v=>v);
+  fields['Products']=products.join(', ');
+  const pending=JSON.parse(localStorage.getItem('reviewpro_pending')||'[]');
+  pending.push({id:'pending_'+Date.now(),name:fields['Business Name']||'Unknown',city:fields['City']||'Unknown',phone:fields['WhatsApp']||'',category:fields['Category']||'Other',placeId:fields['Google Place ID']||'AUTO',catalogue:fields['Products']||'',address:fields['Address']||'',username:user,clientPassword:pass,plan:selPlanVal,status:'pending',payment:'pending',joined:new Date().toISOString().split('T')[0],reviewsGenerated:0,color:'#7c3aed',submittedAt:new Date().toLocaleString()});
+  localStorage.setItem('reviewpro_pending',JSON.stringify(pending));
+  err.style.display='none';
+  document.getElementById('reg-main').style.display='none';
+  document.getElementById('reg-success').style.display='block';
+}
+</script>
+</body>
+</html>
