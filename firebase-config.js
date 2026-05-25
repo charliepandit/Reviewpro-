@@ -1,35 +1,17 @@
-// ============================================================
-// REVIEWPRO — FIREBASE CONFIGURATION
-// Replace values below with your Firebase project settings
-// Get them from: console.firebase.google.com
-// ============================================================
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-const FIREBASE_CONFIG = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDVzIIWXVYcbRTz5O8E23T-ED3Ctkp9UVU",
+  authDomain: "reviewpro-b66c9.firebaseapp.com",
+  projectId: "reviewpro-b66c9",
+  storageBucket: "reviewpro-b66c9.firebasestorage.app",
+  messagingSenderId: "831538269584",
+  appId: "1:831538269584:web:7be67cc23fbe0dc266b715"
 };
 
-// ============================================================
-// ADMIN SETTINGS — Change password before going live!
-// ============================================================
-const ADMIN_CONFIG = {
-  password: "ReviewPro@2025!",
-  name: "Ritik Tiwari",
-  phone: "9988789921",
-  whatsapp: "919988789921",
-  city: "Etawah, UP",
-  trialDays: 30,
-};
-
-// ============================================================
-// PRICING
-// ============================================================
-const PLANS = {
-  trial: { name: "Free Trial", price: 0,   days: 30  },
-  basic: { name: "Basic",      price: 499, days: 30  },
-  pro:   { name: "Pro",        price: 999, days: 30  },
-};
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
