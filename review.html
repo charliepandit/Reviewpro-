@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rate Your Experience — ReviewPro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{
+  --bg:#ffffff;
+  --bg-secondary:#f7f7f7;
+  --card:rgba(255,255,255,0.65);
+  --border:rgba(0,0,0,0.06);
+  --text:#111111;
+  --text-dim:rgba(0,0,0,0.55);
+  --text-soft:rgba(0,0,0,0.35);
+  --green:#10b981;
+  --green-soft:rgba(16,185,129,0.08);
+  --amber:#f59e0b;
+  --red:#dc2626;
+  --font-body:'Barlow',sans-serif;
+  --font-serif:'Instrument Serif',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  font-family:var(--font-body);
+  font-size:15px;
+  font-weight:400;
+  color:var(--text);
+  background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:1rem;
+  overflow-x:hidden;
+  position:relative;
+}
+
+/* Ambient gradient orbs */
+.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0;opacity:0.5;}
+.orb-1{width:500px;height:500px;background:radial-gradient(circle,rgba(16,185,129,0.18),transparent 70%);top:-180px;left:-180px;animation:float1 20s ease-in-out infinite;}
+.orb-2{width:450px;height:450px;background:radial-gradient(circle,rgba(245,158,11,0.12),transparent 70%);bottom:-160px;right:-160px;animation:float2 25s ease-in-out infinite;}
+@keyframes float1{0%,100%{transform:translate(0,0);}50%{transform:translate(60px,40px);}}
+@keyframes float2{0%,100%{transform:translate(0,0);}50%{transform:translate(-50px,-30px);}}
+
+.serif{font-family:var(--font-serif);font-style:italic;letter-spacing:-0.04em;font-weight:400;}
+
+/* LIQUID GLASS */
+.liquid-glass{
+  background:rgba(255,255,255,0.65);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(0,0,0,0.06);
+  box-shadow:0 10px 40px rgba(0,0,0,0.04),inset 0 1px 1px rgba(255,255,255,0.7);
+  position:relative;
+  overflow:hidden;
+  border-radius:28px;
+}
+.liquid-glass::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  padding:1px;
+  background:linear-gradient(180deg,rgba(255,255,255,0.8) 0%,rgba(255,255,255,0.3) 50%,rgba(255,255,255,0.7) 100%);
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  pointer-events:none;
+}
+
+/* Card layout */
+.card{
+  width:100%;
+  max-width:460px;
+  position:relative;
+  z-index:2;
+  animation:cardIn 0.9s cubic-bezier(0.16,1,0.3,1);
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(24px);filter:blur(10px);}to{opacity:1;transform:translateY(0);filter:blur(0);}}
+
+.card-header{
+  padding:2.25rem 1.75rem 1.5rem;
+  text-align:center;
+  position:relative;
+  background:rgba(255,255,255,0.4);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.shop-initials{
+  width:64px;
+  height:64px;
+  background:linear-gradient(135deg,#111111 0%,#333333 100%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  font-weight:600;
+  color:#fff;
+  margin:0 auto 1rem;
+  border-radius:18px;
+  font-family:var(--font-body);
+  box-shadow:0 8px 24px rgba(0,0,0,0.15);
+  letter-spacing:0.02em;
+}
+.shop-name{
+  font-family:var(--font-serif);
+  font-style:italic;
+  font-size:1.75rem;
+  letter-spacing:-0.04em;
+  color:var(--text);
+  margin-bottom:6px;
+  line-height:1.1;
+}
+.shop-sub{font-size:13px;color:var(--text-dim);font-weight:400;letter-spacing:0.01em;}
+
+.card-body{padding:1.75rem;}
+.screen{display:none;animation:fadeIn 0.5s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* EXPIRED */
+.expired-wrap{text-align:center;padding:1.5rem 0.5rem;}
+.expired-icon{font-size:3rem;margin-bottom:1rem;}
+.expired-title{font-family:var(--font-serif);font-style:italic;font-size:1.5rem;color:var(--red);margin-bottom:8px;letter-spacing:-0.03em;}
+.expired-sub{font-size:14px;color:var(--text-dim);line-height:1.7;}
+
+/* WELCOME */
+.welcome-wrap{text-align:center;padding:0.25rem 0 1rem;}
+.welcome-emoji{font-size:3rem;margin-bottom:0.75rem;display:inline-block;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.welcome-title{font-family:var(--font-serif);font-style:italic;font-size:1.875rem;letter-spacing:-0.04em;margin-bottom:10px;line-height:1.1;}
+.welcome-sub{font-size:14px;color:var(--text-dim);line-height:1.6;font-weight:400;}
+.steps-preview{
+  display:flex;
+  justify-content:space-between;
+  background:rgba(255,255,255,0.5);
+  backdrop-filter:blur(10px);
+  border:1px solid var(--border);
+  padding:1rem;
+  margin:1.5rem 0;
+  gap:8px;
+  border-radius:18px;
+}
+.ps-item{text-align:center;flex:1;}
+.ps-icon{font-size:1.25rem;margin-bottom:4px;}
+.ps-text{font-size:11px;color:var(--text-dim);font-weight:500;letter-spacing:0.01em;}
+.ps-divider{color:rgba(0,0,0,0.15);display:flex;align-items:center;font-size:16px;}
+
+/* STEP BAR */
+.step-bar{display:flex;gap:5px;margin-bottom:1.5rem;}
+.step-seg{height:3px;flex:1;background:rgba(0,0,0,0.08);border-radius:6px;transition:all 0.4s ease;}
+.step-seg.done{background:var(--text);}
+.step-seg.active{background:var(--green);box-shadow:0 0 12px rgba(16,185,129,0.4);}
+
+.q-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:var(--green);margin-bottom:8px;}
+.q-text{font-family:var(--font-serif);font-style:italic;font-size:1.5rem;color:var(--text);margin-bottom:1.5rem;line-height:1.2;letter-spacing:-0.03em;}
+
+/* OPTIONS */
+.options{display:flex;flex-direction:column;gap:10px;}
+.opt-btn{
+  background:rgba(255,255,255,0.55);
+  backdrop-filter:blur(10px);
+  border:1px solid var(--border);
+  padding:14px 16px;
+  font-size:14px;
+  font-weight:500;
+  color:var(--text);
+  cursor:pointer;
+  text-align:left;
+  transition:all 0.2s ease;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-family:var(--font-body);
+  border-radius:16px;
+}
+.opt-btn:hover{
+  background:rgba(255,255,255,0.85);
+  border-color:rgba(0,0,0,0.12);
+  transform:translateY(-1px);
+  box-shadow:0 4px 12px rgba(0,0,0,0.04);
+}
+.opt-btn.selected{
+  background:var(--text);
+  color:#fff;
+  border-color:var(--text);
+  box-shadow:0 6px 18px rgba(0,0,0,0.18);
+}
+.opt-icon{
+  width:34px;
+  height:34px;
+  background:rgba(255,255,255,0.9);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+  flex-shrink:0;
+  border-radius:10px;
+  border:1px solid var(--border);
+}
+.opt-btn.selected .opt-icon{
+  background:rgba(255,255,255,0.15);
+  border-color:rgba(255,255,255,0.2);
+}
+
+/* STARS */
+.star-row{display:flex;gap:6px;justify-content:center;margin-top:1.25rem;}
+.star{
+  font-size:46px;
+  cursor:pointer;
+  color:rgba(0,0,0,0.12);
+  transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  line-height:1;
+  user-select:none;
+}
+.star:hover{transform:scale(1.15);}
+.star.lit{
+  color:#f59e0b;
+  text-shadow:0 0 20px rgba(245,158,11,0.45);
+  animation:starPop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes starPop{0%{transform:scale(0.85);}50%{transform:scale(1.25);}100%{transform:scale(1);}}
+.rating-label{
+  text-align:center;
+  font-size:14px;
+  color:var(--text-dim);
+  margin-top:1rem;
+  min-height:20px;
+  font-weight:500;
+  letter-spacing:0.01em;
+}
+
+/* BUTTONS */
+.cta-btn{
+  width:100%;
+  padding:15px;
+  background:var(--text);
+  color:#fff;
+  border:none;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  margin-top:1.5rem;
+  transition:all 0.25s ease;
+  font-family:var(--font-body);
+  opacity:0.35;
+  pointer-events:none;
+  border-radius:18px;
+  letter-spacing:0.01em;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+}
+.cta-btn.ready{opacity:1;pointer-events:all;}
+.cta-btn.ready:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(0,0,0,0.16);}
+.cta-btn.green{background:linear-gradient(135deg,#10b981,#059669);}
+
+/* GENERATING */
+.gen-wrap{text-align:center;padding:2rem 1rem;}
+.gen-orb{
+  width:88px;
+  height:88px;
+  margin:0 auto 1.5rem;
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.gen-orb::before,.gen-orb::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  border:2px solid transparent;
+}
+.gen-orb::before{
+  border-top-color:var(--text);
+  border-right-color:var(--text);
+  animation:spin 1.2s linear infinite;
+}
+.gen-orb::after{
+  border-bottom-color:rgba(16,185,129,0.6);
+  border-left-color:rgba(16,185,129,0.6);
+  animation:spin 1.6s linear infinite reverse;
+  inset:8px;
+}
+.gen-dot{
+  width:14px;
+  height:14px;
+  background:linear-gradient(135deg,#111,#444);
+  border-radius:50%;
+  animation:pulse 1.4s ease-in-out infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(0.7);opacity:0.5;}}
+.gen-title{
+  font-family:var(--font-serif);
+  font-style:italic;
+  font-size:1.5rem;
+  margin-bottom:8px;
+  letter-spacing:-0.03em;
+}
+.gen-sub{font-size:13px;color:var(--text-dim);margin-bottom:1.5rem;}
+.gen-tags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;}
+.gen-tag{
+  font-size:11px;
+  font-weight:500;
+  padding:6px 12px;
+  background:rgba(255,255,255,0.6);
+  border:1px solid var(--border);
+  color:var(--text-dim);
+  border-radius:100px;
+  letter-spacing:0.04em;
+  text-transform:uppercase;
+  animation:tagFlow 2s ease infinite;
+  opacity:0;
+}
+.gen-tag:nth-child(1){animation-delay:0.15s;}
+.gen-tag:nth-child(2){animation-delay:0.35s;}
+.gen-tag:nth-child(3){animation-delay:0.55s;}
+@keyframes tagFlow{0%{opacity:0;transform:translateY(6px);}25%,75%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-6px);}}
+
+/* REVIEW READY */
+.review-label{
+  font-size:11px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:0.12em;
+  color:var(--text-dim);
+  margin-bottom:10px;
+}
+.review-box{
+  background:rgba(255,255,255,0.7);
+  backdrop-filter:blur(14px);
+  border:1px solid var(--border);
+  padding:1.25rem 1.25rem 1rem;
+  margin-bottom:0.85rem;
+  position:relative;
+  border-radius:20px;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,0.7);
+}
+.review-box::before{
+  content:'"';
+  font-size:5rem;
+  line-height:1;
+  color:var(--green);
+  opacity:0.18;
+  position:absolute;
+  top:-6px;
+  left:14px;
+  font-family:Georgia,serif;
+}
+.review-textarea{
+  width:100%;
+  background:transparent;
+  border:none;
+  font-size:14.5px;
+  line-height:1.75;
+  color:var(--text);
+  resize:none;
+  font-family:var(--font-body);
+  padding-top:1.5rem;
+  outline:none;
+  min-height:120px;
+  font-weight:400;
+}
+.review-actions{display:flex;gap:8px;margin-bottom:0.85rem;}
+.small-btn{
+  flex:1;
+  padding:11px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,0.55);
+  backdrop-filter:blur(10px);
+  font-size:13px;
+  font-weight:500;
+  cursor:pointer;
+  font-family:var(--font-body);
+  transition:all 0.2s;
+  color:var(--text);
+  border-radius:14px;
+}
+.small-btn:hover{background:rgba(255,255,255,0.9);border-color:rgba(0,0,0,0.12);}
+
+.google-btn{
+  width:100%;
+  padding:15px;
+  background:#4285F4;
+  color:white;
+  border:none;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:0.75rem;
+  transition:all 0.25s;
+  font-family:var(--font-body);
+  border-radius:18px;
+  box-shadow:0 6px 18px rgba(66,133,244,0.25);
+}
+.google-btn:hover{background:#3367d6;transform:translateY(-1px);box-shadow:0 10px 24px rgba(66,133,244,0.32);}
+
+.instruction-box{
+  display:none;
+  background:rgba(245,158,11,0.08);
+  border-left:3px solid #f59e0b;
+  padding:12px 14px;
+  margin-bottom:10px;
+  font-size:13px;
+  color:#78350f;
+  line-height:1.65;
+  border-radius:10px;
+}
+
+/* DONE */
+.done-wrap{text-align:center;padding:2rem 0.5rem;}
+.done-icon{
+  font-size:3.5rem;
+  margin-bottom:1rem;
+  display:inline-block;
+  animation:pop 0.55s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes pop{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+.done-title{
+  font-family:var(--font-serif);
+  font-style:italic;
+  font-size:2rem;
+  margin-bottom:10px;
+  letter-spacing:-0.04em;
+  line-height:1.1;
+}
+.done-sub{font-size:14px;color:var(--text-dim);line-height:1.7;margin-bottom:1.5rem;}
+.done-badge{
+  display:inline-block;
+  background:var(--green-soft);
+  color:#047857;
+  padding:8px 22px;
+  font-size:13px;
+  font-weight:600;
+  border:1px solid rgba(16,185,129,0.2);
+  border-radius:100px;
+  letter-spacing:0.01em;
+}
+
+.powered-by{
+  text-align:center;
+  font-size:11px;
+  color:var(--text-soft);
+  padding:1.1rem 1rem;
+  border-top:1px solid var(--border);
+  margin-top:0;
+  background:rgba(255,255,255,0.35);
+  letter-spacing:0.05em;
+}
+.powered-by a{color:var(--text);text-decoration:none;font-weight:600;}
+.powered-by a:hover{text-decoration:underline;}
+
+@media(max-width:480px){
+  body{padding:0.5rem;}
+  .card-body{padding:1.5rem 1.25rem;}
+  .card-header{padding:2rem 1.25rem 1.25rem;}
+  .shop-name{font-size:1.5rem;}
+  .welcome-title,.q-text,.gen-title{font-size:1.35rem;}
+  .star{font-size:40px;}
+}
+</style>
+</head>
+<body>
+
+<!-- Ambient orbs -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<div class="card liquid-glass">
+  <div class="card-header">
+    <div class="shop-initials" id="shop-initials">⭐</div>
+    <div class="shop-name" id="shop-name">Loading...</div>
+    <div class="shop-sub" id="shop-sub">Please wait</div>
+  </div>
+  <div class="card-body">
+
+    <!-- EXPIRED -->
+    <div id="s-expired" class="screen">
+      <div class="expired-wrap">
+        <div class="expired-icon">🚫</div>
+        <div class="expired-title">Service Inactive</div>
+        <div class="expired-sub">This review service is currently inactive. Please contact the shop owner for assistance.</div>
+      </div>
+    </div>
+
+    <!-- WELCOME -->
+    <div id="s-welcome" class="screen">
+      <div class="welcome-wrap">
+        <div class="welcome-emoji">✨</div>
+        <div class="welcome-title">How was your visit?</div>
+        <div class="welcome-sub">Answer 3 quick questions — we'll craft the perfect review for you.</div>
+      </div>
+      <div class="steps-preview">
+        <div class="ps-item"><div class="ps-icon">🛍️</div><div class="ps-text">What you bought</div></div>
+        <div class="ps-divider">›</div>
+        <div class="ps-item"><div class="ps-icon">😊</div><div class="ps-text">Rate service</div></div>
+        <div class="ps-divider">›</div>
+        <div class="ps-item"><div class="ps-icon">✍️</div><div class="ps-text">AI writes it</div></div>
+      </div>
+      <button class="cta-btn ready" onclick="goTo('s-q1')">Start — Takes 30 seconds →</button>
+    </div>
+
+    <!-- Q1 PRODUCT -->
+    <div id="s-q1" class="screen">
+      <div class="step-bar"><div class="step-seg active"></div><div class="step-seg"></div><div class="step-seg"></div></div>
+      <div class="q-label">Step 1 of 3</div>
+      <div class="q-text">What did you buy today?</div>
+      <div class="options" id="product-options"></div>
+      <button class="cta-btn" id="btn-q1" onclick="goTo('s-q2')">Next →</button>
+    </div>
+
+    <!-- Q2 STAFF -->
+    <div id="s-q2" class="screen">
+      <div class="step-bar"><div class="step-seg done"></div><div class="step-seg active"></div><div class="step-seg"></div></div>
+      <div class="q-label">Step 2 of 3</div>
+      <div class="q-text">How was the staff?</div>
+      <div class="options">
+        <button class="opt-btn" onclick="pick(this,'staff','very helpful and friendly')"><span class="opt-icon">😊</span>Very helpful &amp; friendly</button>
+        <button class="opt-btn" onclick="pick(this,'staff','knowledgeable and professional')"><span class="opt-icon">👔</span>Professional &amp; knowledgeable</button>
+        <button class="opt-btn" onclick="pick(this,'staff','patient and attentive')"><span class="opt-icon">🙏</span>Patient &amp; attentive</button>
+        <button class="opt-btn" onclick="pick(this,'staff','good but a bit busy')"><span class="opt-icon">⚡</span>Good but a bit busy</button>
+      </div>
+      <button class="cta-btn" id="btn-q2" onclick="goTo('s-q3')">Next →</button>
+    </div>
+
+    <!-- Q3 RATING -->
+    <div id="s-q3" class="screen">
+      <div class="step-bar"><div class="step-seg done"></div><div class="step-seg done"></div><div class="step-seg active"></div></div>
+      <div class="q-label">Step 3 of 3</div>
+      <div class="q-text">Overall, how was your experience?</div>
+      <div class="star-row" id="stars">
+        <span class="star" onclick="rate(1)">★</span>
+        <span class="star" onclick="rate(2)">★</span>
+        <span class="star" onclick="rate(3)">★</span>
+        <span class="star" onclick="rate(4)">★</span>
+        <span class="star" onclick="rate(5)">★</span>
+      </div>
+      <div class="rating-label" id="rating-label"></div>
+      <button class="cta-btn" id="btn-q3" onclick="generateReview()">✨ Generate My Review</button>
+    </div>
+
+    <!-- GENERATING -->
+    <div id="s-generating" class="screen">
+      <div class="gen-wrap">
+        <div class="gen-orb"><div class="gen-dot"></div></div>
+        <div class="gen-title">Crafting your review...</div>
+        <div class="gen-sub">Our AI is finding the perfect words for you</div>
+        <div class="gen-tags">
+          <div class="gen-tag">Analyzing experience</div>
+          <div class="gen-tag">Choosing tone</div>
+          <div class="gen-tag">Polishing words</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVIEW READY -->
+    <div id="s-review" class="screen">
+      <div class="review-label">Your review is ready — feel free to edit</div>
+      <div class="review-box">
+        <textarea class="review-textarea" id="review-text" rows="5"></textarea>
+      </div>
+      <div class="review-actions">
+        <button class="small-btn" onclick="generateReview()">🔄 Try another</button>
+        <button class="small-btn" onclick="copyOnly()">📋 Copy text</button>
+      </div>
+      <div class="instruction-box" id="instruction-box">
+        <strong>📋 Step 2 — On Google:</strong><br>
+        1. Tap inside the review box<br>
+        2. Long press → tap <strong>Paste</strong><br>
+        3. Tap <strong>Post</strong> ✅
+      </div>
+      <button class="google-btn" id="google-btn" onclick="postToGoogle()">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="white" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="white" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="white" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="white" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        📋 Copy &amp; Open Google
+      </button>
+      <div style="text-align:center;font-size:11px;color:var(--text-soft);margin-top:6px;letter-spacing:0.02em;">Review copies automatically → just paste on Google!</div>
+    </div>
+
+    <!-- DONE -->
+    <div id="s-done" class="screen">
+      <div class="done-wrap">
+        <div class="done-icon">🎉</div>
+        <div class="done-title">Thank you!</div>
+        <div class="done-sub">Your review means the world to us. It helps other customers find this shop and motivates the team to keep delivering their best.</div>
+        <div class="done-badge">⭐ You're a star customer</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="powered-by">Powered by <a href="https://www.up75.in" target="_blank">www.up75.in</a></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const clientId = params.get('id');
+const answers = { product: '', staff: '', rating: 0 };
+const ratingLabels = ['','Poor 😞','Below Average 😐','Good 🙂','Very Good 😊','Excellent! 🤩'];
+let shopConfig = null;
+let db;
+
+// ── LOAD CLIENT ──
+async function loadClient() {
+  if (!clientId) { showExpired(); return; }
+  try {
+    const app = firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.firestore();
+    const doc = await db.collection('clients').doc(clientId).get();
+    if (doc.exists) {
+      shopConfig = { ...doc.data(), id: doc.id };
+    } else { throw new Error('not found'); }
+  } catch(e) {
+    // localStorage fallback
+    const clients = JSON.parse(localStorage.getItem('reviewpro_clients') || '[]');
+    shopConfig = clients.find(c => c.id === clientId);
+  }
+
+  if (!shopConfig) { showExpired(); return; }
+
+  // Check expiry — auto-activated accounts (onboardingComplete) are always active
+  const today = new Date().toISOString().split('T')[0];
+  const isExpiredDate = shopConfig.expiryDate && shopConfig.expiryDate < today;
+  if (isExpiredDate) { showExpired(); return; }
+  // onboardingComplete = self-serve activation; treat as active immediately
+  const isAutoActivated = shopConfig.onboardingComplete === true;
+  if (!isAutoActivated && shopConfig.status !== 'active') { showExpired(); return; }
+
+  // Set header
+  const name = shopConfig.name || 'Shop';
+  const initials = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('shop-initials').textContent = initials;
+  document.getElementById('shop-name').textContent = name;
+  document.getElementById('shop-sub').textContent = (shopConfig.category||'Shop') + (shopConfig.city ? ' · ' + shopConfig.city : '');
+  document.title = `Rate Your Experience — ${name}`;
+
+  // Build product options
+  buildProductOptions();
+
+  // Track review count
+  trackReview();
+
+  goTo('s-welcome');
+}
+
+function showExpired() {
+  document.getElementById('shop-initials').textContent = '🚫';
+  document.getElementById('shop-name').textContent = 'Service Inactive';
+  document.getElementById('shop-sub').textContent = 'Contact shop owner';
+  goTo('s-expired');
+}
+
+function buildProductOptions() {
+  const container = document.getElementById('product-options');
+  const catalogue = shopConfig.catalogue || '';
+  const icons = ['🛋️','🛏️','🍽️','🪞','🏮','🛍️','👕','💍','📱','🚗','💊','🪑','👜','🔧','🍕'];
+  let products = catalogue ? catalogue.split(',').map(p=>p.trim()).filter(p=>p).slice(0,6) : [];
+  if (products.length === 0) products = ['Product / Service'];
+
+  container.innerHTML = products.map((p,i) => `
+    <button class="opt-btn" onclick="pick(this,'product','${p.replace(/'/g,"\\'")}')">
+      <span class="opt-icon">${icons[i%icons.length]}</span>${p}
+    </button>
+  `).join('') + `<button class="opt-btn" onclick="pick(this,'product','multiple items')"><span class="opt-icon">🛍️</span>Multiple items</button>`;
+}
+
+async function trackReview() {
+  if (!db || !clientId || clientId.startsWith('local_')) {
+    const clients = JSON.parse(localStorage.getItem('reviewpro_clients') || '[]');
+    const idx = clients.findIndex(c=>c.id===clientId);
+    if (idx !== -1) { clients[idx].reviewsGenerated = (clients[idx].reviewsGenerated||0)+1; localStorage.setItem('reviewpro_clients', JSON.stringify(clients)); }
+    return;
+  }
+  try {
+    await db.collection('clients').doc(clientId).update({ 
+      reviewsGenerated: firebase.firestore.FieldValue.increment(1),
+      reviewsThisMonth: firebase.firestore.FieldValue.increment(1)
+    });
+    // Also update analytics collection
+    try {
+      await db.collection('analytics').doc(clientId).set({
+        reviewsTotal: firebase.firestore.FieldValue.increment(1),
+        reviewsThisMonth: firebase.firestore.FieldValue.increment(1),
+        lastUpdated: new Date().toISOString()
+      }, { merge: true });
+    } catch(e) {}
+  } catch(e) {}
+}
+
+// ── NAV ──
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function pick(btn, key, val) {
+  btn.closest('.options').querySelectorAll('.opt-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  answers[key] = val;
+  const nextBtn = btn.closest('.screen').querySelector('.cta-btn');
+  if (nextBtn) nextBtn.classList.add('ready');
+}
+
+function rate(n) {
+  answers.rating = n;
+  document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',i<n));
+  document.getElementById('rating-label').textContent = ratingLabels[n];
+  document.getElementById('btn-q3').classList.add('ready');
+}
+
+// ── REVIEW ENGINE ─────────────────────────────────────────────────
+// Multi-language, 5-tier (1–5 star) generator. Reviews must feel
+// human, unique, and emotionally believable. 2-star = polite concerns
+// (no harsh criticism). 1-star = calm improvement suggestions (never
+// toxic or abusive).
+const rand = arr => arr[Math.floor(Math.random() * arr.length)];
+
+function pickLanguage() {
+  const lang = (shopConfig && shopConfig.language ? shopConfig.language : 'hinglish').toString().toLowerCase();
+  if (lang.startsWith('eng')) return 'english';
+  if (lang.startsWith('hin') && !lang.includes('glish')) return 'hindi';
+  return 'hinglish';
+}
+
+// ── TEMPLATE POOLS ──
+const POOLS = {
+  hinglish: {
+    5: {
+      openers: ctx => [
+        `${ctx.shop} se ${ctx.p} liya — ekdum mast experience raha!`,
+        `Bhai, ${ctx.shop} ka koi jawab nahi seriously.`,
+        ctx.city ? `Finally ${ctx.city} mein ek aisa showroom mila jahan quality milti hai!` : `Finally ek aisa showroom mila jahan quality milti hai!`,
+        `${ctx.timeRef} ${ctx.shop} gaya tha — wapas aate waqt ekdum satisfied tha!`,
+        `Honestly ${ctx.shop} se ${ctx.p} lena best purchase raha mera is baar!`,
+        `${ctx.shop} mein pehli baar gaya tha — but ab toh regular customer ban gaya hoon!`,
+        `Mere relative ne suggest kiya tha ${ctx.shop} — bilkul sahi suggestion tha!`,
+        ctx.city ? `Suno, agar ${ctx.city} mein ${ctx.p} dhundh rahe ho toh ${ctx.shop} zaroor jao!` : `Suno, agar ${ctx.p} dhundh rahe ho toh ${ctx.shop} zaroor jao!`,
+        `${ctx.shop} visited ${ctx.timeRef} and it was honestly one of the best experiences!`,
+        `Really impressed with ${ctx.shop} — ${ctx.p} ki quality toh kamaal ki hai!`,
+      ],
+      quality: ctx => [
+        `${ctx.p} ki quality ekdum top-notch hai — finish bohot clean hai.`,
+        `Jo ${ctx.p} liya uski build quality dekhke dil khush ho gaya!`,
+        `The ${ctx.p} I bought is solid — great finish and very sturdy.`,
+        `${ctx.p} ka material aur finishing dono hi premium feel dete hain.`,
+        `Ghar leke aaye toh family bhi ${ctx.p} dekh ke impressed ho gayi!`,
+        `${ctx.p} bilkul waisa nikla jaisa showroom mein dikhaya tha — no surprises!`,
+        `Itni achi quality nahi umeed thi is price mein — genuinely surprised!`,
+      ],
+      staff: ctx => [
+        `Staff ne bina pressure ke sab options dikhaye — acha laga.`,
+        `${ctx.s} staff tha — yahi cheez is shop ko alag banati hai.`,
+        `Salesman ne sabr se sab explain kiya, koi rush nahi ki.`,
+        `The staff was ${ctx.s} and never made us feel rushed at all.`,
+        `Bhaiya log bohot cooperative the — sab sawaalon ka jawab diya.`,
+        `Koi bhi sawaal poocha, staff ne clearly aur honestly bataya.`,
+        `Staff ka behaviour ekdum professional tha — ${ctx.s}.`,
+      ],
+      value: ctx => [
+        `Prices market se competitive hain, thodi bargain bhi ho jaati hai.`,
+        `Pricing fair thi — koi hidden charges nahi, transparent dealing.`,
+        `Other shops se compare kiya tha pehle — yahan rate sahi the.`,
+        `Value for money bilkul sahi hai yahan.`,
+      ],
+      extras: ctx => [
+        `Showroom bhi kaafi saaf suthra tha.`,
+        `Delivery bhi time pe hui — no delays.`,
+        `Warranty bhi mili saath mein — tension free purchase.`,
+        `Variety bhi achi hai — bahut options milte hain.`,
+      ],
+      personal: ctx => [
+        `Ghar mein sab ko ${ctx.p} bohot pasand aaya!`,
+        `${ctx.persona} sab khush hain is purchase se.`,
+        `Padosi ne dekha toh unhe bhi pasand aa gaya!`,
+      ],
+      closers: ctx => [
+        ctx.city ? `${ctx.city} mein ${ctx.p} chahiye toh ${ctx.shop} zaroor jao — regret nahi hoga!` : `${ctx.p} chahiye toh ${ctx.shop} zaroor jao — regret nahi hoga!`,
+        `Highly recommend karta hoon ${ctx.shop} ko — must visit!`,
+        `5 stars confidently — will definitely come back!`,
+        `Apne sab dosto ko already suggest kar diya hai ${ctx.shop} ke liye.`,
+        `${ctx.shop} team ko bahut shukriya — keep it up!`,
+        ctx.city ? `Agar ${ctx.city} mein ho toh ${ctx.shop} skip mat karna!` : `${ctx.shop} skip mat karna agar quality chahiye!`,
+        ctx.city ? `One of the best shopping experiences in ${ctx.city} — highly recommend!` : `One of the best shopping experiences — highly recommend!`,
+      ],
+    },
+    4: {
+      openers: ctx => [
+        `${ctx.shop} se ${ctx.p} purchase kiya — overall good experience raha.`,
+        `${ctx.timeRef} ${ctx.shop} visit kiya tha, kaafi acha laga.`,
+        `Good showroom hai ${ctx.shop} — ${ctx.p} ki quality se satisfied hoon.`,
+        `${ctx.shop} mein ${ctx.p} ke liye gaya tha — reasonable experience raha.`,
+        `Had a decent visit to ${ctx.shop} recently — happy with the purchase overall.`,
+        `${ctx.shop} ka ${ctx.p} le ke aaya, kaafi hadd tak khush hoon is se.`,
+      ],
+      quality: ctx => [
+        `${ctx.p} ki quality price ke hisaab se theek hai — value for money.`,
+        `${ctx.p} satisfactory quality ka hai, koi bada issue nahi abhi tak.`,
+        `Quality good hai ${ctx.p} ki — expected ke according tha.`,
+        `The ${ctx.p} is decent quality for the price — no major complaints.`,
+        `${ctx.p} ki finishing thodi aur better ho sakti thi but overall theek hai.`,
+      ],
+      staff: ctx => [
+        `Staff helpful tha, kuch options dikhaye but thodi rush mein the.`,
+        `Salesman cooperative the — sab samjha diya patiently.`,
+        `Staff behaviour acha tha, mostly attentive rahe.`,
+        `Generally polite staff, koi major complaint nahi.`,
+      ],
+      value: ctx => [
+        `Pricing average market rate ke aas paas thi.`,
+        `Bargaining thodi possible thi, fair pricing overall.`,
+      ],
+      extras: ctx => [
+        `Shop neat tha aur layout bhi acha hai.`,
+        `Billing process smooth tha — no time waste.`,
+      ],
+      personal: ctx => [
+        `Ghar wale bhi mostly satisfied hain ${ctx.p} se.`,
+      ],
+      closers: ctx => [
+        `Overall good — would recommend to friends.`,
+        `Will visit again for future needs — decent place.`,
+        ctx.city ? `Good option in ${ctx.city} for ${ctx.p}.` : `Good option for ${ctx.p}.`,
+        `${ctx.shop} recommend karunga — satisfactory experience raha.`,
+        `Solid 4 stars — there's some room to improve but overall happy.`,
+      ],
+    },
+    3: {
+      openers: ctx => [
+        `${ctx.shop} se ${ctx.p} liya. Theek thak experience raha.`,
+        `Average experience ${ctx.shop} mein — kuch cheezein achi thin.`,
+        `Visited ${ctx.shop} ${ctx.timeRef} — it was okay, nothing too special.`,
+        `${ctx.shop} ${ctx.timeRef} gaya tha — mixed feelings hain honestly.`,
+        `Honestly speaking, ${ctx.shop} se ${ctx.p} liya but experience ekdum balanced raha.`,
+      ],
+      quality: ctx => [
+        `${ctx.p} average quality ka laga, price thodi zyada lagi.`,
+        `Quality theek hai — expected a little better at this price.`,
+        `${ctx.p} chal jayega but premium feel nahi aaya.`,
+        `Decent ${ctx.p} but kuch finishing details improve ho sakti thin.`,
+      ],
+      staff: ctx => [
+        `Staff helpful tha but kabhi-kabhi attention nahi mila properly.`,
+        `Salesman thode busy lag rahe the, par helpful rahe.`,
+        `Staff polite the but thoda aur attentive ho sakte the.`,
+      ],
+      value: ctx => [
+        `Pricing market rate par hi thi — kuch alag nahi.`,
+        `Value for money normal hai — not great, not bad.`,
+      ],
+      extras: ctx => [
+        `Showroom okay tha, layout aur better ho sakta hai.`,
+        `Wait thodi zyada lagi service ke liye.`,
+      ],
+      personal: ctx => [],
+      closers: ctx => [
+        `Theek hai overall — kuch improvements ho sakti hain.`,
+        `Average, gets the job done.`,
+        `3 stars — not bad, but room for improvement.`,
+        `Decent experience, expected slightly more honestly.`,
+      ],
+    },
+    2: {
+      openers: ctx => [
+        `${ctx.shop} mein ${ctx.p} ke liye gaya tha ${ctx.timeRef} — honestly experience expected level pe nahi tha.`,
+        `${ctx.timeRef} ${ctx.shop} visit kiya — kuch areas hain jahan improvement ki zaroorat lagti hai.`,
+        `${ctx.shop} se ${ctx.p} liya but kuch concerns hain jo politely share karna chahta hoon.`,
+        `Honest feedback dena chahta hoon ${ctx.shop} ke baare mein — experience thoda mixed raha.`,
+        `Visited ${ctx.shop} recently — sharing my honest thoughts here.`,
+      ],
+      quality: ctx => [
+        `${ctx.p} ki quality expectations ke according nahi thi — thoda aur consistent ho sakti hai.`,
+        `${ctx.p} mein kuch minor finishing issues lag rahe the — checking suggested.`,
+        `Quality control par thoda aur dhyaan diya ja sakta hai — products mein consistency missing thi.`,
+      ],
+      staff: ctx => [
+        `Staff thodi rush mein the, attention bilkul focused nahi raha.`,
+        `Salesman cooperative the par detailed explanation thodi missing rahi.`,
+        `Staff aur attentive ho sakte hain — customers ko zyada time dena helpful hoga.`,
+      ],
+      value: ctx => [
+        `Pricing thodi high lagi mujhe is quality ke hisaab se.`,
+        `Value for money par sawaal hai — expected better at this price point.`,
+      ],
+      extras: ctx => [
+        `Showroom thoda aur organized ho sakta hai — products dhundhne mein time laga.`,
+        `Billing aur after-purchase process smoother ho sakta hai.`,
+      ],
+      personal: ctx => [],
+      closers: ctx => [
+        `Constructive feedback hai — hopefully management notice karega aur improve karega.`,
+        `Improvements ki gunjaish hai. Shop owner se request hai ki in cheezon par dhyaan dein.`,
+        `Honestly hope ${ctx.shop} customer experience par aur kaam karega — potential hai yahan.`,
+        `Sharing this as honest feedback, not criticism — better customer service is needed.`,
+      ],
+    },
+    1: {
+      openers: ctx => [
+        `${ctx.shop} mein ${ctx.p} ke liye gaya tha — experience expected jaisa nahi tha. Sharing constructive feedback.`,
+        `${ctx.timeRef} ${ctx.shop} visit kiya — kuch suggestions hain jo helpful ho sakti hain.`,
+        `Honestly, my ${ctx.shop} visit didn't go as I'd hoped. Sharing this calmly so it can help.`,
+        `Visiting ${ctx.shop} ${ctx.timeRef} was a bit underwhelming — wanted to share calm, constructive feedback.`,
+      ],
+      quality: ctx => [
+        `${ctx.p} ki quality par dobara dhyaan dene ki zaroorat lagti hai — meri opinion mein.`,
+        `Product mein kuch issues the jinhe check kiya ja sakta hai before selling.`,
+        `Quality consistency par focus karna helpful hoga — yeh ek improvement area hai.`,
+      ],
+      staff: ctx => [
+        `Staff training aur customer interaction par aur kaam ho sakta hai — politely suggesting.`,
+        `Customer ko zyada time aur attention dena — yeh ek important point hai.`,
+        `Staff communication aur helpful rakhne mein behtari ho sakti hai.`,
+      ],
+      value: ctx => [
+        `Price aur experience ka balance abhi sahi nahi lag raha — review karne layak hai.`,
+        `Value proposition par dobara sochne ki zaroorat hai shop owner ko.`,
+      ],
+      extras: ctx => [
+        `Overall management aur process flow par bhi attention dena zaroori hai.`,
+      ],
+      personal: ctx => [],
+      closers: ctx => [
+        `Yeh feedback hai, complaint nahi — hopefully ${ctx.shop} aage chal ke better service offer karega.`,
+        `Sharing this constructively. Genuinely hope to see improvements on a future visit.`,
+        `Hopefully next visit experience aur acha rahega. ${ctx.shop} ke paas potential hai — bas execution improve karne ki zaroorat hai.`,
+        `Calm feedback hai — taaki shop apne services improve kar sake. Best wishes.`,
+      ],
+    },
+  },
+
+  english: {
+    5: {
+      openers: ctx => [
+        `Had a wonderful experience at ${ctx.shop} — picked up ${ctx.p} and absolutely loved it!`,
+        `${ctx.shop} truly delivers on quality and service. Genuinely impressed.`,
+        ctx.city ? `Finally found a place in ${ctx.city} that lives up to its reputation — ${ctx.shop}!` : `Finally found a place that lives up to its reputation — ${ctx.shop}!`,
+        `Visited ${ctx.shop} ${ctx.timeRef} and walked out completely satisfied with my ${ctx.p}.`,
+        `Honestly one of the best shopping experiences I've had — ${ctx.shop} stood out from the rest.`,
+        `Got my ${ctx.p} from ${ctx.shop} and couldn't be happier with the choice.`,
+        `${ctx.shop} was recommended by a friend — and I see exactly why now.`,
+      ],
+      quality: ctx => [
+        `The ${ctx.p} I bought is top-notch — fantastic build and finish.`,
+        `Quality of the ${ctx.p} genuinely exceeded my expectations.`,
+        `What I love most is that the ${ctx.p} feels premium and durable.`,
+        `Beautiful craftsmanship — the ${ctx.p} looks even better than in the showroom.`,
+        `Honestly didn't expect this level of quality at this price point.`,
+      ],
+      staff: ctx => [
+        `The staff was ${ctx.s} — never pushy, just genuinely helpful throughout.`,
+        `Sales team was patient, took time to walk us through every option.`,
+        `Everyone was ${ctx.s} and answered every question without hesitation.`,
+        `The team made the whole experience comfortable and stress-free.`,
+      ],
+      value: ctx => [
+        `Pricing was fair and transparent — no hidden surprises later.`,
+        `Great value for the quality on offer — competitive rates.`,
+        `Compared a few places before this — ${ctx.shop} offered the best balance.`,
+      ],
+      extras: ctx => [
+        `The showroom itself is clean, well-organized and easy to browse.`,
+        `Delivery happened right on time — no delays or excuses.`,
+        `Warranty terms were clearly explained — gives real peace of mind.`,
+      ],
+      personal: ctx => [
+        `My family loves the ${ctx.p} — already getting compliments at home!`,
+        `So glad we chose ${ctx.shop} — everyone is happy with the purchase.`,
+      ],
+      closers: ctx => [
+        ctx.city ? `If you're shopping for ${ctx.p} in ${ctx.city}, ${ctx.shop} should be your first stop.` : `If you're shopping for ${ctx.p}, ${ctx.shop} should be your first stop.`,
+        `Highly recommend ${ctx.shop} — five stars without hesitation.`,
+        `Definitely coming back for future needs — thank you ${ctx.shop} team!`,
+        `Already telling friends about ${ctx.shop} — keep up the great work.`,
+        `One of the best experiences I've had — truly recommend.`,
+      ],
+    },
+    4: {
+      openers: ctx => [
+        `Had a good overall experience at ${ctx.shop} — bought ${ctx.p} and I'm pleased.`,
+        `Visited ${ctx.shop} ${ctx.timeRef} and came away satisfied with the purchase.`,
+        `${ctx.shop} is a solid choice for ${ctx.p} — quality and service were both reliable.`,
+        `Generally happy with my ${ctx.p} from ${ctx.shop} — would visit again.`,
+        `${ctx.shop} delivered a smooth, professional experience for the most part.`,
+      ],
+      quality: ctx => [
+        `Quality of the ${ctx.p} is good — solid for the price.`,
+        `The ${ctx.p} is well-made — no major issues so far.`,
+        `Quality met expectations — the finish could be slightly better but it's fine.`,
+      ],
+      staff: ctx => [
+        `Staff was helpful — answered most questions clearly.`,
+        `The team was polite and reasonably attentive throughout.`,
+        `Sales staff was cooperative, though slightly busy at times.`,
+      ],
+      value: ctx => [
+        `Pricing felt fair — close to market rate.`,
+        `Decent value for money overall.`,
+      ],
+      extras: ctx => [
+        `Showroom was neat and easy to navigate.`,
+        `Billing was quick and straightforward.`,
+      ],
+      personal: ctx => [
+        `Family is mostly happy with the ${ctx.p}.`,
+      ],
+      closers: ctx => [
+        `Would recommend ${ctx.shop} — a solid 4 stars from me.`,
+        `Will likely visit again for future needs.`,
+        ctx.city ? `Good option in ${ctx.city} for ${ctx.p}.` : `Good option for ${ctx.p}.`,
+        `A few things could be sharper, but overall a positive experience.`,
+      ],
+    },
+    3: {
+      openers: ctx => [
+        `Average experience at ${ctx.shop} — some good, some so-so.`,
+        `Visited ${ctx.shop} ${ctx.timeRef} for ${ctx.p} — it was okay overall.`,
+        `Mixed feelings about my visit to ${ctx.shop}, sharing honestly.`,
+        `Bought ${ctx.p} from ${ctx.shop} — the experience was alright, nothing exceptional.`,
+      ],
+      quality: ctx => [
+        `Quality of the ${ctx.p} was average — expected a bit more for the price.`,
+        `The ${ctx.p} is fine but doesn't quite feel premium.`,
+        `Decent ${ctx.p}, though finishing details could be sharper.`,
+      ],
+      staff: ctx => [
+        `Staff was polite but not always fully attentive.`,
+        `Sales team was cooperative when reached, but felt busy.`,
+        `Service was passable — could be warmer and more thorough.`,
+      ],
+      value: ctx => [
+        `Pricing was at market rate — nothing particularly competitive.`,
+        `Value for money felt average.`,
+      ],
+      extras: ctx => [
+        `Wait time was slightly longer than expected.`,
+        `Showroom layout could be improved a bit.`,
+      ],
+      personal: ctx => [],
+      closers: ctx => [
+        `3 stars — there's potential here, but room to grow.`,
+        `Decent experience overall, expected slightly more.`,
+        `Not bad, but I'd hope for more polish on a return visit.`,
+      ],
+    },
+    2: {
+      openers: ctx => [
+        `Visited ${ctx.shop} for ${ctx.p} — the experience wasn't quite what I expected. Sharing honestly.`,
+        `${ctx.shop} ${ctx.timeRef} — a few areas felt like they needed attention.`,
+        `Wanted to share polite feedback after my recent visit to ${ctx.shop}.`,
+        `Got ${ctx.p} from ${ctx.shop} but there were a few concerns worth flagging.`,
+      ],
+      quality: ctx => [
+        `Quality of the ${ctx.p} didn't quite match expectations — could use a closer check before delivery.`,
+        `Noticed some minor finishing issues with the ${ctx.p} — small but worth attention.`,
+        `Product consistency seems to be an area that could be tightened.`,
+      ],
+      staff: ctx => [
+        `Staff felt a bit rushed — attention to each customer could be better.`,
+        `Sales team was cooperative but explanations were brief.`,
+        `Service could be more attentive — small things make a big difference.`,
+      ],
+      value: ctx => [
+        `Felt slightly overpriced for the quality offered.`,
+        `Value for money felt a bit off at this price point.`,
+      ],
+      extras: ctx => [
+        `Showroom organization could be improved — found it tricky to browse easily.`,
+        `Billing and after-sale process felt a little disorganized.`,
+      ],
+      personal: ctx => [],
+      closers: ctx => [
+        `Sharing this as honest, constructive feedback — hope it's taken positively.`,
+        `Room to improve. Hopefully the team takes a look at these areas.`,
+        `Genuinely hope ${ctx.shop} works on customer experience — there's potential here.`,
+        `Not a complaint, just feedback. Better service would make a real difference.`,
+      ],
+    },
+    1: {
+      openers: ctx => [
+        `My visit to ${ctx.shop} for ${ctx.p} didn't go as I'd hoped. Sharing this constructively.`,
+        `Visited ${ctx.shop} ${ctx.timeRef} — wanted to share some calm, honest suggestions.`,
+        `Experience at ${ctx.shop} was below expectations — sharing this respectfully for the team's review.`,
+        `Felt my visit could have gone better. Offering this as polite, constructive feedback.`,
+      ],
+      quality: ctx => [
+        `Quality of the ${ctx.p} needs a closer look — checking before sale would help.`,
+        `Product had a few issues that could be addressed with better quality control.`,
+        `Consistency in product standards seems like an important focus area.`,
+      ],
+      staff: ctx => [
+        `Staff training and customer interaction could use some attention.`,
+        `Spending more time with each customer would noticeably improve the experience.`,
+        `Communication from the team could be warmer and clearer.`,
+      ],
+      value: ctx => [
+        `The balance between price and experience felt off — worth reviewing.`,
+        `Value proposition could be reconsidered to match customer expectations.`,
+      ],
+      extras: ctx => [
+        `Overall process flow and management could benefit from attention.`,
+      ],
+      personal: ctx => [],
+      closers: ctx => [
+        `This is feedback, not a complaint — hopefully ${ctx.shop} can improve on these points.`,
+        `Sharing constructively. Genuinely wishing the team better service quality going forward.`,
+        `${ctx.shop} has potential — execution is what needs improvement.`,
+        `Hoping for a better experience on a future visit. Best wishes to the team.`,
+      ],
+    },
+  },
+
+  hindi: {
+    5: {
+      openers: ctx => [
+        `${ctx.shop} se ${ctx.p} liya — बहुत ही शानदार अनुभव रहा!`,
+        `सच में ${ctx.shop} का कोई जवाब नहीं है — quality और सर्विस दोनों कमाल की!`,
+        ctx.city ? `${ctx.city} में आख़िरकार एक ऐसी जगह मिली जहाँ quality पर भरोसा किया जा सकता है — ${ctx.shop}!` : `आख़िरकार एक ऐसी जगह मिली जहाँ quality पर भरोसा किया जा सकता है — ${ctx.shop}!`,
+        `${ctx.timeRef} ${ctx.shop} गया था — पूरी तरह से satisfied होकर लौटा।`,
+        `ईमानदारी से कहूँ तो ${ctx.shop} से ${ctx.p} लेना मेरी सबसे अच्छी खरीदारी थी।`,
+        `दोस्त ने suggest किया था ${ctx.shop} — बिल्कुल सही सुझाव निकला।`,
+      ],
+      quality: ctx => [
+        `${ctx.p} की quality बेहद उम्दा है — finishing एकदम साफ़ और मज़बूत।`,
+        `${ctx.p} की build quality देखकर दिल खुश हो गया!`,
+        `material और finishing दोनों ही premium feel देते हैं।`,
+        `घर लाने के बाद family भी ${ctx.p} देख कर बहुत खुश हुई।`,
+        `इस price में इतनी अच्छी quality की उम्मीद नहीं थी — सच में surprise हुआ।`,
+      ],
+      staff: ctx => [
+        `staff ने बिना किसी pressure के सारे options दिखाए — बहुत अच्छा लगा।`,
+        `salesperson ने धैर्य से सब कुछ समझाया, कोई जल्दबाज़ी नहीं की।`,
+        `staff का व्यवहार बेहद professional और मददगार रहा।`,
+        `हर सवाल का जवाब साफ़ और ईमानदारी से दिया गया।`,
+      ],
+      value: ctx => [
+        `Prices बाज़ार के मुकाबले बहुत competitive हैं।`,
+        `कोई hidden charges नहीं — पूरी transparent dealing।`,
+        `पहले कई जगह compare किया था — यहाँ rate सबसे सही थे।`,
+      ],
+      extras: ctx => [
+        `showroom भी काफ़ी साफ़-सुथरा और सुव्यवस्थित था।`,
+        `delivery भी समय पर हुई — कोई देरी नहीं।`,
+        `warranty साथ में मिली — पूरी तरह से tension-free purchase।`,
+      ],
+      personal: ctx => [
+        `घर में सबको ${ctx.p} बहुत पसंद आया!`,
+        `पूरा परिवार इस खरीदारी से बहुत खुश है।`,
+      ],
+      closers: ctx => [
+        ctx.city ? `${ctx.city} में ${ctx.p} चाहिए तो ${ctx.shop} ज़रूर जाइए — निराश नहीं होंगे!` : `${ctx.p} चाहिए तो ${ctx.shop} ज़रूर जाइए — निराश नहीं होंगे!`,
+        `${ctx.shop} को मैं पूरे विश्वास से highly recommend करता हूँ।`,
+        `5 stars — ज़रूर वापस आऊँगा।`,
+        `अपने सभी दोस्तों को ${ctx.shop} के बारे में बता चुका हूँ।`,
+        `${ctx.shop} की पूरी team का बहुत-बहुत धन्यवाद — ऐसे ही बेहतरीन service देते रहिए!`,
+      ],
+    },
+    4: {
+      openers: ctx => [
+        `${ctx.shop} से ${ctx.p} खरीदा — overall अनुभव अच्छा रहा।`,
+        `${ctx.timeRef} ${ctx.shop} गया था, काफ़ी अच्छा लगा।`,
+        `${ctx.shop} एक भरोसेमंद जगह है ${ctx.p} के लिए — quality और service दोनों ठीक मिले।`,
+        `${ctx.shop} में अनुभव कुल मिलाकर अच्छा रहा।`,
+      ],
+      quality: ctx => [
+        `${ctx.p} की quality price के हिसाब से अच्छी है।`,
+        `${ctx.p} ठीक-ठाक quality का है, कोई बड़ी समस्या नहीं।`,
+        `quality उम्मीद के मुताबिक रही।`,
+      ],
+      staff: ctx => [
+        `staff helpful था, सब कुछ patiently समझाया।`,
+        `team polite थी और काफ़ी हद तक attentive रही।`,
+      ],
+      value: ctx => [
+        `pricing market rate के आस-पास थी।`,
+        `value for money ठीक है।`,
+      ],
+      extras: ctx => [
+        `दुकान साफ़ और व्यवस्थित थी।`,
+        `billing process भी smooth रहा।`,
+      ],
+      personal: ctx => [
+        `घर वाले भी अधिकतर खुश हैं ${ctx.p} से।`,
+      ],
+      closers: ctx => [
+        `overall अच्छा — दोस्तों को recommend करूँगा।`,
+        `अगली ज़रूरत पर भी ${ctx.shop} ज़रूर आऊँगा।`,
+        `solid 4 stars — कुछ छोटी improvements संभव हैं पर अनुभव अच्छा रहा।`,
+      ],
+    },
+    3: {
+      openers: ctx => [
+        `${ctx.shop} से ${ctx.p} लिया — अनुभव ठीक-ठाक रहा।`,
+        `${ctx.shop} में average experience रहा — कुछ चीज़ें अच्छी थीं।`,
+        `${ctx.timeRef} ${ctx.shop} गया था — कुछ ख़ास नहीं था, ठीक-ठाक।`,
+        `ईमानदारी से कहूँ तो अनुभव balanced रहा।`,
+      ],
+      quality: ctx => [
+        `${ctx.p} की quality average लगी, price थोड़ा ज़्यादा महसूस हुआ।`,
+        `quality ठीक है — इस दाम पर थोड़ा बेहतर expect किया था।`,
+        `${ctx.p} काम चला जाएगा, पर premium feel नहीं आया।`,
+      ],
+      staff: ctx => [
+        `staff helpful था पर पूरी तरह attentive नहीं रहा।`,
+        `salesperson थोड़े busy लग रहे थे, फिर भी कोशिश की मदद की।`,
+        `staff polite तो था, पर थोड़ा और attentive हो सकता था।`,
+      ],
+      value: ctx => [
+        `pricing market rate पर ही थी — कुछ अलग नहीं।`,
+      ],
+      extras: ctx => [
+        `showroom ठीक था, layout और बेहतर हो सकता है।`,
+        `service में थोड़ी देर लगी।`,
+      ],
+      personal: ctx => [],
+      closers: ctx => [
+        `कुल मिलाकर ठीक है — कुछ improvements संभव हैं।`,
+        `3 stars — बुरा नहीं, पर बेहतर बनने की गुंजाइश है।`,
+        `decent experience, थोड़ी और expectations थीं ईमानदारी से।`,
+      ],
+    },
+    2: {
+      openers: ctx => [
+        `${ctx.shop} में ${ctx.p} के लिए गया था ${ctx.timeRef} — ईमानदारी से कहूँ तो अनुभव expected level पर नहीं था।`,
+        `${ctx.shop} ${ctx.timeRef} visit किया — कुछ areas हैं जहाँ improvement की ज़रूरत है।`,
+        `${ctx.shop} से ${ctx.p} लिया पर कुछ बातें politely share करना चाहता हूँ।`,
+        `अपनी ईमानदार राय दे रहा हूँ ${ctx.shop} के बारे में — अनुभव थोड़ा mixed रहा।`,
+      ],
+      quality: ctx => [
+        `${ctx.p} की quality expectations के अनुसार नहीं थी — थोड़ी और consistent हो सकती है।`,
+        `${ctx.p} में कुछ minor finishing issues दिखे — check करना ज़रूरी लगा।`,
+        `quality control पर थोड़ा और ध्यान दिया जा सकता है।`,
+      ],
+      staff: ctx => [
+        `staff थोड़ी जल्दबाज़ी में था, attention focused नहीं रहा।`,
+        `salesperson cooperative थे पर detailed explanation थोड़ी कम रही।`,
+        `staff और attentive हो सकता है — customers को अधिक समय देना मददगार होगा।`,
+      ],
+      value: ctx => [
+        `pricing इस quality के हिसाब से थोड़ी high लगी।`,
+        `value for money पर सवाल है — इस price पर बेहतर expected था।`,
+      ],
+      extras: ctx => [
+        `showroom थोड़ा और organized हो सकता है।`,
+        `billing और after-purchase process smoother हो सकता है।`,
+      ],
+      personal: ctx => [],
+      closers: ctx => [
+        `यह constructive feedback है — उम्मीद है management इस पर ध्यान देगा।`,
+        `improvements की गुंजाइश है। shop owner से request है कि इन बातों पर विचार करें।`,
+        `genuinely उम्मीद करता हूँ ${ctx.shop} customer experience पर और काम करेगा।`,
+      ],
+    },
+    1: {
+      openers: ctx => [
+        `${ctx.shop} में ${ctx.p} के लिए गया था — अनुभव वैसा नहीं था जैसा सोचा था। Constructive feedback share कर रहा हूँ।`,
+        `${ctx.timeRef} ${ctx.shop} visit किया — कुछ सुझाव हैं जो helpful हो सकते हैं।`,
+        `अपना अनुभव शांति से share कर रहा हूँ — उम्मीद है इससे team को मदद मिले।`,
+      ],
+      quality: ctx => [
+        `${ctx.p} की quality पर दोबारा ध्यान देने की ज़रूरत है — मेरी राय में।`,
+        `product में कुछ issues थे जिन्हें selling से पहले check किया जा सकता है।`,
+        `quality consistency पर focus करना मददगार होगा।`,
+      ],
+      staff: ctx => [
+        `staff training और customer interaction पर और काम हो सकता है — politely सुझा रहा हूँ।`,
+        `customer को ज़्यादा time और attention देना ज़रूरी है।`,
+        `staff communication को warmer और clearer बनाया जा सकता है।`,
+      ],
+      value: ctx => [
+        `price और experience का balance अभी सही नहीं लग रहा।`,
+        `value proposition पर दोबारा सोचने की ज़रूरत है।`,
+      ],
+      extras: ctx => [
+        `overall management और process flow पर ध्यान देना भी ज़रूरी है।`,
+      ],
+      personal: ctx => [],
+      closers: ctx => [
+        `यह feedback है, शिकायत नहीं — उम्मीद है ${ctx.shop} आगे चलकर बेहतर service offer करेगा।`,
+        `constructively share कर रहा हूँ। अगली visit पर बेहतर अनुभव की आशा है।`,
+        `${ctx.shop} में potential है — बस execution improve करने की ज़रूरत है।`,
+        `team के लिए शुभकामनाएँ — उम्मीद है service में सुधार होगा।`,
+      ],
+    },
+  },
+};
+
+
+// Check review limit
+function checkReviewLimit() {
+  if (!shopConfig) return true;
+  const limit = shopConfig.reviewLimit || 9999;
+  const used = shopConfig.reviewsThisMonth || shopConfig.reviewsGenerated || 0;
+  if (limit < 9999 && used >= limit) {
+    // Show limit reached - redirect to thank you screen
+    document.getElementById('s-staff').style.display = 'none';
+    document.getElementById('s-generating').style.display = 'none';
+    const doneEl = document.getElementById('s-done');
+    if (doneEl) {
+      doneEl.style.display = 'flex';
+      const sub = doneEl.querySelector('.done-sub');
+      if (sub) sub.textContent = 'Monthly review limit reached. Please visit again next month.';
+    }
+    return false;
+  }
+  return true;
+}
+
+function buildReview() {
+  const lang = pickLanguage();
+  const p = answers.product || (lang === 'hindi' ? 'सामान' : 'the items');
+  const s = answers.staff || (lang === 'hindi' ? 'सहायक' : 'helpful');
+  const r = answers.rating || 5;
+  const shop = (shopConfig && shopConfig.name) || (lang === 'hindi' ? 'इस दुकान' : 'this shop');
+  const city = (shopConfig && shopConfig.city) || '';
+
+  // Time and persona refs by language
+  const timeOptions = {
+    hinglish: ['kal','parso','pichle hafte','recently','last week','aaj','kuch din pehle','is hafte'],
+    english: ['recently','last week','a few days ago','this week','yesterday','the other day'],
+    hindi: ['कल','पिछले हफ़्ते','हाल ही में','कुछ दिन पहले','इस हफ़्ते'],
+  };
+  const personaOptions = {
+    hinglish: ['main','hum dono','poori family','hum log'],
+    english: ['we','my family','I','my partner and I'],
+    hindi: ['मैं','हम दोनों','पूरा परिवार','हम लोग'],
+  };
+
+  const ctx = {
+    p, s, shop, city,
+    timeRef: rand(timeOptions[lang]),
+    persona: rand(personaOptions[lang]),
+  };
+
+  // Get the correct pool for this language and rating
+  const pool = (POOLS[lang] && POOLS[lang][r]) || POOLS.hinglish[5];
+
+  // Anti-repeat helper
+  const used = new Set();
+  const addU = pool => {
+    let t = rand(pool); let tries = 0;
+    while(used.has(t) && tries < 8){ t = rand(pool); tries++; }
+    if(t && t.trim()){ used.add(t); return t; }
+    return '';
+  };
+
+  let parts = [];
+
+  // Rating-specific composition strategy
+  if (r >= 5) {
+    const struct = rand(['A','B','C','D']);
+    parts.push(addU(pool.openers(ctx)));
+    if (struct === 'B') {
+      parts.push(addU(pool.staff(ctx)));
+      parts.push(addU(pool.quality(ctx)));
+    } else {
+      parts.push(addU(pool.quality(ctx)));
+      parts.push(addU(pool.staff(ctx)));
+    }
+    if (Math.random() > 0.35) parts.push(addU(pool.value(ctx)));
+    const ex = rand(pool.extras(ctx)); if (ex) parts.push(ex);
+    const pe = rand(pool.personal(ctx)); if (pe) parts.push(pe);
+    parts.push(addU(pool.closers(ctx)));
+  } else if (r === 4) {
+    parts.push(addU(pool.openers(ctx)));
+    parts.push(addU(pool.quality(ctx)));
+    parts.push(addU(pool.staff(ctx)));
+    if (Math.random() > 0.5) parts.push(addU(pool.value(ctx)));
+    if (Math.random() > 0.6) {
+      const ex = rand(pool.extras(ctx)); if (ex) parts.push(ex);
+    }
+    parts.push(addU(pool.closers(ctx)));
+  } else if (r === 3) {
+    parts.push(addU(pool.openers(ctx)));
+    parts.push(addU(pool.quality(ctx)));
+    if (Math.random() > 0.4) parts.push(addU(pool.staff(ctx)));
+    if (Math.random() > 0.7) {
+      const ex = rand(pool.extras(ctx)); if (ex) parts.push(ex);
+    }
+    parts.push(addU(pool.closers(ctx)));
+  } else if (r === 2) {
+    // Polite concerns — soft tone, constructive
+    parts.push(addU(pool.openers(ctx)));
+    // Mix at most two concern areas to keep it focused and not piling on
+    const concerns = [pool.quality(ctx), pool.staff(ctx), pool.value(ctx)];
+    const shuffled = concerns.sort(()=>Math.random()-0.5);
+    parts.push(addU(shuffled[0]));
+    if (Math.random() > 0.4) parts.push(addU(shuffled[1]));
+    parts.push(addU(pool.closers(ctx)));
+  } else {
+    // r === 1 — calm improvement suggestions, never toxic
+    parts.push(addU(pool.openers(ctx)));
+    // Pick 1-2 areas to discuss calmly
+    const areas = [pool.quality(ctx), pool.staff(ctx), pool.value(ctx)];
+    const shuffled = areas.sort(()=>Math.random()-0.5);
+    parts.push(addU(shuffled[0]));
+    if (Math.random() > 0.5) parts.push(addU(shuffled[1]));
+    parts.push(addU(pool.closers(ctx)));
+  }
+
+  let review = parts.filter(x=>x&&x.trim()).join(' ');
+
+  // Human-feel tweaks (hinglish only; hindi/english kept clean)
+  if (lang === 'hinglish') {
+    const tweaks = [[' hai ',' h '],[' acha ',' accha '],[' bohot ',' bohat '],[' bhai ',' bhai! ']];
+    if (Math.random() > 0.65) {
+      const t = rand(tweaks);
+      if (review.includes(t[0])) review = review.replace(t[0], t[1]);
+    }
+  }
+
+  return review;
+}
+
+function generateReview() {
+  goTo('s-generating');
+  setTimeout(() => {
+    const text = buildReview();
+    document.getElementById('review-text').value = text;
+    document.getElementById('instruction-box').style.display = 'none';
+    document.getElementById('google-btn').style.background = '#4285F4';
+    document.getElementById('google-btn').innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24"><path fill="white" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="white" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="white" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="white" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> 📋 Copy & Open Google`;
+    goTo('s-review');
+  }, 1800);
+}
+
+function postToGoogle() {
+  const text = document.getElementById('review-text').value;
+  const placeId = shopConfig?.placeId || '';
+  const url = `https://search.google.com/local/writereview?placeid=${placeId}`;
+  const btn = document.getElementById('google-btn');
+
+  const openGoogle = () => {
+    btn.style.background = '#10b981';
+    btn.innerHTML = '✅ Copied! Opening Google...';
+    document.getElementById('instruction-box').style.display = 'block';
+    setTimeout(() => { window.open(url, '_blank'); goTo('s-done'); }, 1500);
+  };
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(openGoogle).catch(() => fallbackCopy(text, openGoogle));
+  } else { fallbackCopy(text, openGoogle); }
+}
+
+function fallbackCopy(text, cb) {
+  const ta = document.getElementById('review-text');
+  ta.select(); ta.setSelectionRange(0,99999);
+  try { document.execCommand('copy'); } catch(e) {}
+  cb();
+}
+
+function copyOnly() {
+  const text = document.getElementById('review-text').value;
+  navigator.clipboard.writeText(text).then(() => {
+    const btns = document.querySelectorAll('.small-btn');
+    btns[1].textContent = '✅ Copied!';
+    setTimeout(()=>btns[1].textContent='📋 Copy text',2000);
+  });
+}
+
+// ── INIT ──
+loadClient();
+</script>
+</body>
+</html>
