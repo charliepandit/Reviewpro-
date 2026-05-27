@@ -8,13 +8,13 @@
 // 4. Enable: Authentication → Phone, Firestore Database
 // ═══════════════════════════════════════════════════════════
 
-const FIREBASE_CONFIG = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+const firebaseConfig = {
+  apiKey: "AIzaSyDVzIIWXVYcbRTz5O8E23T-ED3Ctkp9UVU",
+  authDomain: "reviewpro-b66c9.firebaseapp.com",
+  projectId: "reviewpro-b66c9",
+  storageBucket: "reviewpro-b66c9.firebasestorage.app",
+  messagingSenderId: "831538269584",
+  appId: "1:831538269584:web:7be67cc23fbe0dc266b715"
 };
 
 // ─── ADMIN SETTINGS ───────────────────────────────────────
