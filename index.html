@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UP75 — Turn Every Customer Into Your Brand Ambassador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+<script src="https://unpkg.com/framer-motion@11.11.17/dist/framer-motion.js"></script>
+<script>window.Motion = window.FramerMotion;</script>
+<style>
+:root{
+  --bg:#ffffff;
+  --bg-2:#f7f7f7;
+  --card:rgba(255,255,255,0.65);
+  --border:rgba(0,0,0,0.06);
+  --text:#111111;
+  --text-dim:rgba(0,0,0,0.55);
+  --text-soft:rgba(0,0,0,0.35);
+  --green:#10b981;
+  --amber:#f59e0b;
+  --red:#dc2626;
+  --font-body:'Barlow',sans-serif;
+  --font-serif:'Instrument Serif',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-body);
+  font-size:15px;
+  font-weight:400;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  line-height:1.6;
+  position:relative;
+}
+
+/* TYPOGRAPHY HELPERS */
+.serif{font-family:var(--font-serif);font-style:italic;letter-spacing:-0.04em;font-weight:400;}
+.h-xl{font-family:var(--font-serif);font-style:italic;font-size:clamp(3rem,6vw,5rem);line-height:1.02;letter-spacing:-0.04em;font-weight:400;}
+.h-lg{font-family:var(--font-serif);font-style:italic;font-size:clamp(2rem,4vw,3rem);line-height:1.08;letter-spacing:-0.04em;font-weight:400;}
+.h-md{font-family:var(--font-serif);font-style:italic;font-size:1.5rem;line-height:1.2;letter-spacing:-0.03em;font-weight:400;}
+.body-15{font-size:15px;line-height:1.65;}
+.small-13{font-size:13px;}
+.btn-14{font-size:14px;font-weight:500;}
+
+/* AMBIENT BG ORBS — replaces dark canvas */
+.ambient{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:#fff;}
+.orb{position:absolute;border-radius:50%;filter:blur(100px);opacity:0.55;}
+.orb-1{width:600px;height:600px;background:radial-gradient(circle,rgba(16,185,129,0.20),transparent 70%);top:-200px;left:-200px;animation:float1 22s ease-in-out infinite;}
+.orb-2{width:550px;height:550px;background:radial-gradient(circle,rgba(245,158,11,0.12),transparent 70%);top:30%;right:-200px;animation:float2 26s ease-in-out infinite;}
+.orb-3{width:450px;height:450px;background:radial-gradient(circle,rgba(99,102,241,0.10),transparent 70%);bottom:-150px;left:30%;animation:float3 28s ease-in-out infinite;}
+@keyframes float1{0%,100%{transform:translate(0,0);}50%{transform:translate(80px,60px);}}
+@keyframes float2{0%,100%{transform:translate(0,0);}50%{transform:translate(-60px,40px);}}
+@keyframes float3{0%,100%{transform:translate(0,0);}50%{transform:translate(40px,-50px);}}
+
+/* Grain texture overlay */
+.grain{position:fixed;inset:0;z-index:-1;opacity:0.025;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* LIQUID GLASS */
+.liquid-glass{
+  background:rgba(255,255,255,0.65);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(0,0,0,0.06);
+  box-shadow:0 10px 40px rgba(0,0,0,0.04),inset 0 1px 1px rgba(255,255,255,0.7);
+  position:relative;
+  overflow:hidden;
+}
+.liquid-glass::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  padding:1px;
+  background:linear-gradient(180deg,rgba(255,255,255,0.8) 0%,rgba(255,255,255,0.3) 50%,rgba(255,255,255,0.7) 100%);
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  pointer-events:none;
+}
+
+/* NAV */
+nav.top-nav{
+  position:fixed;
+  top:18px;
+  left:50%;
+  transform:translateX(-50%);
+  width:calc(100% - 2.5rem);
+  max-width:1180px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 18px 12px 22px;
+  z-index:100;
+  border-radius:100px;
+  transition:all 0.3s ease;
+}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-mark{
+  width:34px;height:34px;border-radius:10px;
+  background:linear-gradient(135deg,#111 0%,#333 100%);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:600;font-size:14px;letter-spacing:0.02em;
+  box-shadow:0 4px 12px rgba(0,0,0,0.12);
+}
+.logo-name{
+  font-family:var(--font-serif);font-style:italic;
+  font-size:22px;letter-spacing:-0.04em;color:var(--text);
+}
+.nav-links{display:flex;gap:1.75rem;align-items:center;}
+.nav-link{font-size:13px;color:var(--text-dim);font-weight:500;cursor:pointer;transition:color 0.2s;text-decoration:none;letter-spacing:0.01em;}
+.nav-link:hover{color:var(--text);}
+.nav-btns{display:flex;gap:8px;align-items:center;}
+.btn{
+  padding:9px 18px;border-radius:100px;font-size:13px;font-weight:500;
+  cursor:pointer;border:none;font-family:var(--font-body);
+  transition:all 0.25s ease;display:inline-flex;align-items:center;gap:6px;
+  letter-spacing:0.01em;text-decoration:none;
+}
+.btn-ghost{background:rgba(0,0,0,0.04);color:var(--text);border:1px solid rgba(0,0,0,0.06);}
+.btn-ghost:hover{background:rgba(0,0,0,0.08);}
+.btn-dark{background:var(--text);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,0.12);}
+.btn-dark:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(0,0,0,0.18);}
+.btn-wa{background:#25D366;color:#fff;font-size:12px;padding:8px 14px;}
+.btn-wa:hover{background:#20b956;box-shadow:0 4px 14px rgba(37,211,102,0.3);}
+
+/* HERO */
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:9rem 1.5rem 5rem;position:relative;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,0.7);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(0,0,0,0.06);
+  border-radius:100px;padding:7px 18px;
+  font-size:12px;color:var(--text-dim);
+  margin-bottom:2rem;letter-spacing:0.04em;
+  box-shadow:0 4px 14px rgba(0,0,0,0.03);
+}
+.eyebrow-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pdot 2s infinite;}
+@keyframes pdot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.7);}}
+
+.hero h1{margin-bottom:1.5rem;max-width:920px;}
+.h1-l1{display:block;color:var(--text);}
+.h1-l2{
+  display:block;
+  background:linear-gradient(135deg,#10b981 0%,#059669 50%,#111 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-size:200% 200%;animation:gflow 10s ease infinite;
+}
+@keyframes gflow{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+
+.hero-sub{font-size:18px;color:var(--text-dim);line-height:1.65;max-width:580px;margin:0 auto 2.5rem;font-weight:400;}
+.hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:4rem;}
+.cta-p{
+  padding:14px 30px;border-radius:100px;font-size:15px;font-weight:500;
+  background:var(--text);color:#fff;border:none;cursor:pointer;
+  box-shadow:0 8px 24px rgba(0,0,0,0.15);transition:all 0.3s ease;
+  font-family:var(--font-body);display:inline-flex;align-items:center;gap:8px;
+  letter-spacing:0.01em;
+}
+.cta-p:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(0,0,0,0.22);}
+.cta-s{
+  padding:14px 30px;border-radius:100px;font-size:15px;font-weight:500;
+  background:rgba(255,255,255,0.7);color:var(--text);
+  border:1px solid var(--border);cursor:pointer;
+  backdrop-filter:blur(10px);transition:all 0.25s ease;
+  font-family:var(--font-body);display:inline-flex;align-items:center;gap:8px;
+  letter-spacing:0.01em;
+}
+.cta-s:hover{background:#fff;border-color:rgba(0,0,0,0.12);transform:translateY(-1px);}
+
+.stats-bar{
+  display:flex;gap:32px;
+  border-radius:24px;padding:22px 36px;
+  flex-wrap:wrap;justify-content:center;
+  background:rgba(255,255,255,0.65);
+  backdrop-filter:blur(20px);
+  border:1px solid var(--border);
+  box-shadow:0 10px 40px rgba(0,0,0,0.05),inset 0 1px 1px rgba(255,255,255,0.7);
+}
+.stat-item{text-align:center;}
+.stat-n{font-family:var(--font-serif);font-style:italic;font-size:2.25rem;line-height:1;letter-spacing:-0.04em;color:var(--text);}
+.stat-l{font-size:11px;color:var(--text-soft);margin-top:6px;letter-spacing:0.08em;text-transform:uppercase;font-weight:500;}
+.stat-sep{width:1px;background:rgba(0,0,0,0.06);}
+
+/* SECTIONS */
+.section{padding:6rem 1.5rem;max-width:1200px;margin:0 auto;position:relative;}
+.section-full{padding:6rem 1.5rem;position:relative;}
+.section-inner{max-width:1200px;margin:0 auto;}
+.section-bg-soft{background:rgba(247,247,247,0.6);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+
+.label{
+  font-size:11px;font-weight:600;text-transform:uppercase;
+  letter-spacing:0.15em;color:var(--green);margin-bottom:1rem;
+  display:inline-block;
+}
+.sec-title{margin-bottom:1rem;color:var(--text);}
+.sec-sub{font-size:16px;color:var(--text-dim);line-height:1.65;max-width:580px;font-weight:400;}
+
+/* STEP CARDS */
+.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.25rem;margin-top:3.5rem;}
+.step-card{
+  background:rgba(255,255,255,0.6);
+  backdrop-filter:blur(14px);
+  border:1px solid var(--border);
+  border-radius:24px;padding:2rem;
+  transition:all 0.35s cubic-bezier(0.16,1,0.3,1);
+  position:relative;overflow:hidden;
+  box-shadow:0 6px 24px rgba(0,0,0,0.03);
+}
+.step-card:hover{transform:translateY(-6px);box-shadow:0 20px 48px rgba(0,0,0,0.08);background:rgba(255,255,255,0.85);}
+.step-n{
+  width:48px;height:48px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-serif);font-style:italic;font-size:22px;
+  margin-bottom:1.25rem;color:#fff;
+  letter-spacing:-0.03em;
+}
+.sn1{background:linear-gradient(135deg,#111,#333);}
+.sn2{background:linear-gradient(135deg,#10b981,#059669);}
+.sn3{background:linear-gradient(135deg,#f59e0b,#d97706);}
+.sn4{background:linear-gradient(135deg,#6366f1,#4f46e5);}
+.step-bg-n{position:absolute;top:1rem;right:1.5rem;font-family:var(--font-serif);font-style:italic;font-size:4.5rem;color:rgba(0,0,0,0.04);line-height:1;}
+.step-title{font-size:15px;font-weight:600;margin-bottom:6px;color:var(--text);}
+.step-desc{font-size:13px;color:var(--text-dim);line-height:1.65;}
+
+/* STATS 4 */
+.stats4{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-top:3rem;}
+.sg{
+  text-align:center;
+  background:rgba(255,255,255,0.6);
+  backdrop-filter:blur(14px);
+  border:1px solid var(--border);
+  border-radius:20px;padding:2rem 1rem;
+  transition:all 0.35s cubic-bezier(0.16,1,0.3,1);
+}
+.sg:hover{transform:translateY(-4px);box-shadow:0 14px 36px rgba(0,0,0,0.06);}
+.sg-big{font-family:var(--font-serif);font-style:italic;font-size:3rem;line-height:1;margin-bottom:6px;letter-spacing:-0.04em;color:var(--text);}
+.sg-lbl{font-size:12px;color:var(--text-dim);line-height:1.5;}
+
+/* IMPACT */
+.impact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;margin-top:2.5rem;}
+.ic{
+  background:rgba(255,255,255,0.65);
+  backdrop-filter:blur(14px);
+  border:1px solid var(--border);
+  border-radius:20px;padding:1.75rem;
+  transition:all 0.3s ease;
+  border-left:3px solid;
+}
+.ic:hover{transform:translateY(-3px);background:rgba(255,255,255,0.85);box-shadow:0 12px 32px rgba(0,0,0,0.05);}
+.ic-v{border-left-color:#10b981;}
+.ic-e{border-left-color:#f59e0b;}
+.ic-a{border-left-color:#6366f1;}
+.ic-r{border-left-color:#dc2626;}
+.ic-b{border-left-color:#0ea5e9;}
+.ic-w{border-left-color:#25D366;}
+.ic-icon{font-size:24px;margin-bottom:12px;}
+.ic-title{font-size:15px;font-weight:600;margin-bottom:8px;color:var(--text);}
+.ic-desc{font-size:13px;color:var(--text-dim);line-height:1.7;}
+
+/* TABLE */
+.compare-wrap{
+  background:rgba(255,255,255,0.55);
+  backdrop-filter:blur(14px);
+  border:1px solid var(--border);
+  border-radius:20px;overflow:hidden;margin-top:2.5rem;
+}
+.compare-wrap table{width:100%;border-collapse:collapse;}
+.compare-wrap th{padding:14px 20px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-dim);background:rgba(0,0,0,0.02);border-bottom:1px solid var(--border);}
+.compare-wrap td{padding:14px 20px;font-size:13px;border-bottom:1px solid rgba(0,0,0,0.04);color:var(--text);}
+.compare-wrap tr:last-child td{border:none;}
+.compare-wrap tr:hover td{background:rgba(0,0,0,0.015);}
+.td-g{color:#059669;font-weight:600;}
+.td-r{color:#dc2626;font-weight:600;}
+
+/* BENEFITS */
+.benefits-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin-top:3rem;}
+.bc{
+  background:rgba(255,255,255,0.6);
+  backdrop-filter:blur(14px);
+  border:1px solid var(--border);
+  border-radius:20px;padding:1.75rem;
+  display:flex;gap:1.1rem;transition:all 0.3s ease;
+}
+.bc:hover{transform:translateY(-3px);background:rgba(255,255,255,0.85);box-shadow:0 12px 32px rgba(0,0,0,0.05);}
+.bc-icon{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;background:rgba(0,0,0,0.03);}
+.bc-title{font-size:14px;font-weight:600;margin-bottom:6px;color:var(--text);}
+.bc-desc{font-size:13px;color:var(--text-dim);line-height:1.65;}
+
+/* AI REVIEW + QR SHOWCASE */
+.split-show{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;margin-top:3rem;}
+.show-text h3{margin-bottom:1rem;}
+.show-text p{font-size:15px;color:var(--text-dim);line-height:1.75;margin-bottom:1rem;}
+.show-list{list-style:none;margin-top:1.5rem;}
+.show-list li{font-size:14px;color:var(--text);padding:8px 0;display:flex;align-items:center;gap:10px;}
+.show-list li::before{content:'✓';color:var(--green);font-weight:600;width:20px;height:20px;background:rgba(16,185,129,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;}
+
+/* AI Demo card */
+.ai-demo{
+  background:rgba(255,255,255,0.7);
+  backdrop-filter:blur(20px);
+  border:1px solid var(--border);
+  border-radius:24px;padding:2rem;
+  box-shadow:0 20px 60px rgba(0,0,0,0.06);
+  position:relative;
+}
+.ai-demo-header{display:flex;align-items:center;gap:10px;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
+.ai-dot{width:8px;height:8px;border-radius:50%;}
+.ai-stars{color:#f59e0b;font-size:14px;letter-spacing:1px;}
+.ai-tag{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--green);padding:3px 10px;background:rgba(16,185,129,0.08);border-radius:100px;margin-left:auto;}
+.ai-text{font-family:var(--font-body);font-size:14px;line-height:1.75;color:var(--text);margin-bottom:1rem;font-weight:400;animation:fadeIn 0.6s ease;}
+.ai-meta{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--text-soft);}
+.ai-langs{display:flex;gap:6px;margin-top:1rem;flex-wrap:wrap;}
+.ai-lang{
+  font-size:11px;font-weight:500;padding:4px 12px;
+  background:rgba(0,0,0,0.04);border-radius:100px;cursor:pointer;
+  color:var(--text-dim);transition:all 0.2s;
+  border:1px solid transparent;
+}
+.ai-lang.active{background:var(--text);color:#fff;}
+.ai-lang:hover:not(.active){background:rgba(0,0,0,0.08);}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* QR card preview */
+.qr-preview-card{
+  background:#fff;
+  border-radius:24px;
+  padding:2.25rem 2rem;
+  text-align:center;
+  box-shadow:0 24px 60px rgba(0,0,0,0.08);
+  border:1px solid var(--border);
+  max-width:340px;
+  margin:0 auto;
+  position:relative;
+}
+.qr-prev-name{font-family:var(--font-serif);font-style:italic;font-size:1.5rem;line-height:1.1;letter-spacing:-0.03em;color:var(--text);margin-bottom:1rem;}
+.qr-prev-box{
+  width:200px;height:200px;margin:0 auto 1.25rem;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:14px;padding:8px;
+  display:flex;align-items:center;justify-content:center;
+}
+.qr-prev-pattern{
+  width:100%;height:100%;
+  background-image:
+    radial-gradient(circle at 10px 10px,#111 1.5px,transparent 1.5px),
+    radial-gradient(circle at 22px 10px,#111 1.5px,transparent 1.5px),
+    radial-gradient(circle at 34px 10px,#111 1.5px,transparent 1.5px),
+    radial-gradient(circle at 10px 22px,#111 1.5px,transparent 1.5px),
+    radial-gradient(circle at 34px 22px,#111 1.5px,transparent 1.5px);
+  background-size:12px 12px;
+  background-color:#fff;
+  position:relative;
+  border-radius:8px;
+}
+.qr-prev-pattern::before,.qr-prev-pattern::after,.qr-prev-pattern .qr-corner{
+  content:'';position:absolute;width:38px;height:38px;border:6px solid #111;border-radius:6px;
+}
+.qr-prev-pattern::before{top:6px;left:6px;}
+.qr-prev-pattern::after{top:6px;right:6px;}
+.qr-prev-pattern .qr-corner{bottom:6px;left:6px;}
+.qr-prev-footer{font-size:11px;color:var(--text-soft);letter-spacing:0.05em;font-weight:500;}
+.qr-prev-footer a{color:var(--text);text-decoration:none;font-weight:600;}
+
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.25rem;margin-top:3rem;max-width:880px;margin-left:auto;margin-right:auto;}
+.pc{
+  background:rgba(255,255,255,0.65);
+  backdrop-filter:blur(20px);
+  border:1px solid var(--border);
+  border-radius:28px;padding:2.5rem;position:relative;overflow:hidden;
+  transition:all 0.35s cubic-bezier(0.16,1,0.3,1);
+}
+.pc:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(0,0,0,0.08);}
+.pc.hot{border-color:rgba(0,0,0,0.12);background:rgba(255,255,255,0.85);}
+.hot-badge{position:absolute;top:0;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;font-size:10px;font-weight:600;padding:5px 18px;border-radius:0 0 12px 12px;letter-spacing:0.1em;}
+.pc-name{font-size:12px;color:var(--text-soft);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:12px;font-weight:500;}
+.pc-price{font-family:var(--font-serif);font-style:italic;font-size:3.5rem;color:var(--text);line-height:1;margin-bottom:4px;letter-spacing:-0.04em;}
+.pc-price span{font-size:15px;font-weight:400;color:var(--text-dim);font-family:var(--font-body);font-style:normal;}
+.pc-setup{font-size:12px;color:var(--amber);margin-bottom:10px;}
+.pc-desc{font-size:13px;color:var(--text-dim);margin-bottom:1.75rem;}
+.pc-feats{list-style:none;margin-bottom:2rem;}
+.pc-feats li{font-size:13.5px;color:var(--text);padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:center;gap:10px;}
+.pc-feats li:last-child{border:none;}
+.pc-feats li::before{content:'✓';color:var(--green);font-weight:600;flex-shrink:0;}
+.pc-btn{
+  width:100%;padding:13px;border-radius:100px;font-size:14px;font-weight:500;
+  cursor:pointer;border:none;font-family:var(--font-body);transition:all 0.25s;
+  display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;
+}
+.pb-o{background:rgba(0,0,0,0.04);color:var(--text);border:1px solid var(--border);}
+.pb-o:hover{background:rgba(0,0,0,0.08);}
+.pb-g{background:var(--text);color:#fff;box-shadow:0 8px 24px rgba(0,0,0,0.15);}
+.pb-g:hover{transform:translateY(-1px);box-shadow:0 12px 32px rgba(0,0,0,0.22);}
+
+/* TESTIMONIALS */
+.testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;margin-top:3rem;}
+.tc{
+  background:rgba(255,255,255,0.65);
+  backdrop-filter:blur(14px);
+  border:1px solid var(--border);
+  border-radius:24px;padding:2rem;position:relative;overflow:hidden;
+  transition:all 0.3s ease;
+}
+.tc:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,0.06);}
+.tc::before{content:'"';font-size:80px;line-height:1;color:var(--green);opacity:0.15;position:absolute;top:-4px;left:14px;font-family:Georgia,serif;}
+.tc-stars{color:#f59e0b;font-size:14px;margin-bottom:1rem;letter-spacing:1px;}
+.tc-text{font-size:14px;color:var(--text);line-height:1.75;margin-bottom:1.25rem;font-style:italic;font-family:var(--font-serif);font-size:1.05rem;}
+.tc-name{font-size:14px;font-weight:600;color:var(--text);}
+.tc-shop{font-size:12px;color:var(--text-soft);margin-top:2px;}
+
+/* FAQ */
+.faq-wrap{max-width:820px;margin:0 auto;}
+.faq-list{margin-top:2.5rem;display:flex;flex-direction:column;gap:0.85rem;}
+.faq-item{
+  background:rgba(255,255,255,0.6);
+  backdrop-filter:blur(14px);
+  border:1px solid var(--border);
+  border-radius:18px;overflow:hidden;
+  transition:all 0.25s ease;
+}
+.faq-item:hover{background:rgba(255,255,255,0.85);}
+.faq-q{padding:1.2rem 1.6rem;font-size:15px;font-weight:500;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text);gap:1rem;}
+.faq-icon{width:26px;height:26px;border-radius:50%;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--green);transition:transform 0.25s;flex-shrink:0;font-weight:600;}
+.faq-icon.open{transform:rotate(45deg);background:var(--text);color:#fff;}
+.faq-a{padding:0 1.6rem 1.25rem;font-size:14px;color:var(--text-dim);line-height:1.75;display:none;}
+.faq-a.open{display:block;animation:fadeIn 0.3s ease;}
+
+/* CONTACT */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:3rem;}
+.cc{
+  background:rgba(255,255,255,0.65);
+  backdrop-filter:blur(14px);
+  border:1px solid var(--border);
+  border-radius:24px;padding:2.5rem;
+}
+.cc-title{font-family:var(--font-serif);font-style:italic;font-size:1.5rem;letter-spacing:-0.03em;color:var(--text);margin-bottom:1.5rem;}
+.cc-row{display:flex;align-items:center;gap:14px;margin-bottom:1.25rem;}
+.cc-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;background:rgba(0,0,0,0.04);}
+.cc-lbl{font-size:10px;color:var(--text-soft);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:2px;font-weight:600;}
+.cc-val{font-size:14px;font-weight:500;color:var(--text);}
+.cc-val a{color:var(--green);text-decoration:none;}
+
+/* CTA */
+.cta-sec{margin:0 1.5rem 4rem;border-radius:32px;overflow:hidden;position:relative;}
+.cta-bg{position:absolute;inset:0;background:linear-gradient(135deg,#111 0%,#1a1a1a 50%,#0a0a0a 100%);}
+.cta-grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:48px 48px;}
+.cta-inner{position:relative;z-index:1;padding:5rem 2.5rem;text-align:center;color:#fff;}
+.cta-title{font-family:var(--font-serif);font-style:italic;font-size:clamp(2rem,4.5vw,3.5rem);line-height:1.05;margin-bottom:1rem;letter-spacing:-0.04em;}
+.cta-sub{font-size:16px;color:rgba(255,255,255,0.65);margin-bottom:2.5rem;line-height:1.7;font-weight:400;}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.cb-w{padding:14px 32px;border-radius:100px;font-size:15px;font-weight:500;background:#fff;color:var(--text);border:none;cursor:pointer;transition:all 0.25s ease;font-family:var(--font-body);}
+.cb-w:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(255,255,255,0.2);}
+.cb-o{padding:14px 32px;border-radius:100px;font-size:15px;font-weight:500;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);cursor:pointer;transition:all 0.25s ease;font-family:var(--font-body);backdrop-filter:blur(10px);text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+.cb-o:hover{background:rgba(255,255,255,0.18);}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:3rem 1.5rem 2rem;text-align:center;position:relative;background:rgba(247,247,247,0.5);}
+.foot-brand{font-family:var(--font-serif);font-style:italic;font-size:2rem;letter-spacing:-0.04em;color:var(--text);margin-bottom:6px;}
+.foot-tagline{font-size:13px;color:var(--text-soft);margin-bottom:1.5rem;}
+.foot-links{display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem;}
+.foot-link{font-size:13px;color:var(--text-dim);text-decoration:none;cursor:pointer;transition:color 0.2s;}
+.foot-link:hover{color:var(--text);}
+.foot-copy{font-size:11px;color:var(--text-soft);letter-spacing:0.04em;}
+
+/* WA FLOAT */
+.wa-float{
+  position:fixed;bottom:1.5rem;right:1.5rem;
+  width:54px;height:54px;
+  background:linear-gradient(135deg,#25D366,#128C7E);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:24px;box-shadow:0 8px 24px rgba(37,211,102,0.4);
+  z-index:500;transition:all 0.25s;text-decoration:none;
+  animation:wap 3s ease-in-out infinite;cursor:pointer;
+}
+@keyframes wap{0%,100%{box-shadow:0 8px 24px rgba(37,211,102,0.35);}50%{box-shadow:0 8px 40px rgba(37,211,102,0.65);}}
+.wa-float:hover{transform:scale(1.1);}
+
+/* MODAL */
+.modal-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.5);z-index:1000;
+  align-items:center;justify-content:center;
+  backdrop-filter:blur(12px);
+  animation:overlayIn 0.25s ease;
+}
+@keyframes overlayIn{from{opacity:0;}to{opacity:1;}}
+.modal-overlay.open{display:flex;}
+.modal{
+  background:rgba(255,255,255,0.95);
+  backdrop-filter:blur(30px);
+  border:1px solid var(--border);
+  border-radius:28px;width:100%;max-width:480px;max-height:92vh;
+  overflow:hidden;
+  animation:mIn 0.35s cubic-bezier(0.16,1,0.3,1);
+  margin:1rem;
+  box-shadow:0 30px 80px rgba(0,0,0,0.18);
+  display:flex;flex-direction:column;
+}
+@keyframes mIn{from{opacity:0;transform:translateY(20px) scale(0.96);filter:blur(6px);}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0);}}
+.modal-head{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.modal-title{font-family:var(--font-serif);font-style:italic;font-size:1.4rem;letter-spacing:-0.04em;color:var(--text);}
+.modal-close{background:rgba(0,0,0,0.04);border:none;font-size:18px;cursor:pointer;color:var(--text-dim);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.modal-close:hover{background:rgba(0,0,0,0.08);color:var(--text);}
+.modal-body{padding:1.25rem 1.5rem 1.5rem;flex:1;overflow-y:auto;}
+
+/* PORTAL OPTIONS */
+.portal-opt{
+  display:flex;align-items:center;gap:14px;
+  padding:1rem 1.25rem;
+  background:rgba(255,255,255,0.5);
+  border:1px solid var(--border);
+  border-radius:18px;
+  margin-bottom:10px;cursor:pointer;
+  transition:all 0.2s ease;
+}
+.portal-opt:hover{background:rgba(255,255,255,0.9);border-color:rgba(0,0,0,0.12);transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,0.04);}
+.po-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.po-title{font-size:14px;font-weight:600;color:var(--text);}
+.po-sub{font-size:12px;color:var(--text-dim);margin-top:2px;}
+.po-arrow{margin-left:auto;color:var(--text-soft);font-size:22px;}
+
+/* FORM */
+.form-group{margin-bottom:1rem;}
+.form-label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-dim);margin-bottom:6px;}
+.form-input,.form-select{
+  width:100%;padding:11px 14px;
+  background:rgba(255,255,255,0.7);
+  border:1px solid var(--border);
+  border-radius:12px;font-size:14px;
+  font-family:var(--font-body);color:var(--text);
+  outline:none;transition:all 0.2s;
+}
+.form-input:focus,.form-select:focus{border-color:rgba(0,0,0,0.2);background:#fff;box-shadow:0 0 0 4px rgba(0,0,0,0.03);}
+.form-input::placeholder{color:rgba(0,0,0,0.25);}
+.form-hint{font-size:11px;color:var(--text-soft);margin-top:5px;}
+.err-msg{font-size:12px;color:var(--red);margin-top:8px;display:none;font-weight:500;}
+
+.back-btn{background:rgba(0,0,0,0.04);border:1px solid var(--border);font-size:12px;padding:6px 12px;cursor:pointer;color:var(--text-dim);font-family:var(--font-body);border-radius:8px;transition:all 0.2s;}
+.back-btn:hover{background:rgba(0,0,0,0.08);color:var(--text);}
+
+.sub-btn{
+  width:100%;padding:13px;
+  background:var(--text);color:#fff;
+  border:none;border-radius:14px;
+  font-size:14px;font-weight:500;
+  cursor:pointer;font-family:var(--font-body);
+  transition:all 0.25s ease;letter-spacing:0.01em;
+  box-shadow:0 6px 18px rgba(0,0,0,0.1);
+}
+.sub-btn:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(0,0,0,0.18);}
+.sb-violet{background:var(--text);}
+.sb-amber{background:var(--text);}
+
+.creds-box{background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.15);border-radius:14px;padding:1rem;margin-bottom:1rem;}
+.creds-title{font-size:11px;font-weight:600;color:#047857;margin-bottom:10px;letter-spacing:0.06em;}
+
+.plan-sel{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.ps-opt{background:rgba(255,255,255,0.5);border:1px solid var(--border);border-radius:14px;padding:14px;cursor:pointer;text-align:center;transition:all 0.2s;}
+.ps-opt:hover{background:rgba(255,255,255,0.85);}
+.ps-opt.sel{background:var(--text);color:#fff;border-color:var(--text);}
+.ps-name{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;}
+.ps-price{font-family:var(--font-serif);font-style:italic;font-size:1.25rem;letter-spacing:-0.03em;}
+.ps-setup{font-size:10px;opacity:0.7;margin-top:2px;}
+
+.rm-btn{background:rgba(0,0,0,0.04);border:1px solid var(--border);padding:8px 12px;font-size:16px;cursor:pointer;color:var(--text-dim);border-radius:10px;}
+.rm-btn:hover{border-color:var(--red);color:var(--red);background:rgba(220,38,38,0.05);}
+.add-field{width:100%;padding:10px;background:transparent;border:1px dashed rgba(0,0,0,0.15);border-radius:12px;color:var(--text-dim);font-size:13px;cursor:pointer;font-family:var(--font-body);transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.add-field:hover{border-color:var(--text);color:var(--text);background:rgba(0,0,0,0.02);}
+
+.success-wrap{text-align:center;padding:2rem 1rem;}
+.scroll-btns{position:sticky;bottom:0;background:rgba(255,255,255,0.92);padding:0.75rem 0 0;display:flex;gap:8px;justify-content:flex-end;backdrop-filter:blur(10px);}
+.scr-btn{width:32px;height:32px;background:rgba(0,0,0,0.04);border:1px solid var(--border);border-radius:50%;color:var(--text-dim);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.scr-btn:hover{background:rgba(0,0,0,0.08);color:var(--text);}
+
+.info-box{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:12px;padding:10px 14px;margin-bottom:1.25rem;font-size:12px;color:#047857;line-height:1.65;}
+
+/* FORGOT LINK */
+.forgot-link{font-size:12px;color:var(--green);cursor:pointer;text-align:right;display:block;margin-top:-4px;margin-bottom:6px;text-decoration:none;font-weight:500;}
+.forgot-link:hover{text-decoration:underline;color:#059669;}
+
+@media(max-width:768px){
+  nav.top-nav{width:calc(100% - 1rem);padding:10px 14px;}
+  .nav-links{display:none;}
+  .stats-bar{gap:18px;padding:16px 22px;}
+  .stat-n{font-size:1.65rem;}
+  .contact-grid{grid-template-columns:1fr;}
+  .cta-inner{padding:4rem 1.5rem;}
+  .split-show{grid-template-columns:1fr;gap:2rem;}
+  .section,.section-full{padding:4rem 1.25rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- AMBIENT BACKGROUND (replaces dark canvas) -->
+<div class="ambient">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+<div class="grain"></div>
+
+<!-- NAV -->
+<nav class="top-nav liquid-glass">
+  <div class="logo">
+    <div class="logo-mark">U</div>
+    <div class="logo-name">UP75</div>
+  </div>
+  <div class="nav-links">
+    <a class="nav-link" onclick="scroll2('about')">About</a>
+    <a class="nav-link" onclick="scroll2('how')">How it works</a>
+    <a class="nav-link" onclick="scroll2('ai-system')">AI System</a>
+    <a class="nav-link" onclick="scroll2('pricing')">Pricing</a>
+    <a class="nav-link" onclick="scroll2('contact')">Contact</a>
+  </div>
+  <div class="nav-btns">
+    <a href="https://wa.me/919988789921" class="btn btn-wa">💬 WhatsApp</a>
+    <button class="btn btn-ghost" onclick="openRegister()">Register</button>
+    <button class="btn btn-dark" onclick="openPortal()">Login</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow"><div class="eyebrow-dot"></div>Where Local Business Meets Global Standards</div>
+  <h1 class="h-xl">
+    <span class="h1-l1">Turn Every Customer Into</span>
+    <span class="h1-l2">Your Brand Ambassador</span>
+  </h1>
+  <p class="hero-sub">Place our smart QR code on your counter. AI writes a perfect, natural review. Your customer posts it to Google — in just 30 seconds.</p>
+  <div class="hero-cta">
+    <button class="cta-p" onclick="openRegister()">🏪 Register Your Business</button>
+    <button class="cta-s" onclick="openPortal()">🔐 Client Login</button>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-n">30s</div><div class="stat-l">To post a review</div></div>
+    <div class="stat-sep"></div>
+    <div class="stat-item"><div class="stat-n">100%</div><div class="stat-l">Unique AI reviews</div></div>
+    <div class="stat-sep"></div>
+    <div class="stat-item"><div class="stat-n">₹0</div><div class="stat-l">Setup cost</div></div>
+    <div class="stat-sep"></div>
+    <div class="stat-item"><div class="stat-n">24h</div><div class="stat-l">To go live</div></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;" class="about-grid">
+    <div>
+      <div class="label">About UP75</div>
+      <div class="sec-title h-lg">Your Reputation.<br>Amplified by AI.</div>
+      <p style="font-size:15px;color:var(--text-dim);line-height:1.75;margin-bottom:1.25rem;">UP75 is a made-in-India AI-powered review system built for local businesses. We help showrooms, shops, salons and restaurants get genuine Google reviews — effortlessly.</p>
+      <p style="font-size:15px;color:var(--text-dim);line-height:1.75;margin-bottom:1.5rem;">Our AI writes unique, natural reviews in English, Hindi and Hinglish that feel 100% genuine — because the experience behind each one is real.</p>
+      <a href="https://wa.me/919988789921?text=Hi UP75 Team, I want a free demo!" class="btn btn-wa" style="font-size:14px;padding:12px 22px;">💬 Get Free Demo</a>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:1rem;">
+      <div class="liquid-glass" style="border-radius:20px;padding:1.5rem;">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:var(--green);margin-bottom:0.5rem;">Our Mission</div>
+        <div style="font-size:14px;color:var(--text);line-height:1.7;">Help every local business compete with big brands by building a strong online reputation through genuine customer reviews.</div>
+      </div>
+      <div class="liquid-glass" style="border-radius:20px;padding:1.5rem;">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:#d97706;margin-bottom:0.5rem;">AI Powered</div>
+        <div style="font-size:14px;color:var(--text);line-height:1.7;">Thousands of unique review combinations — across English, Hindi, Hinglish and five different rating tones — so every review reads natural and human.</div>
+      </div>
+      <div class="liquid-glass" style="border-radius:20px;padding:1.5rem;">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:#6366f1;margin-bottom:0.5rem;">Local First</div>
+        <div style="font-size:14px;color:var(--text);line-height:1.7;">Serving Etawah, Moradabad, Agra, Kanpur, Lucknow and beyond. Personal service, local understanding, real results.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section-full section-bg-soft" id="how">
+  <div class="section-inner">
+    <div style="text-align:center;margin-bottom:0.5rem;">
+      <div class="label">How it works</div>
+      <div class="sec-title h-lg">From QR scan to Google review<br>in 30 seconds.</div>
+      <div class="sec-sub" style="margin:0 auto;">No app download. No complicated process. No typing. Just scan and done.</div>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card"><div class="step-bg-n">01</div><div class="step-n sn1">1</div><div class="step-title">You get a QR Code</div><div class="step-desc">Custom QR code linked to your Google Business. Print it and place on your billing counter.</div></div>
+      <div class="step-card"><div class="step-bg-n">02</div><div class="step-n sn2">2</div><div class="step-title">Customer scans it</div><div class="step-desc">Opens instantly in browser — no app download, no registration needed.</div></div>
+      <div class="step-card"><div class="step-bg-n">03</div><div class="step-n sn3">3</div><div class="step-title">AI writes the review</div><div class="step-desc">3 quick questions → perfect unique review in your chosen language, in seconds.</div></div>
+      <div class="step-card"><div class="step-bg-n">04</div><div class="step-n sn4">4</div><div class="step-title">Posted on Google</div><div class="step-desc">One tap → review copied → Google opens → customer pastes and posts. Done in 30s.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- AI REVIEW SYSTEM -->
+<section class="section" id="ai-system">
+  <div class="label">AI Review System</div>
+  <div class="sec-title h-lg">Intelligent reviews that<br>match every experience.</div>
+  <div class="sec-sub">Our AI adapts tone to the rating — and writes in the language your customers actually speak.</div>
+
+  <div class="split-show">
+    <div class="show-text">
+      <p>Generated reviews dynamically change with the star rating. 5-star reviews are warm and emotional. 4-star feels honest and balanced. 3-star is realistic and useful. 2-star is polite and constructive — never harsh. 1-star is calm improvement feedback — never toxic.</p>
+      <ul class="show-list">
+        <li>Five rating tiers, each with its own voice</li>
+        <li>English, Hindi and Hinglish — set per showroom</li>
+        <li>Every review unique — Google-safe and natural</li>
+        <li>Edit before posting — always in customer's control</li>
+      </ul>
+    </div>
+    <div class="ai-demo">
+      <div class="ai-demo-header">
+        <div class="ai-stars" id="demo-stars">★★★★★</div>
+        <div class="ai-tag" id="demo-tag">5-star · Hinglish</div>
+      </div>
+      <div class="ai-text" id="demo-text">Bhai, UP75 ka system kamaal ka hai! Pichle hafte furniture liya tha — quality top class, staff bohot helpful. Highly recommend karta hoon!</div>
+      <div class="ai-meta">
+        <span id="demo-meta">— Sample review for "Jain Furniture"</span>
+        <span style="cursor:pointer;color:var(--green);font-weight:500;" onclick="cycleDemo()">↻ Regenerate</span>
+      </div>
+      <div class="ai-langs">
+        <div class="ai-lang active" data-lang="hinglish" onclick="setDemoLang('hinglish')">Hinglish</div>
+        <div class="ai-lang" data-lang="english" onclick="setDemoLang('english')">English</div>
+        <div class="ai-lang" data-lang="hindi" onclick="setDemoLang('hindi')">हिंदी</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QR SYSTEM -->
+<section class="section-full section-bg-soft" id="qr-system">
+  <div class="section-inner">
+    <div style="text-align:center;">
+      <div class="label">QR System</div>
+      <div class="sec-title h-lg">Beautiful, brandable QR codes —<br>printed and ready.</div>
+      <div class="sec-sub" style="margin:0 auto 3rem;">Every QR includes your showroom name and a clean footer. Premium design out of the box.</div>
+    </div>
+    <div class="split-show" style="margin-top:0;">
+      <div class="qr-preview-card">
+        <div class="qr-prev-name">Your Showroom Name</div>
+        <div class="qr-prev-box"><div class="qr-prev-pattern"><div class="qr-corner"></div></div></div>
+        <div class="qr-prev-footer">Powered by <a href="https://www.up75.in" target="_blank">www.up75.in</a></div>
+      </div>
+      <div class="show-text">
+        <p>The QR layout is standardized for a clean print result on any A5 or A6 paper. Showroom name at the top, the scannable code in the center, and a discrete <strong>Powered by www.up75.in</strong> footer.</p>
+        <ul class="show-list">
+          <li>Premium white-on-black contrast for reliable scanning</li>
+          <li>Showroom name auto-rendered above the code</li>
+          <li>One-click download as PNG with full branding</li>
+          <li>Print-ready dimensions — A5 / A6 friendly</li>
+          <li>Update branding anytime from your dashboard</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY GOOGLE / ANALYTICS -->
+<section class="section" id="why">
+  <div class="label">Why It Matters</div>
+  <div class="sec-title h-lg">Google Rating — The New<br>Currency of Trust.</div>
+  <div class="sec-sub">Your Google rating is your first impression — long before a customer steps inside your shop.</div>
+  <div class="stats4">
+    <div class="sg"><div class="sg-big">93%</div><div class="sg-lbl">read reviews before visiting a local shop</div></div>
+    <div class="sg"><div class="sg-big">4.5★</div><div class="sg-lbl">minimum rating customers trust</div></div>
+    <div class="sg"><div class="sg-big">70%</div><div class="sg-lbl">trust online reviews like personal advice</div></div>
+    <div class="sg"><div class="sg-big">3×</div><div class="sg-lbl">more visits with 100+ vs 10 reviews</div></div>
+  </div>
+  <div class="impact-grid">
+    <div class="ic ic-v"><div class="ic-icon">📍</div><div class="ic-title">Google Maps Ranking</div><div class="ic-desc">When someone searches "furniture shop near me", Google ranks shops with more reviews higher. If your competitor has 200 and you have 15, they appear first — every day.</div></div>
+    <div class="ic ic-e"><div class="ic-icon">💰</div><div class="ic-title">Direct Revenue Impact</div><div class="ic-desc">A 4.8-rated shop gets 30–40% more walk-ins than one at 3.9. Your rating is your silent salesman, working 24×7.</div></div>
+    <div class="ic ic-a"><div class="ic-icon">🏆</div><div class="ic-title">Beat the Competition</div><div class="ic-desc">As markets go digital, competitors are already building their online presence. Build now and dominate your category for years.</div></div>
+    <div class="ic ic-r"><div class="ic-icon">⚠️</div><div class="ic-title">Cost of Ignoring It</div><div class="ic-desc">Every month without reviews is a month a competitor pulls ahead. Once they hit 300+, catching up gets hard. The best time to start was yesterday.</div></div>
+    <div class="ic ic-b"><div class="ic-icon">🤝</div><div class="ic-title">Customer Trust & Loyalty</div><div class="ic-desc">When new customers see 150+ positive reviews, they walk in already trusting you. They spend more, negotiate less, and return.</div></div>
+    <div class="ic ic-w"><div class="ic-icon">📱</div><div class="ic-title">The Mobile Search Era</div><div class="ic-desc">70% of customers search on mobile before buying. If you're not visible on Google — to many, you simply don't exist.</div></div>
+  </div>
+  <div class="compare-wrap">
+    <table>
+      <thead><tr><th style="text-align:left;">Factor</th><th style="text-align:center;color:#059669;">✅ With 100+ Reviews</th><th style="text-align:center;color:#dc2626;">❌ Without Reviews</th></tr></thead>
+      <tbody>
+        <tr><td>Google Maps Position</td><td style="text-align:center;" class="td-g">Top 3 results</td><td style="text-align:center;" class="td-r">Page 2 or invisible</td></tr>
+        <tr><td>Customer Trust</td><td style="text-align:center;" class="td-g">Very High</td><td style="text-align:center;" class="td-r">Low — customers doubt</td></tr>
+        <tr><td>Monthly Walk-ins</td><td style="text-align:center;" class="td-g">30–40% more</td><td style="text-align:center;" class="td-r">Losing to competitor</td></tr>
+        <tr><td>Price Negotiation</td><td style="text-align:center;" class="td-g">Customers negotiate less</td><td style="text-align:center;" class="td-r">More price pressure</td></tr>
+        <tr><td>Long Term Growth</td><td style="text-align:center;" class="td-g">Compounding advantage</td><td style="text-align:center;" class="td-r">Falling further behind</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="section-full section-bg-soft" id="benefits">
+  <div class="section-inner">
+    <div class="label">Why UP75</div>
+    <div class="sec-title h-lg">Benefits for your showroom.</div>
+    <div class="sec-sub">Everything you need to build a powerful online reputation.</div>
+    <div class="benefits-grid">
+      <div class="bc"><div class="bc-icon">⭐</div><div><div class="bc-title">More Reviews = More Customers</div><div class="bc-desc">90% check Google before visiting. More reviews = more trust = more footfall.</div></div></div>
+      <div class="bc"><div class="bc-icon">🤖</div><div><div class="bc-title">AI Writes Perfect Reviews</div><div class="bc-desc">Natural reviews based on real customer experience. They just tap and post.</div></div></div>
+      <div class="bc"><div class="bc-icon">🎯</div><div><div class="bc-title">100% Unique — Google Safe</div><div class="bc-desc">Every review differs in words, structure, length and language mix.</div></div></div>
+      <div class="bc"><div class="bc-icon">📱</div><div><div class="bc-title">No App Needed</div><div class="bc-desc">Works in any phone browser. Scan QR — no install, no registration.</div></div></div>
+      <div class="bc"><div class="bc-icon">🗂️</div><div><div class="bc-title">Client Dashboard</div><div class="bc-desc">Login to see stats, download QR, update catalogue anytime.</div></div></div>
+      <div class="bc"><div class="bc-icon">🔄</div><div><div class="bc-title">Update Catalogue Anytime</div><div class="bc-desc">New products? Update once — AI reviews improve automatically.</div></div></div>
+      <div class="bc"><div class="bc-icon">📈</div><div><div class="bc-title">Beat Competition</div><div class="bc-desc">While competitors have 10 reviews, you'll have hundreds.</div></div></div>
+      <div class="bc"><div class="bc-icon">💎</div><div><div class="bc-title">Just ₹499/month</div><div class="bc-desc">Less than ₹17/day. One extra customer covers the entire cost.</div></div></div>
+      <div class="bc"><div class="bc-icon">🤝</div><div><div class="bc-title">Personal WhatsApp Support</div><div class="bc-desc">Direct support from the UP75 Team. Response within hours.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section" id="pricing">
+  <div style="text-align:center;">
+    <div class="label">Pricing</div>
+    <div class="sec-title h-lg">Simple, transparent plans.</div>
+    <div class="sec-sub" style="margin:0 auto;">No contracts. Cancel anytime. Instant activation. No admin wait.</div>
+  </div>
+  <div class="pricing-grid">
+    <div class="pc">
+      <div class="pc-name">Free Trial</div>
+      <div class="pc-price">₹0<span> /14 days</span></div>
+      <div class="pc-desc">Start instantly — no card needed</div>
+      <ul class="pc-feats">
+        <li>QR Code (instant)</li><li>AI Reviews (50/month)</li>
+        <li>Basic Dashboard</li><li>WhatsApp Support</li>
+      </ul>
+      <button class="pc-btn pb-o" onclick="openRegister()">Start Free →</button>
+    </div>
+    <div class="pc">
+      <div class="pc-name">Basic Plan</div>
+      <div class="pc-price">₹499<span> /month</span></div>
+      <div class="pc-setup">+ ₹1,999 one-time setup fee</div>
+      <div class="pc-desc">Perfect for small shops &amp; showrooms</div>
+      <ul class="pc-feats">
+        <li>Custom QR code for your shop</li>
+        <li>Unique AI review generation</li>
+        <li>English / Hindi / Hinglish</li>
+        <li>Direct Google Business link</li>
+        <li>Client login dashboard</li>
+        <li>Update catalogue anytime</li>
+        <li>WhatsApp support</li>
+      </ul>
+      <button class="pc-btn pb-o" onclick="openRegisterPlan('starter')">Start Free Trial →</button>
+    </div>
+    <div class="pc hot">
+      <div class="hot-badge">MOST POPULAR</div>
+      <div class="pc-name">Pro Plan</div>
+      <div class="pc-price">₹999<span> /month</span></div>
+      <div class="pc-setup">+ ₹1,999 one-time setup fee</div>
+      <div class="pc-desc">For established businesses</div>
+      <ul class="pc-feats">
+        <li>Custom QR code for your shop</li>
+        <li>Unique AI review generation</li>
+        <li>English / Hindi / Hinglish</li>
+        <li>Direct Google Business link</li>
+        <li>Client login dashboard</li>
+        <li>Update catalogue anytime</li>
+        <li>Priority WhatsApp support</li>
+        <li>Monthly review report</li>
+        <li>Strategy consultation</li>
+      </ul>
+      <button class="pc-btn pb-g" onclick="openRegisterPlan('premium')">Get Premium →</button>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:1.5rem;font-size:13px;color:var(--text-soft);">Not sure which plan? <a href="https://wa.me/919988789921" style="color:var(--green);text-decoration:none;font-weight:500;">Chat with UP75 Support</a> — free consultation.</div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section-full section-bg-soft">
+  <div class="section-inner">
+    <div style="text-align:center;">
+      <div class="label">Testimonials</div>
+      <div class="sec-title h-lg">Real results from real businesses.</div>
+    </div>
+    <div class="testi-grid">
+      <div class="tc"><div class="tc-stars">★★★★★</div><div class="tc-text">"Pehle hamare paas sirf 8 reviews the. UP75 lene ke baad ek mahine mein 47 reviews aa gaye. Ab humara showroom Google Maps pe first page pe aata hai."</div><div class="tc-name">Ramesh Gupta</div><div class="tc-shop">Furniture Showroom, Etawah</div></div>
+      <div class="tc"><div class="tc-stars">★★★★★</div><div class="tc-text">"Ekdum mast system hai. Customer ko kuch nahi karna — bas scan karo aur review post ho jaata hai. Highly recommend."</div><div class="tc-name">Sunita Sharma</div><div class="tc-shop">Clothing Boutique, Kanpur</div></div>
+      <div class="tc"><div class="tc-stars">★★★★★</div><div class="tc-text">"UP75 team ne bahut achi service di. Setup same day ho gaya. Our Google rating went from 3.8 to 4.6 in just 2 months."</div><div class="tc-name">Akash Verma</div><div class="tc-shop">Electronics Shop, Agra</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq">
+  <div class="faq-wrap">
+    <div style="text-align:center;">
+      <div class="label">FAQ</div>
+      <div class="sec-title h-lg">Common questions.</div>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item"><div class="faq-q" onclick="toggleFAQ(this)"><span>Is this against Google's rules?</span><div class="faq-icon">+</div></div><div class="faq-a">No. Customers share their genuine experience — the AI just helps them find the right words. They post from their own phone. It's 100% Google policy compliant.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFAQ(this)"><span>How long does setup take?</span><div class="faq-icon">+</div></div><div class="faq-a">Under 2 minutes. Register → verify your phone OTP → auto-login → QR code ready. No admin, no waiting.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFAQ(this)"><span>Does the customer need to download an app?</span><div class="faq-icon">+</div></div><div class="faq-a">No. Scanning the QR opens directly in the phone browser. No app, no registration.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFAQ(this)"><span>What if Google deletes reviews?</span><div class="faq-icon">+</div></div><div class="faq-a">Every review is different — words, structure, language mix. Google doesn't find a pattern. For safety, keep it to 2-3 reviews per day.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFAQ(this)"><span>What if I want to cancel?</span><div class="faq-icon">+</div></div><div class="faq-a">No problem. No contracts. Just message us on WhatsApp. No penalty, no hidden charges.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFAQ(this)"><span>Can I change the review language later?</span><div class="faq-icon">+</div></div><div class="faq-a">Yes. English, Hindi, Hinglish — switchable anytime from your dashboard settings. Your AI will adapt immediately.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section" id="contact">
+  <div class="label">Contact</div>
+  <div class="sec-title h-lg">Get in touch with UP75.</div>
+  <div class="sec-sub">Personal response guaranteed within 2–4 hours.</div>
+  <div class="contact-grid">
+    <div class="cc">
+      <div class="cc-title">📞 Contact Details</div>
+      <div class="cc-row"><div class="cc-icon">💬</div><div><div class="cc-lbl">WhatsApp (Fastest)</div><div class="cc-val"><a href="https://wa.me/919988789921">+91 9988789921</a></div></div></div>
+      <div class="cc-row"><div class="cc-icon">👤</div><div><div class="cc-lbl">Support</div><div class="cc-val">UP75 Team</div></div></div>
+      <div class="cc-row"><div class="cc-icon">🌐</div><div><div class="cc-lbl">Website</div><div class="cc-val"><a href="https://www.up75.in" target="_blank">www.up75.in</a></div></div></div>
+      <div class="cc-row"><div class="cc-icon">⏰</div><div><div class="cc-lbl">Response Time</div><div class="cc-val">Within 2–4 hours</div></div></div>
+    </div>
+    <div class="cc">
+      <div class="cc-title">🚀 Get Free Demo</div>
+      <p style="font-size:14px;color:var(--text-dim);line-height:1.75;margin-bottom:1.5rem;">Want to see UP75 in action before buying? Live demo on WhatsApp — see exactly how your customers will experience it.</p>
+      <a href="https://wa.me/919988789921?text=Hi UP75 Team, I want a free demo!" class="btn btn-wa" style="width:100%;justify-content:center;padding:14px;font-size:15px;border-radius:14px;display:flex;margin-bottom:1rem;">💬 Get Free Demo on WhatsApp</a>
+      <button onclick="openRegister()" class="btn btn-dark" style="width:100%;justify-content:center;padding:14px;font-size:15px;border-radius:14px;">🏪 Register Your Business</button>
+      <p style="font-size:12px;color:var(--text-soft);text-align:center;margin-top:1rem;">Setup in 24 hours · No hidden charges · Cancel anytime</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-sec">
+  <div class="cta-bg"></div>
+  <div class="cta-grid-bg"></div>
+  <div class="cta-inner">
+    <div class="cta-title">Ready to get more<br>Google reviews?</div>
+    <div class="cta-sub">Join businesses across India growing faster with UP75.<br>Instant activation. No admin wait. Results from day one.</div>
+    <div class="cta-btns">
+      <button class="cb-w" onclick="openRegister()">🏪 Register Free</button>
+      <a href="https://wa.me/919988789921" class="cb-o">💬 WhatsApp Demo</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-brand">UP75</div>
+  <div class="foot-tagline">Turning local businesses into digital powerhouses — one review at a time.</div>
+  <div class="foot-links">
+    <a class="foot-link" onclick="scroll2('about')">About</a>
+    <a class="foot-link" onclick="scroll2('how')">How it works</a>
+    <a class="foot-link" onclick="scroll2('pricing')">Pricing</a>
+    <a href="https://wa.me/919988789921" class="foot-link">WhatsApp</a>
+    <a href="/admin.html" class="foot-link">Admin</a>
+  </div>
+  <div class="foot-copy">© 2025 UP75 · UP75 Team · <a href="https://www.up75.in" style="color:inherit;">www.up75.in</a> · +91 9988789921</div>
+</footer>
+
+<!-- WA FLOAT -->
+<a href="https://wa.me/919988789921" class="wa-float">💬</a>
+
+
+<!-- PORTAL MODAL -->
+<div class="modal-overlay" id="portal-modal">
+  <div class="modal" id="portal-modal-inner">
+    <div class="modal-head">
+      <div class="modal-title" id="portal-modal-title">Welcome to UP75</div>
+      <button class="modal-close" onclick="closePortal()">×</button>
+    </div>
+    <div class="modal-body" id="portal-modal-body"></div>
+    <!-- reCAPTCHA containers must live inside the modal (always in DOM) so Firebase can mount them reliably -->
+    <div id="reg-recaptcha-container" style="display:none;"></div>
+    <div id="forgot-recaptcha-container" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- PLACE ID HELP MODAL -->
+<div class="modal-overlay" id="placeid-modal">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-head">
+      <div class="modal-title">📍 How to Get Google Place ID</div>
+      <button class="modal-close" onclick="document.getElementById('placeid-modal').classList.remove('open')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="info-box">Your Place ID links your QR code to your Google Business reviews page.</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;gap:12px;padding:12px;background:rgba(0,0,0,0.02);border-radius:12px;align-items:flex-start;">
+          <div style="width:26px;height:26px;background:var(--text);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;">1</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.6;">Go to <a href="https://maps.google.com" target="_blank" style="color:var(--green);font-weight:600;">maps.google.com</a></div>
+        </div>
+        <div style="display:flex;gap:12px;padding:12px;background:rgba(0,0,0,0.02);border-radius:12px;align-items:flex-start;">
+          <div style="width:26px;height:26px;background:var(--text);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;">2</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.6;">Search your <strong>exact shop name + city</strong> (e.g. "Jain Furniture Etawah")</div>
+        </div>
+        <div style="display:flex;gap:12px;padding:12px;background:rgba(0,0,0,0.02);border-radius:12px;align-items:flex-start;">
+          <div style="width:26px;height:26px;background:var(--text);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;">3</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.6;">Click your shop → <strong>Share → Copy Link</strong> and paste in the Maps Link field — Place ID auto-fills!</div>
+        </div>
+        <div style="display:flex;gap:12px;padding:12px;background:rgba(0,0,0,0.02);border-radius:12px;align-items:flex-start;">
+          <div style="width:26px;height:26px;background:var(--text);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;">4</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.6;">Alternative: Use <a href="https://developers.google.com/maps/documentation/javascript/examples/places-placeid-finder" target="_blank" style="color:var(--green);font-weight:600;">Place ID Finder Tool</a> to search and copy directly</div>
+        </div>
+      </div>
+      <div style="background:rgba(0,0,0,0.03);border:1px solid var(--border);padding:12px;border-radius:10px;margin-top:1rem;">
+        <div style="font-size:10px;color:var(--text-soft);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;font-weight:600;">Example Place ID</div>
+        <div style="font-size:12px;font-family:monospace;color:var(--text);">ChIJu1JZJAPhdTkRgfOUwL9sUhU</div>
+      </div>
+      <p style="font-size:12px;color:var(--text-dim);margin-top:1rem;">💡 Don't know your Place ID? Leave blank — add from your dashboard anytime, or message UP75 on WhatsApp for help.</p>
+      <button class="sub-btn" style="margin-top:1.25rem;" onclick="document.getElementById('placeid-modal').classList.remove('open')">Got it!</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+// ════════════════════════════════════════════
+// PLAN CONFIG (merged here + firebase-config.js)
+// ════════════════════════════════════════════
+const PLAN_CONFIG_LOCAL = {
+  trial:      { name:'Free Trial',  price:0,    durationDays:14, reviewLimit:50,    qrLimit:1,  features:['QR Code','AI Reviews (50/mo)','Basic Dashboard','WhatsApp Support'] },
+  starter:    { name:'Starter',     price:499,  durationDays:30, reviewLimit:200,   qrLimit:1,  features:['QR Code','AI Reviews (200/mo)','Full Dashboard','Review History','WhatsApp Support'] },
+  basic:      { name:'Basic',       price:499,  durationDays:30, reviewLimit:200,   qrLimit:1,  features:['QR Code','AI Reviews (200/mo)','Full Dashboard','Review History','WhatsApp Support'] },
+  premium:    { name:'Premium',     price:999,  durationDays:30, reviewLimit:1000,  qrLimit:3,  features:['3 QR Codes','AI Reviews (1000/mo)','Full Dashboard','Priority Support','Monthly Report','Strategy Consultation'] },
+  pro:        { name:'Pro',         price:999,  durationDays:30, reviewLimit:1000,  qrLimit:3,  features:['3 QR Codes','AI Reviews (1000/mo)','Full Dashboard','Priority Support','Monthly Report'] },
+  enterprise: { name:'Enterprise',  price:2499, durationDays:30, reviewLimit:99999, qrLimit:10, features:['10 QR Codes','Unlimited Reviews','Full Dashboard','Dedicated Support','Weekly Reports','Custom Branding'] }
+};
+const CFG = (typeof PLAN_CONFIG !== 'undefined') ? PLAN_CONFIG : PLAN_CONFIG_LOCAL;
+
+// ════════════════════════════════════════════
+// FIREBASE INIT
+// ════════════════════════════════════════════
+let db, auth, firebaseReady = false;
+try {
+  if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+  db = firebase.firestore();
+  auth = firebase.auth();
+  firebaseReady = true;
+} catch(e) { console.warn('Firebase not configured — localStorage fallback active'); }
+
+// ════════════════════════════════════════════
+// UTILITY
+// ════════════════════════════════════════════
+function scroll2(id){ document.getElementById(id)?.scrollIntoView({behavior:'smooth'}); }
+function toggleFAQ(el){ const a=el.nextElementSibling; const ic=el.querySelector('.faq-icon'); a.classList.toggle('open'); ic.classList.toggle('open'); ic.textContent=ic.classList.contains('open')?'×':'+'; }
+function openPortal(){ setPortalView('options'); document.getElementById('portal-modal').classList.add('open'); }
+function closePortal(){ document.getElementById('portal-modal').classList.remove('open'); }
+function openRegister(){ selectedPlan='trial'; setPortalView('register'); document.getElementById('portal-modal').classList.add('open'); }
+function openRegisterPlan(plan){ selectedPlan=plan; setPortalView('register'); document.getElementById('portal-modal').classList.add('open'); }
+// Legacy compat
+function showLogin(){ setPortalView('client-login'); document.getElementById('portal-modal').classList.add('open'); }
+
+document.getElementById('portal-modal').addEventListener('click', e=>{ if(e.target===document.getElementById('portal-modal')) closePortal(); });
+function setModalTitle(t){ document.getElementById('portal-modal-title').textContent=t; }
+
+// ════════════════════════════════════════════
+// AI DEMO (marketing page)
+// ════════════════════════════════════════════
+const DEMO_REVIEWS = {
+  hinglish:{5:'Bhai, UP75 ka system kamaal ka hai! Pichle hafte furniture liya tha — quality top class, staff bohot helpful. Highly recommend karta hoon!',4:'Overall acha experience raha. Product theek-thaak hai. Recommend kar sakte hain.',3:'Theek-thaak experience raha. Kuch cheezein achi thin, kuch areas mein improvement ho sakti hai.',2:'Honest feedback — kuch concerns hain. Staff thodi rush mein the aur product quality improve ho sakti hai.',1:'Constructive feedback share kar raha hoon — quality aur training par dhyaan dene ki zaroorat hai.'},
+  english:{5:'Genuinely impressed! Picked up new furniture — quality top-notch, staff warm throughout. Highly recommend.',4:'Good overall experience. Product quality solid for the price. Would visit again.',3:'Average experience — some things good, some need improvement.',2:'Polite feedback: a few concerns around service and product finish — hope these get attention.',1:'Sharing calmly — quality control and staff training need strengthening.'},
+  hindi:{5:'बेहद शानदार अनुभव! Furniture लिया — quality उत्तम और staff बहुत मददगार। पूरे विश्वास से recommend करता हूँ।',4:'कुल मिलाकर अच्छा अनुभव। product ठीक है और team cooperative रही।',3:'average अनुभव — कुछ अच्छी चीज़ें, कुछ में सुधार की गुंजाइश है।',2:'विनम्र feedback — service और product पर ध्यान देने की ज़रूरत है।',1:'शांति से सुझाव — quality control पर काम ज़रूरी है।'}
+};
+let demoLang='hinglish', demoRating=5;
+function setDemoLang(l){ demoLang=l; document.querySelectorAll('.ai-lang').forEach(el=>el.classList.toggle('active',el.dataset.lang===l)); renderDemo(); }
+function cycleDemo(){ demoRating=demoRating===1?5:demoRating-1; renderDemo(); }
+function renderDemo(){
+  const t=DEMO_REVIEWS[demoLang][demoRating];
+  const ll=demoLang==='hinglish'?'Hinglish':demoLang==='english'?'English':'Hindi';
+  document.getElementById('demo-text').textContent=t;
+  document.getElementById('demo-stars').textContent='★'.repeat(demoRating)+'☆'.repeat(5-demoRating);
+  document.getElementById('demo-tag').textContent=`${demoRating}-star · ${ll}`;
+}
+renderDemo();
+
+// ════════════════════════════════════════════
+// PORTAL VIEW ROUTER
+// ════════════════════════════════════════════
+let selectedPlan = 'trial';
+let otpConfirmResult = null;
+let regOtpVerified = false;
+let pwResetOtpVerified = false;
+let otpTimerInterval = null;
+let otpRateLimit = {};
+let appliedDiscount = 0;
+let forgotOtpResult = null;
+let forgotClientData = null;
+
+const VIEW_TITLES = {
+  options:'Welcome to UP75', 'client-login':'🏪 Client Login',
+  'admin-login':'🔐 Admin Login', register:'✨ Create Your Account',
+  'forgot-client':'🔑 Reset Password', 'forgot-admin':'🔑 Admin Password Reset'
+};
+
+function setPortalView(view) {
+  setModalTitle(VIEW_TITLES[view]||'UP75');
+  document.getElementById('portal-modal-body').innerHTML = buildView(view);
+  if (view==='register') {
+    setTimeout(()=>{ const card=document.querySelector(`[data-plan="${selectedPlan}"]`); if(card){document.querySelectorAll('.ps-card').forEach(c=>c.classList.remove('sel')); card.classList.add('sel'); updatePlanSummary(); } }, 50);
+  }
+}
+
+function buildView(v) {
+  if(v==='options') return `
+    <div>
+      <div class="portal-opt" onclick="setPortalView('client-login')">
+        <div class="po-icon" style="background:rgba(16,185,129,0.1);color:#059669;">🏪</div>
+        <div><div class="po-title">Client Login</div><div class="po-sub">Access dashboard, QR code, analytics</div></div><div class="po-arrow">›</div>
+      </div>
+      <div class="portal-opt" onclick="setPortalView('register')">
+        <div class="po-icon" style="background:rgba(245,158,11,0.1);color:#d97706;">✨</div>
+        <div><div class="po-title">New Business — Start Free</div><div class="po-sub">14-day free trial, instant activation</div></div><div class="po-arrow">›</div>
+      </div>
+      <div class="portal-opt" onclick="setPortalView('admin-login')">
+        <div class="po-icon" style="background:rgba(0,0,0,0.05);">🔐</div>
+        <div><div class="po-title">Administrator</div><div class="po-sub">UP75 Team — manage all clients</div></div><div class="po-arrow">›</div>
+      </div>
+    </div>`;
+
+  if(v==='client-login') return `
+    <div>
+      <button class="back-btn" onclick="setPortalView('options')" style="margin-bottom:1rem;">← Back</button>
+      <div class="f-group"><label class="f-label">Username</label><input class="f-input" id="login-user" placeholder="Your username" autocomplete="off"></div>
+      <div class="f-group"><label class="f-label">Password</label><input class="f-input" type="password" id="login-pass" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <span class="forgot-link" onclick="setPortalView('forgot-client')">Forgot password?</span>
+      <div class="err-msg" id="login-err">❌ Wrong username or password.</div>
+      <button class="sub-btn" onclick="doLogin()" id="login-btn" style="margin-top:0.75rem;">Login →</button>
+      <div style="text-align:center;margin-top:1rem;font-size:12px;color:var(--text-soft);">No account? <span style="color:var(--green);cursor:pointer;font-weight:500;" onclick="setPortalView('register')">Start free trial</span></div>
+    </div>`;
+
+  if(v==='admin-login') return `
+    <div>
+      <button class="back-btn" onclick="setPortalView('options')" style="margin-bottom:1rem;">← Back</button>
+      <div class="f-group"><label class="f-label">Admin Password</label><input class="f-input" type="password" id="admin-pass" placeholder="Admin password" onkeydown="if(event.key==='Enter')doAdminLogin()"></div>
+      <span class="forgot-link" onclick="setPortalView('forgot-admin')">Forgot password?</span>
+      <div class="err-msg" id="admin-err">❌ Wrong password.</div>
+      <button class="sub-btn" onclick="doAdminLogin()" style="margin-top:0.75rem;">Login as Admin →</button>
+    </div>`;
+
+  if(v==='register') return buildRegisterView();
+
+  if(v==='forgot-client') return `
+    <div>
+      <button class="back-btn" onclick="setPortalView('client-login')" style="margin-bottom:1rem;">← Back</button>
+      <div class="info-box">📱 Verify your registered mobile number to reset your password.</div>
+      <div class="f-group"><label class="f-label">Registered Mobile Number</label>
+        <div style="display:flex;gap:8px;">
+          <input class="f-input" id="forgot-phone" placeholder="+91 9876543210" type="tel" style="flex:1;">
+          <button class="otp-btn" id="forgot-otp-btn" onclick="sendForgotOTP()">Send OTP</button>
+        </div>
+        <div class="otp-timer" id="forgot-otp-timer"></div>
+      </div>
+      <div id="forgot-otp-sec" style="display:none;">
+        <div class="f-group"><label class="f-label">Enter OTP</label>
+          <input class="f-input" id="forgot-otp-inp" placeholder="6-digit OTP" maxlength="6" type="number" oninput="if(this.value.length===6)verifyForgotOTP()">
+          <div class="verified-badge" id="forgot-v-badge" style="display:none;">✓ Verified!</div>
+        </div>
+      </div>
+      <div id="forgot-newpw-sec" style="display:none;">
+        <div class="f-group"><label class="f-label">New Password</label><input class="f-input" type="password" id="forgot-new-pw" placeholder="Min 8 characters" oninput="pwStr(this,'fpw-bar')">
+          <div style="height:4px;background:rgba(0,0,0,0.06);border-radius:3px;overflow:hidden;margin-top:6px;"><div id="fpw-bar" style="height:100%;width:0;transition:all 0.3s;border-radius:3px;"></div></div>
+        </div>
+        <div class="f-group"><label class="f-label">Confirm Password</label><input class="f-input" type="password" id="forgot-confirm-pw" placeholder="Repeat password"></div>
+        <div class="err-msg" id="forgot-pw-err">Passwords do not match.</div>
+        <button class="sub-btn" onclick="completeForgotReset()">Update Password →</button>
+      </div>
+      <div class="err-msg" id="forgot-err" style="margin-top:8px;"></div>
+      <div id="forgot-ok" style="display:none;text-align:center;padding:1.25rem;background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.2);border-radius:12px;margin-top:1rem;">
+        <div style="font-size:2rem;">✅</div><div style="font-size:14px;font-weight:600;color:var(--green-dark);margin-top:6px;">Password updated!</div>
+        <button class="sub-btn" style="margin-top:1rem;" onclick="setPortalView('client-login')">Login Now →</button>
+      </div>
+    </div>`;
+
+  if(v==='forgot-admin') return `
+    <div>
+      <button class="back-btn" onclick="setPortalView('admin-login')" style="margin-bottom:1rem;">← Back</button>
+      <div class="info-box">Admin password reset is handled via WhatsApp verification with UP75 Team.</div>
+      <div class="f-group"><label class="f-label">Admin Phone</label><input class="f-input" id="adm-forgot-ph" placeholder="Registered admin phone"></div>
+      <div class="err-msg" id="adm-forgot-err">Enter valid phone.</div>
+      <button class="sub-btn" onclick="submitAdmForgot()" style="margin-top:0.75rem;">Request Reset →</button>
+      <div id="adm-forgot-ok" style="display:none;text-align:center;padding:1rem;margin-top:1rem;background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.2);border-radius:12px;">
+        <div style="font-size:2rem;">✅</div><div style="font-size:13px;color:var(--green-dark);margin-top:6px;">Request logged! Contact UP75 on WhatsApp to proceed.</div>
+        <a href="https://wa.me/919988789921?text=Hi UP75, admin password reset request" class="sub-btn" style="margin-top:0.75rem;display:block;text-decoration:none;text-align:center;">💬 WhatsApp UP75</a>
+      </div>
+    </div>`;
+  return '';
+}
+
+function buildRegisterView() {
+  return `
+  <div id="reg-scroll" style="overflow-y:auto;max-height:76vh;">
+
+    <!-- PROGRESS BAR -->
+    <div style="display:flex;align-items:center;gap:0;margin-bottom:1.75rem;padding:0 0.25rem;">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
+        <div id="rsi-1-dot" style="width:32px;height:32px;border-radius:50%;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;transition:all 0.3s;box-shadow:0 4px 12px rgba(0,0,0,0.18);">1</div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#111;" id="rsi-1">Details</div>
+      </div>
+      <div id="prog-line-1" style="flex:1;height:2px;background:linear-gradient(90deg,#111,rgba(0,0,0,0.12));margin-bottom:18px;transition:all 0.4s;"></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
+        <div id="rsi-2-dot" style="width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,0.08);color:rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;transition:all 0.3s;">2</div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(0,0,0,0.3);" id="rsi-2">Verify</div>
+      </div>
+      <div id="prog-line-2" style="flex:1;height:2px;background:rgba(0,0,0,0.08);margin-bottom:18px;transition:all 0.4s;"></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
+        <div id="rsi-3-dot" style="width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,0.08);color:rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;transition:all 0.3s;">3</div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(0,0,0,0.3);" id="rsi-3">Plan</div>
+      </div>
+    </div>
+
+    <!-- ══ STEP 1: Business Details ══ -->
+    <div id="rs-1">
+
+      <!-- Business Name -->
+      <div style="margin-bottom:1rem;">
+        <label style="display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(0,0,0,0.4);margin-bottom:7px;">Business Name <span style="color:#dc2626;">*</span></label>
+        <input id="r-bname" class="f-input" placeholder="e.g. Jain Furniture House" style="font-size:15px;padding:13px 16px;border-radius:14px;border:1.5px solid rgba(0,0,0,0.08);background:#fff;width:100%;outline:none;transition:all 0.2s;font-family:var(--font-body);" onfocus="this.style.borderColor='rgba(0,0,0,0.25)';this.style.boxShadow='0 0 0 4px rgba(0,0,0,0.04)'" onblur="this.style.borderColor='rgba(0,0,0,0.08)';this.style.boxShadow='none'">
+      </div>
+
+      <!-- Owner Name -->
+      <div style="margin-bottom:1rem;">
+        <label style="display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(0,0,0,0.4);margin-bottom:7px;">Owner Name <span style="color:#dc2626;">*</span></label>
+        <input id="r-owner" class="f-input" placeholder="e.g. Ramesh Jain" style="font-size:15px;padding:13px 16px;border-radius:14px;border:1.5px solid rgba(0,0,0,0.08);background:#fff;width:100%;outline:none;transition:all 0.2s;font-family:var(--font-body);" onfocus="this.style.borderColor='rgba(0,0,0,0.25)';this.style.boxShadow='0 0 0 4px rgba(0,0,0,0.04)'" onblur="this.style.borderColor='rgba(0,0,0,0.08)';this.style.boxShadow='none'">
+      </div>
+
+      <!-- City + Email -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
+        <div>
+          <label style="display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(0,0,0,0.4);margin-bottom:7px;">City <span style="color:#dc2626;">*</span></label>
+          <input id="r-city" class="f-input" placeholder="e.g. Etawah" style="font-size:14px;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(0,0,0,0.08);background:#fff;width:100%;outline:none;transition:all 0.2s;font-family:var(--font-body);" onfocus="this.style.borderColor='rgba(0,0,0,0.25)'" onblur="this.style.borderColor='rgba(0,0,0,0.08)'">
+        </div>
+        <div>
+          <label style="display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(0,0,0,0.4);margin-bottom:7px;">Email</label>
+          <input id="r-email" class="f-input" type="email" placeholder="you@email.com" style="font-size:14px;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(0,0,0,0.08);background:#fff;width:100%;outline:none;transition:all 0.2s;font-family:var(--font-body);" onfocus="this.style.borderColor='rgba(0,0,0,0.25)'" onblur="this.style.borderColor='rgba(0,0,0,0.08)'">
+        </div>
+      </div>
+
+      <!-- Category + Language -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
+        <div>
+          <label style="display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(0,0,0,0.4);margin-bottom:7px;">Category <span style="color:#dc2626;">*</span></label>
+          <select id="r-cat" class="f-select" style="font-size:14px;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(0,0,0,0.08);background:#fff;width:100%;outline:none;font-family:var(--font-body);appearance:auto;color:var(--text);">
+            <option value="">Select category</option>
+            <option>Furniture & Home Decor</option>
+            <option>Clothing & Fashion</option>
+            <option>Electronics</option>
+            <option>Jewellery</option>
+            <option>Restaurant / Food</option>
+            <option>Salon & Beauty</option>
+            <option>Car Dealership</option>
+            <option>Medical / Pharmacy</option>
+            <option>Hardware & Building</option>
+            <option>Grocery / Kirana</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(0,0,0,0.4);margin-bottom:7px;">Review Language <span style="color:#dc2626;">*</span></label>
+          <select id="r-lang" class="f-select" style="font-size:14px;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(0,0,0,0.08);background:#fff;width:100%;outline:none;font-family:var(--font-body);appearance:auto;color:var(--text);">
+            <option value="hinglish">🇮🇳 Hinglish</option>
+            <option value="english">🇬🇧 English</option>
+            <option value="hindi">🕉️ Hindi</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Google Maps Link -->
+      <div style="margin-bottom:1rem;">
+        <label style="display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(0,0,0,0.4);margin-bottom:7px;">
+          Google Maps Link
+          <span onclick="document.getElementById('placeid-modal').classList.add('open')" style="color:#10b981;cursor:pointer;font-weight:600;margin-left:6px;font-size:9px;background:rgba(16,185,129,0.08);padding:2px 8px;border-radius:100px;letter-spacing:0.06em;">? HOW TO GET PLACE ID</span>
+        </label>
+        <div style="position:relative;">
+          <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;">📍</span>
+          <input id="r-maps-link" class="f-input" placeholder="Paste your Google Maps shop link here" oninput="extractPlaceId(this.value)"
+            style="font-size:14px;padding:12px 14px 12px 40px;border-radius:12px;border:1.5px solid rgba(0,0,0,0.08);background:#fff;width:100%;outline:none;transition:all 0.2s;font-family:var(--font-body);" onfocus="this.style.borderColor='rgba(0,0,0,0.25)'" onblur="this.style.borderColor='rgba(0,0,0,0.08)'">
+        </div>
+        <div style="font-size:11px;color:rgba(0,0,0,0.35);margin-top:5px;padding-left:4px;">Paste link → Google Place ID fills automatically below</div>
+      </div>
+
+      <!-- Place ID -->
+      <div style="margin-bottom:1.25rem;">
+        <label style="display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(0,0,0,0.4);margin-bottom:7px;">Google Place ID</label>
+        <input id="r-placeid" class="f-input" placeholder="Auto-filled from link above, or enter manually"
+          style="font-size:13px;padding:11px 14px;border-radius:12px;border:1.5px solid rgba(0,0,0,0.08);background:rgba(247,247,247,0.8);width:100%;outline:none;font-family:monospace;transition:all 0.2s;" onfocus="this.style.borderColor='rgba(16,185,129,0.4)'" onblur="this.style.borderColor='rgba(0,0,0,0.08)'">
+        <div style="font-size:11px;color:rgba(0,0,0,0.35);margin-top:5px;padding-left:4px;">Optional — you can add this later from your dashboard</div>
+      </div>
+
+      <!-- Products divider -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;">
+        <div style="flex:1;height:1px;background:rgba(0,0,0,0.06);"></div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(0,0,0,0.3);">Products / Services</div>
+        <div style="flex:1;height:1px;background:rgba(0,0,0,0.06);"></div>
+      </div>
+
+      <!-- Products -->
+      <div id="r-prod-fields" style="margin-bottom:0.5rem;">
+        <div style="display:flex;gap:8px;margin-bottom:8px;">
+          <input class="f-input r-prod" placeholder="e.g. Sofa Set, Wardrobe, Dining Table" style="flex:1;font-size:14px;padding:11px 14px;border-radius:12px;border:1.5px solid rgba(0,0,0,0.08);background:#fff;outline:none;font-family:var(--font-body);transition:all 0.2s;" onfocus="this.style.borderColor='rgba(0,0,0,0.25)'" onblur="this.style.borderColor='rgba(0,0,0,0.08)'">
+          <button onclick="rmRegProd(this)" style="width:40px;height:40px;background:rgba(220,38,38,0.06);border:1.5px solid rgba(220,38,38,0.12);border-radius:10px;cursor:pointer;color:#dc2626;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">×</button>
+        </div>
+      </div>
+      <button onclick="addRegProd()" style="width:100%;padding:10px;background:transparent;border:1.5px dashed rgba(0,0,0,0.12);border-radius:12px;color:rgba(0,0,0,0.4);font-size:13px;cursor:pointer;font-family:var(--font-body);display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:1.5rem;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(0,0,0,0.25)';this.style.color='rgba(0,0,0,0.6)'" onmouseout="this.style.borderColor='rgba(0,0,0,0.12)';this.style.color='rgba(0,0,0,0.4)'">
+        <span style="font-size:16px;">+</span> Add Product / Service
+      </button>
+
+      <!-- Login Credentials -->
+      <div style="background:linear-gradient(135deg,rgba(16,185,129,0.06),rgba(5,150,105,0.03));border:1.5px solid rgba(16,185,129,0.15);border-radius:18px;padding:1.25rem 1.25rem 1rem;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem;">
+          <div style="width:28px;height:28px;background:rgba(16,185,129,0.12);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;">🔑</div>
+          <div style="font-size:11px;font-weight:700;color:#047857;letter-spacing:0.1em;text-transform:uppercase;">Create Your Login</div>
+        </div>
+        <div style="margin-bottom:0.85rem;">
+          <label style="display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(0,0,0,0.4);margin-bottom:7px;">Username <span style="color:#dc2626;">*</span></label>
+          <input id="r-user" class="f-input" placeholder="e.g. jainfurniture" autocomplete="off" style="font-size:14px;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(16,185,129,0.2);background:#fff;width:100%;outline:none;font-family:var(--font-body);transition:all 0.2s;" onfocus="this.style.borderColor='rgba(16,185,129,0.5)'" onblur="this.style.borderColor='rgba(16,185,129,0.2)'">
+          <div style="font-size:11px;color:rgba(0,0,0,0.35);margin-top:4px;padding-left:2px;">No spaces. e.g. jainfurniture, rameshshop</div>
+        </div>
+        <div>
+          <label style="display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(0,0,0,0.4);margin-bottom:7px;">Password <span style="color:#dc2626;">*</span></label>
+          <input id="r-pass" class="f-input" type="password" placeholder="Minimum 8 characters" oninput="pwStr(this,'rpw-bar')" style="font-size:14px;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(16,185,129,0.2);background:#fff;width:100%;outline:none;font-family:var(--font-body);transition:all 0.2s;" onfocus="this.style.borderColor='rgba(16,185,129,0.5)'" onblur="this.style.borderColor='rgba(16,185,129,0.2)'">
+          <div style="height:4px;background:rgba(0,0,0,0.06);border-radius:100px;overflow:hidden;margin-top:8px;">
+            <div id="rpw-bar" style="height:100%;width:0;transition:all 0.3s ease;border-radius:100px;"></div>
+          </div>
+          <div style="font-size:11px;color:rgba(0,0,0,0.35);margin-top:4px;padding-left:2px;">Use uppercase + number for a strong password</div>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div class="err-msg" id="rs1-err" style="margin-top:1rem;padding:10px 14px;background:rgba(220,38,38,0.06);border-radius:10px;border:1px solid rgba(220,38,38,0.15);font-size:13px;display:none;"></div>
+
+      <!-- Next Button -->
+      <button onclick="regStep1Next()" style="width:100%;margin-top:1.25rem;padding:15px;background:#111;color:#fff;border:none;border-radius:16px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font-body);letter-spacing:0.02em;box-shadow:0 8px 24px rgba(0,0,0,0.18);transition:all 0.25s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 32px rgba(0,0,0,0.24)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.18)'">
+        Next: Verify Phone →
+      </button>
+      <div style="text-align:center;font-size:12px;color:rgba(0,0,0,0.35);margin-top:10px;">No admin approval · Instant activation</div>
+    </div>
+
+    <!-- ══ STEP 2: Phone OTP ══ -->
+    <div id="rs-2" style="display:none;">
+      <div style="text-align:center;margin-bottom:1.75rem;">
+        <div style="font-size:3rem;margin-bottom:0.5rem;">📱</div>
+        <div style="font-family:var(--font-serif);font-style:italic;font-size:1.5rem;letter-spacing:-0.03em;color:var(--text);margin-bottom:6px;">Verify Your Number</div>
+        <div style="font-size:13px;color:rgba(0,0,0,0.45);line-height:1.6;">We'll send a one-time OTP to confirm your WhatsApp number and activate your account instantly.</div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.04);border:1.5px solid rgba(16,185,129,0.15);border-radius:16px;padding:1.25rem;margin-bottom:1.25rem;">
+        <label style="display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#047857;margin-bottom:10px;">WhatsApp / Mobile Number <span style="color:#dc2626;">*</span></label>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div style="background:#fff;border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;padding:12px 12px;font-size:13px;font-weight:600;color:rgba(0,0,0,0.5);white-space:nowrap;flex-shrink:0;">🇮🇳 +91</div>
+          <input id="r-phone" type="tel" placeholder="9876543210" style="flex:1;font-size:15px;padding:12px 14px;border-radius:10px;border:1.5px solid rgba(0,0,0,0.1);background:#fff;outline:none;font-family:var(--font-body);transition:all 0.2s;" onfocus="this.style.borderColor='rgba(16,185,129,0.4)'" onblur="this.style.borderColor='rgba(0,0,0,0.1)'">
+          <button id="r-otp-btn" onclick="sendRegOTP()" style="padding:12px 16px;background:#111;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-body);white-space:nowrap;transition:all 0.2s;min-width:96px;">Send OTP</button>
+        </div>
+        <div id="r-otp-timer" style="font-size:11px;color:rgba(0,0,0,0.4);margin-top:8px;display:none;text-align:center;"></div>
+      </div>
+
+      <div id="r-otp-sec" style="display:none;">
+        <label style="display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(0,0,0,0.4);margin-bottom:10px;">Enter 6-Digit OTP</label>
+        <input id="r-otp-inp" type="number" placeholder="• • • • • •" maxlength="6"
+          oninput="if(this.value.length===6)verifyRegOTP()"
+          style="width:100%;font-size:28px;font-weight:700;letter-spacing:0.3em;text-align:center;padding:18px 14px;border-radius:16px;border:1.5px solid rgba(0,0,0,0.1);background:#fff;outline:none;font-family:var(--font-body);transition:all 0.2s;color:var(--text);"
+          onfocus="this.style.borderColor='rgba(16,185,129,0.5)';this.style.boxShadow='0 0 0 4px rgba(16,185,129,0.08)'"
+          onblur="this.style.borderColor='rgba(0,0,0,0.1)';this.style.boxShadow='none'">
+        <div id="r-v-badge" style="display:none;text-align:center;margin-top:12px;">
+          <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(16,185,129,0.1);color:#047857;font-size:13px;font-weight:600;padding:8px 18px;border-radius:100px;">
+            <span style="font-size:16px;">✓</span> Phone verified! Setting up your plan...
+          </span>
+        </div>
+      </div>
+
+      <div class="err-msg" id="rs2-err" style="margin-top:1rem;padding:10px 14px;background:rgba(220,38,38,0.06);border-radius:10px;border:1px solid rgba(220,38,38,0.15);font-size:13px;display:none;"></div>
+
+      <button onclick="goRegStep(1)" style="margin-top:1.25rem;background:transparent;border:1.5px solid rgba(0,0,0,0.1);color:rgba(0,0,0,0.5);padding:11px 20px;border-radius:12px;font-size:13px;cursor:pointer;font-family:var(--font-body);display:flex;align-items:center;gap:6px;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(0,0,0,0.2)';this.style.color='rgba(0,0,0,0.7)'" onmouseout="this.style.borderColor='rgba(0,0,0,0.1)';this.style.color='rgba(0,0,0,0.5)'">
+        ← Back to Details
+      </button>
+    </div>
+
+    <!-- ══ STEP 3: Plan Selection ══ -->
+    <div id="rs-3" style="display:none;">
+      <div style="text-align:center;margin-bottom:1.5rem;">
+        <div style="font-size:2.5rem;margin-bottom:6px;">🎉</div>
+        <div style="font-family:var(--font-serif);font-style:italic;font-size:1.5rem;letter-spacing:-0.03em;color:var(--text);margin-bottom:4px;">Phone Verified!</div>
+        <div style="font-size:13px;color:rgba(0,0,0,0.45);">Choose your plan. Account activates the moment you tap Create Account.</div>
+      </div>
+
+      <!-- Plan Cards -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem;">
+        <div class="ps-card sel" data-plan="trial" onclick="selectRegPlan('trial')" style="border-radius:16px;padding:1rem;cursor:pointer;text-align:center;transition:all 0.25s;position:relative;">
+          <div style="font-size:20px;margin-bottom:6px;">🆓</div>
+          <div class="ps-name" style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Free Trial</div>
+          <div class="ps-price" style="font-family:var(--font-serif);font-style:italic;font-size:1.6rem;letter-spacing:-0.03em;">₹0</div>
+          <div class="ps-desc" style="font-size:11px;margin-top:3px;opacity:0.65;">14 days · No card</div>
+        </div>
+        <div class="ps-card" data-plan="starter" onclick="selectRegPlan('starter')" style="border-radius:16px;padding:1rem;cursor:pointer;text-align:center;transition:all 0.25s;">
+          <div style="font-size:20px;margin-bottom:6px;">🚀</div>
+          <div class="ps-name" style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Starter</div>
+          <div class="ps-price" style="font-family:var(--font-serif);font-style:italic;font-size:1.6rem;letter-spacing:-0.03em;">₹499</div>
+          <div class="ps-desc" style="font-size:11px;margin-top:3px;opacity:0.65;">/ month</div>
+        </div>
+        <div class="ps-card" data-plan="premium" onclick="selectRegPlan('premium')" style="border-radius:16px;padding:1rem;cursor:pointer;text-align:center;transition:all 0.25s;position:relative;">
+          <div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-size:9px;font-weight:700;padding:3px 12px;border-radius:100px;letter-spacing:0.1em;white-space:nowrap;box-shadow:0 4px 10px rgba(16,185,129,0.3);">✦ POPULAR</div>
+          <div style="font-size:20px;margin-bottom:6px;">⭐</div>
+          <div class="ps-name" style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Premium</div>
+          <div class="ps-price" style="font-family:var(--font-serif);font-style:italic;font-size:1.6rem;letter-spacing:-0.03em;">₹999</div>
+          <div class="ps-desc" style="font-size:11px;margin-top:3px;opacity:0.65;">/ month</div>
+        </div>
+        <div class="ps-card" data-plan="enterprise" onclick="selectRegPlan('enterprise')" style="border-radius:16px;padding:1rem;cursor:pointer;text-align:center;transition:all 0.25s;">
+          <div style="font-size:20px;margin-bottom:6px;">🏢</div>
+          <div class="ps-name" style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Enterprise</div>
+          <div class="ps-price" style="font-family:var(--font-serif);font-style:italic;font-size:1.6rem;letter-spacing:-0.03em;">₹2499</div>
+          <div class="ps-desc" style="font-size:11px;margin-top:3px;opacity:0.65;">/ month</div>
+        </div>
+      </div>
+
+      <!-- Coupon -->
+      <div style="margin-bottom:1.25rem;">
+        <label style="display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(0,0,0,0.4);margin-bottom:8px;">🏷️ Coupon Code <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label>
+        <div style="display:flex;gap:8px;">
+          <input id="r-coupon" placeholder="e.g. WELCOME50" style="flex:1;font-size:14px;font-weight:600;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(0,0,0,0.08);background:#fff;outline:none;font-family:var(--font-body);letter-spacing:0.05em;text-transform:uppercase;transition:all 0.2s;" oninput="this.value=this.value.toUpperCase()" onfocus="this.style.borderColor='rgba(0,0,0,0.2)'" onblur="this.style.borderColor='rgba(0,0,0,0.08)'">
+          <button onclick="applyCoupon()" style="padding:12px 18px;background:rgba(0,0,0,0.06);color:var(--text);border:1.5px solid rgba(0,0,0,0.08);border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-body);white-space:nowrap;transition:all 0.2s;" onmouseover="this.style.background='rgba(0,0,0,0.1)'" onmouseout="this.style.background='rgba(0,0,0,0.06)'">Apply</button>
+        </div>
+        <div id="coup-ok" style="font-size:12px;color:#047857;font-weight:600;display:none;margin-top:6px;padding:6px 10px;background:rgba(16,185,129,0.08);border-radius:8px;"></div>
+        <div id="coup-err" style="font-size:12px;color:#dc2626;font-weight:500;display:none;margin-top:6px;"></div>
+      </div>
+
+      <!-- Price Summary -->
+      <div style="background:linear-gradient(135deg,rgba(255,255,255,0.9),rgba(247,247,247,0.8));border:1.5px solid rgba(0,0,0,0.07);border-radius:18px;padding:1.25rem;margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);" id="plan-sum-name">Free Trial</div>
+          <div style="font-size:12px;color:rgba(0,0,0,0.4);margin-top:2px;" id="plan-sum-desc">14 days, no card required</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:var(--font-serif);font-style:italic;font-size:2rem;letter-spacing:-0.04em;color:#059669;line-height:1;" id="plan-sum-price">₹0</div>
+        </div>
+      </div>
+
+      <div class="err-msg" id="rs3-err" style="margin-bottom:1rem;padding:10px 14px;background:rgba(220,38,38,0.06);border-radius:10px;border:1px solid rgba(220,38,38,0.15);font-size:13px;display:none;"></div>
+
+      <!-- Create Account Button -->
+      <button id="reg-submit-btn" onclick="completeRegistration()" style="width:100%;padding:16px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;border-radius:16px;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font-body);letter-spacing:0.02em;box-shadow:0 8px 28px rgba(16,185,129,0.35);transition:all 0.25s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 36px rgba(16,185,129,0.45)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 28px rgba(16,185,129,0.35)'">
+        🚀 Create My Account Instantly
+      </button>
+      <div style="text-align:center;font-size:11px;color:rgba(0,0,0,0.3);margin-top:10px;line-height:1.6;">
+        Instant activation · No admin wait · Dashboard live immediately
+      </div>
+
+      <button onclick="goRegStep(2)" style="margin-top:0.75rem;background:transparent;border:1.5px solid rgba(0,0,0,0.1);color:rgba(0,0,0,0.45);padding:10px 18px;border-radius:12px;font-size:13px;cursor:pointer;font-family:var(--font-body);display:flex;align-items:center;gap:6px;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(0,0,0,0.2)'" onmouseout="this.style.borderColor='rgba(0,0,0,0.1)'">
+        ← Back
+      </button>
+    </div>
+
+  </div>`;
+}
+
+// ════════════════════════════════════════════
+// REGISTER HELPERS
+// ════════════════════════════════════════════
+function addRegProd(){
+  const r=document.createElement('div'); r.style.cssText='display:flex;gap:8px;margin-bottom:8px;';
+  r.innerHTML='<input class="f-input r-prod" placeholder="e.g. Wardrobe" style="flex:1;"><button onclick="rmRegProd(this)" style="background:rgba(0,0,0,0.04);border:1px solid var(--border);padding:8px 12px;font-size:15px;cursor:pointer;color:var(--text-dim);border-radius:10px;">×</button>';
+  document.getElementById('r-prod-fields').appendChild(r); r.querySelector('input').focus();
+}
+function rmRegProd(btn){ if(document.querySelectorAll('.r-prod').length>1) btn.closest('div').remove(); }
+
+function goRegStep(n) {
+  [1,2,3].forEach(i=>{
+    const s=document.getElementById('rs-'+i); if(s) s.style.display=i===n?'block':'none';
+    const dot=document.getElementById('rsi-'+i+'-dot');
+    const lbl=document.getElementById('rsi-'+i);
+    if(!dot) return;
+    if(i<n){
+      dot.style.background='#10b981'; dot.style.color='#fff'; dot.style.boxShadow='0 4px 12px rgba(16,185,129,0.3)';
+      dot.innerHTML='✓'; if(lbl) lbl.style.color='#059669';
+    } else if(i===n){
+      dot.style.background='#111'; dot.style.color='#fff'; dot.style.boxShadow='0 4px 12px rgba(0,0,0,0.18)';
+      dot.innerHTML=String(i); if(lbl) lbl.style.color='#111';
+    } else {
+      dot.style.background='rgba(0,0,0,0.08)'; dot.style.color='rgba(0,0,0,0.3)'; dot.style.boxShadow='none';
+      dot.innerHTML=String(i); if(lbl) lbl.style.color='rgba(0,0,0,0.3)';
+    }
+  });
+  // Update progress lines
+  const l1=document.getElementById('prog-line-1'), l2=document.getElementById('prog-line-2');
+  if(l1) l1.style.background = n>1 ? 'linear-gradient(90deg,#10b981,#059669)' : 'linear-gradient(90deg,#111,rgba(0,0,0,0.12))';
+  if(l2) l2.style.background = n>2 ? 'linear-gradient(90deg,#10b981,#059669)' : 'rgba(0,0,0,0.08)';
+  const scroll = document.getElementById('reg-scroll');
+  if(scroll) scroll.scrollTop=0;
+}
+
+function regStep1Next() {
+  const err=document.getElementById('rs1-err'); err.style.display='none';
+  const bname=document.getElementById('r-bname').value.trim();
+  const owner=document.getElementById('r-owner').value.trim();
+  const city=document.getElementById('r-city').value.trim();
+  const cat=document.getElementById('r-cat').value;
+  const user=document.getElementById('r-user').value.trim().toLowerCase();
+  const pass=document.getElementById('r-pass').value;
+  if(!bname){showErr('rs1-err','❌ Business name required.');return;}
+  if(!owner){showErr('rs1-err','❌ Owner name required.');return;}
+  if(!city){showErr('rs1-err','❌ City required.');return;}
+  if(!cat){showErr('rs1-err','❌ Select a business category.');return;}
+  if(!user){showErr('rs1-err','❌ Username required.');return;}
+  if(user.includes(' ')){showErr('rs1-err','❌ Username cannot have spaces.');return;}
+  if(!pass||pass.length<8){showErr('rs1-err','❌ Password must be at least 8 characters.');return;}
+  const existing=JSON.parse(localStorage.getItem('reviewpro_clients')||'[]');
+  if(existing.find(c=>c.username===user)){showErr('rs1-err','❌ Username taken. Choose another.');return;}
+  goRegStep(2);
+}
+
+function startOtpTimer(btnId,timerId,sec=60){
+  clearInterval(otpTimerInterval);
+  const btn=document.getElementById(btnId),timer=document.getElementById(timerId);
+  if(!btn||!timer)return;
+  btn.disabled=true; timer.style.display='block'; let rem=sec;
+  timer.textContent=`Resend in ${rem}s`;
+  otpTimerInterval=setInterval(()=>{
+    rem--;
+    if(rem<=0){clearInterval(otpTimerInterval);btn.disabled=false;btn.textContent='Resend OTP';timer.textContent='';timer.style.display='none';}
+    else timer.textContent=`Resend in ${rem}s`;
+  },1000);
+}
+
+async function sendRegOTP(){
+  const phone=document.getElementById('r-phone').value.trim();
+  const err=document.getElementById('rs2-err'); err.style.display='none';
+  if(!phone||phone.replace(/\D/g,'').length<10){showErr('rs2-err','❌ Enter valid 10-digit mobile.');return;}
+  const clean='+91'+phone.replace(/\D/g,'').slice(-10);
+  const now=Date.now();
+  if(otpRateLimit[clean]&&now-otpRateLimit[clean]<60000){showErr('rs2-err','⏳ Wait before requesting another OTP.');return;}
+  otpRateLimit[clean]=now;
+  document.getElementById('r-otp-btn').textContent='Sending...'; document.getElementById('r-otp-btn').disabled=true;
+  if(auth&&firebaseReady){
+    try{
+      // Always destroy and recreate — a stale/errored verifier silently fails on retry
+      try{ if(window.regRecaptcha){ window.regRecaptcha.clear(); window.regRecaptcha=null; } }catch(_){}
+      window.regRecaptcha=new firebase.auth.RecaptchaVerifier('reg-recaptcha-container',{size:'invisible',callback:()=>{}});
+      otpConfirmResult=await auth.signInWithPhoneNumber(clean,window.regRecaptcha);
+    }catch(e){
+      console.error('Firebase OTP error:',e.code,e.message);
+      // Reset verifier so the next attempt starts clean
+      try{ if(window.regRecaptcha){ window.regRecaptcha.clear(); window.regRecaptcha=null; } }catch(_){}
+      otpConfirmResult=null;
+      document.getElementById('r-otp-btn').disabled=false;
+      document.getElementById('r-otp-btn').textContent='Retry OTP';
+      showErr('rs2-err','\u274C Could not send OTP: '+e.message);
+      return;
+    }
+  }
+  document.getElementById('r-otp-sec').style.display='block';
+  startOtpTimer('r-otp-btn','r-otp-timer');
+  if(!firebaseReady){
+    const hint=document.createElement('div');hint.style.cssText='font-size:11px;color:#d97706;margin-top:6px;background:rgba(245,158,11,0.08);padding:8px;border-radius:8px;';
+    hint.textContent='🔧 Dev mode: enter any 6-digit code to verify'; hint.id='dev-hint';
+    if(!document.getElementById('dev-hint'))document.getElementById('r-otp-sec').appendChild(hint);
+  }
+}
+
+async function verifyRegOTP(){
+  const code=document.getElementById('r-otp-inp').value;
+  const ok=()=>{regOtpVerified=true;document.getElementById('r-v-badge').style.display='inline-flex';document.getElementById('r-otp-inp').disabled=true;clearInterval(otpTimerInterval);setTimeout(()=>goRegStep(3),700);};
+  if(otpConfirmResult){try{await otpConfirmResult.confirm(code);ok();}catch(e){showErr('rs2-err','❌ Wrong OTP.');}}
+  else{if(code.length===6)ok();else showErr('rs2-err','❌ Enter 6-digit OTP.');}
+}
+
+function selectRegPlan(plan){
+  selectedPlan=plan;
+  document.querySelectorAll('.ps-card').forEach(c=>c.classList.toggle('sel',c.dataset.plan===plan));
+  updatePlanSummary();
+}
+
+function updatePlanSummary(){
+  const cfg=CFG[selectedPlan]||CFG.trial||PLAN_CONFIG_LOCAL.trial;
+  const el1=document.getElementById('plan-sum-name'),el2=document.getElementById('plan-sum-desc'),el3=document.getElementById('plan-sum-price');
+  if(!el1)return;
+  const final=Math.max(0,(cfg.price||0)-appliedDiscount);
+  el1.textContent=cfg.name||selectedPlan; el2.textContent=selectedPlan==='trial'?'14 days free':'Monthly · '+(cfg.reviewLimit||200)+' reviews';
+  el3.textContent='₹'+final.toLocaleString(); el3.style.color=final===0?'var(--green-dark)':'var(--text)';
+}
+
+async function applyCoupon(){
+  const code=document.getElementById('r-coupon').value.trim().toUpperCase();
+  const ok=document.getElementById('coup-ok'),err=document.getElementById('coup-err');
+  ok.style.display='none'; err.style.display='none'; appliedDiscount=0;
+  if(!code){err.textContent='Enter a coupon code.';err.style.display='block';return;}
+  let coupon=null;
+  if(db&&firebaseReady){try{const s=await db.collection('coupons').where('code','==',code).where('active','==',true).get();if(!s.empty)coupon=s.docs[0].data();}catch(e){}}
+  const builtIn={'WELCOME50':{discountType:'percent',discountValue:50},'FREEMONTH':{discountType:'flat',discountValue:499},'UP75PREMIUM':{discountType:'percent',discountValue:20}};
+  if(!coupon&&builtIn[code])coupon=builtIn[code];
+  if(!coupon){err.textContent='❌ Invalid or expired coupon.';err.style.display='block';return;}
+  const cfg=CFG[selectedPlan]||{price:0};
+  appliedDiscount=coupon.discountType==='percent'?Math.round((cfg.price||0)*coupon.discountValue/100):coupon.discountValue||0;
+  ok.textContent=`✅ Coupon applied! You save ₹${appliedDiscount}`;ok.style.display='block';
+  updatePlanSummary();
+}
+
+async function completeRegistration(){
+  const btn=document.getElementById('reg-submit-btn'),err=document.getElementById('rs3-err');
+  err.style.display='none';
+  if(!regOtpVerified){showErr('rs3-err','❌ Verify your phone first.');return;}
+  btn.disabled=true; btn.innerHTML='<span style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;"></span> Creating your account...';
+
+  const bname=document.getElementById('r-bname').value.trim();
+  const owner=document.getElementById('r-owner').value.trim();
+  const city=document.getElementById('r-city').value.trim();
+  const email=document.getElementById('r-email').value.trim();
+  const cat=document.getElementById('r-cat').value;
+  const lang=document.getElementById('r-lang').value;
+  const mapsLink=document.getElementById('r-maps-link').value.trim();
+  const placeId=document.getElementById('r-placeid').value.trim();
+  const phone=document.getElementById('r-phone').value.trim();
+  const user=document.getElementById('r-user').value.trim().toLowerCase();
+  const pass=document.getElementById('r-pass').value;
+  const prods=Array.from(document.querySelectorAll('.r-prod')).map(i=>i.value.trim()).filter(v=>v);
+  const planCfg=CFG[selectedPlan]||PLAN_CONFIG_LOCAL.trial;
+  const now=new Date(), expiry=new Date(now);
+  expiry.setDate(expiry.getDate()+(planCfg.durationDays||14));
+
+  const clientData={
+    name:bname, owner:owner, city:city, email:email, phone:phone.replace(/\D/g,'').slice(-10),
+    category:cat, language:lang, googleMapsLink:mapsLink, placeId:placeId||'',
+    catalogue:prods.join(', '), username:user, password:btoa(pass), clientPassword:pass,
+    plan:selectedPlan, planName:planCfg.name||selectedPlan,
+    reviewLimit:planCfg.reviewLimit||50, qrLimit:planCfg.qrLimit||1, features:planCfg.features||[],
+    status:'active', payment:selectedPlan==='trial'?'trial':'pending',
+    trialActive:selectedPlan==='trial', trialStartDate:now.toISOString().split('T')[0],
+    expiryDate:expiry.toISOString().split('T')[0], reviewsGenerated:0, reviewsThisMonth:0,
+    qrScans:0, joined:now.toISOString().split('T')[0], createdAt:now.toISOString(),
+    lastActive:now.toISOString(), onboardingComplete:true, color:'#10b981',
+    qrName:bname, qrGenerated:true, about:'', address:'', logo:'',
+    couponApplied:document.getElementById('r-coupon').value.trim()||'', discountApplied:appliedDiscount
+  };
+
+  try{
+    let docId;
+    if(db&&firebaseReady){
+      const ref=await db.collection('clients').add(clientData);
+      docId=ref.id; clientData.id=docId;
+      try{await db.collection('subscriptions').doc(docId).set({clientId:docId,clientName:bname,plan:selectedPlan,status:selectedPlan==='trial'?'trial':'active',startDate:now.toISOString().split('T')[0],expiryDate:expiry.toISOString().split('T')[0],amount:Math.max(0,(planCfg.price||0)-appliedDiscount),renewals:0,createdAt:now.toISOString()});}catch(e){}
+      try{await db.collection('analytics').doc(docId).set({clientId:docId,clientName:bname,reviewsTotal:0,reviewsThisMonth:0,qrScans:0,avgRating:0,createdAt:now.toISOString()});}catch(e){}
+      try{await db.collection('otpLogs').add({phone:clientData.phone,type:'registration',clientId:docId,verified:true,timestamp:now.toISOString()});}catch(e){}
+      if(placeId){try{await db.collection('placeIds').doc(docId).set({clientId:docId,clientName:bname,placeId:placeId,mapsLink:mapsLink,city:city,verified:false,createdAt:now.toISOString()});}catch(e){}}
+    }else{
+      docId='local_'+Date.now(); clientData.id=docId;
+      const existing=JSON.parse(localStorage.getItem('reviewpro_clients')||'[]');
+      existing.unshift(clientData);
+      localStorage.setItem('reviewpro_clients',JSON.stringify(existing));
+    }
+    sessionStorage.setItem('rp_client',JSON.stringify(clientData));
+    showRegSuccess(clientData);
+  }catch(e){
+    console.error('Registration error:',e);
+    btn.disabled=false; btn.innerHTML='🚀 Create My Account Instantly →';
+    showErr('rs3-err','❌ Registration failed. Try again.');
+  }
+}
+
+function showRegSuccess(c){
+  setModalTitle('🎉 Welcome to UP75!');
+  document.getElementById('portal-modal-body').innerHTML=`
+    <div style="text-align:center;padding:2rem 1rem;">
+      <div style="font-size:4rem;margin-bottom:1rem;animation:popIn 0.6s cubic-bezier(0.34,1.56,0.64,1);">🎉</div>
+      <div style="font-family:var(--font-serif);font-style:italic;font-size:1.75rem;letter-spacing:-0.04em;margin-bottom:8px;">Account Created!</div>
+      <div style="font-size:14px;color:var(--text-dim);line-height:1.7;margin-bottom:1.5rem;">Your dashboard is live, QR code is ready, and your AI review system is active. No admin wait. No manual setup.</div>
+      <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:14px;padding:1rem;margin-bottom:1.5rem;text-align:left;">
+        <div style="font-size:11px;font-weight:600;color:#047857;margin-bottom:8px;letter-spacing:0.08em;">YOUR ACCOUNT DETAILS</div>
+        <div style="font-size:13px;line-height:1.8;"><strong>Username:</strong> ${c.username}<br><strong>Plan:</strong> ${c.planName} (active now)<br><strong>Expires:</strong> ${c.expiryDate}<br><strong>Reviews:</strong> Up to ${c.reviewLimit}/month</div>
+      </div>
+      <button class="sub-btn" style="background:linear-gradient(135deg,#10b981,#059669);" onclick="window.location.href='/client.html'">🚀 Open My Dashboard →</button>
+      <div style="font-size:11px;color:var(--text-soft);margin-top:10px;">Auto-redirecting in 3 seconds...</div>
+    </div>`;
+  setTimeout(()=>window.location.href='/client.html',3000);
+}
+
+// ════════════════════════════════════════════
+// PLACE ID EXTRACTION
+// ════════════════════════════════════════════
+function extractPlaceId(url){
+  if(!url)return;
+  let m=url.match(/place_id[=:]([A-Za-z0-9_\-]+)/i)||url.match(/!1s([A-Za-z0-9_\-:]+)!8m/i)||url.match(/\/place\/[^\/]+\/([A-Za-z0-9_\-:]+)/);
+  if(m&&m[1]&&m[1].length>10){
+    const f=document.getElementById('r-placeid');
+    if(f){f.value=m[1];f.style.background='rgba(16,185,129,0.05)';f.style.borderColor='rgba(16,185,129,0.4)';}
+  }
+}
+
+// ════════════════════════════════════════════
+// CLIENT LOGIN
+// ════════════════════════════════════════════
+async function doLogin(){
+  const user=document.getElementById('login-user').value.trim().toLowerCase();
+  const pass=document.getElementById('login-pass').value;
+  const btn=document.getElementById('login-btn');
+  if(!user||!pass){showErr('login-err','❌ Enter username and password.');return;}
+  btn.disabled=true; btn.innerHTML='Logging in...';
+  document.getElementById('login-err').style.display='none';
+  let client=null;
+  if(db&&firebaseReady){
+    try{const s=await db.collection('clients').where('username','==',user).limit(1).get();if(!s.empty){const d={...s.docs[0].data(),id:s.docs[0].id};if(d.clientPassword===pass||d.password===btoa(pass))client=d;}}catch(e){}
+  }
+  if(!client){const cl=JSON.parse(localStorage.getItem('reviewpro_clients')||'[]');client=cl.find(c=>c.username&&c.username.toLowerCase()===user&&(c.clientPassword===pass||c.password===btoa(pass)));}
+  if(client){sessionStorage.setItem('rp_client',JSON.stringify(client));window.location.href='/client.html';}
+  else{btn.disabled=false;btn.innerHTML='Login →';showErr('login-err','❌ Wrong username or password.');}
+}
+
+// ════════════════════════════════════════════
+// ADMIN LOGIN  
+// ════════════════════════════════════════════
+function doAdminLogin(){
+  const pass=document.getElementById('admin-pass').value;
+  if(pass===ADMIN_CONFIG.password){sessionStorage.setItem('rp_admin','1');window.location.href='/admin.html';}
+  else{showErr('admin-err','❌ Wrong password.');document.getElementById('admin-pass').value='';}
+}
+
+// ════════════════════════════════════════════
+// FORGOT PASSWORD
+// ════════════════════════════════════════════
+async function sendForgotOTP(){
+  const phone=document.getElementById('forgot-phone').value.trim();
+  const err=document.getElementById('forgot-err'); err.style.display='none';
+  if(!phone||phone.replace(/\D/g,'').length<10){err.textContent='❌ Enter valid mobile number.';err.style.display='block';return;}
+  const clean='+91'+phone.replace(/\D/g,'').slice(-10);
+  let found=false;
+  if(db&&firebaseReady){try{const s=await db.collection('clients').where('phone','==',phone.replace(/\D/g,'').slice(-10)).limit(1).get();if(!s.empty){forgotClientData={...s.docs[0].data(),id:s.docs[0].id};found=true;}}catch(e){}}
+  if(!found){const cl=JSON.parse(localStorage.getItem('reviewpro_clients')||'[]');const c=cl.find(c=>c.phone&&c.phone.replace(/\D/g,'').slice(-10)===phone.replace(/\D/g,'').slice(-10));if(c){forgotClientData=c;found=true;}}
+  if(!found){err.textContent='❌ Mobile not found. Check your registered number.';err.style.display='block';return;}
+  document.getElementById('forgot-otp-btn').textContent='Sending...'; document.getElementById('forgot-otp-btn').disabled=true;
+  if(auth&&firebaseReady){
+    try{
+      // Always destroy and recreate — a stale/errored verifier silently fails on retry
+      try{ if(window.forgotRecaptcha){ window.forgotRecaptcha.clear(); window.forgotRecaptcha=null; } }catch(_){}
+      window.forgotRecaptcha=new firebase.auth.RecaptchaVerifier('forgot-recaptcha-container',{size:'invisible',callback:()=>{}});
+      forgotOtpResult=await auth.signInWithPhoneNumber(clean,window.forgotRecaptcha);
+    }catch(e){
+      console.error('Firebase Forgot OTP error:',e.code,e.message);
+      try{ if(window.forgotRecaptcha){ window.forgotRecaptcha.clear(); window.forgotRecaptcha=null; } }catch(_){}
+      forgotOtpResult=null;
+      document.getElementById('forgot-otp-btn').disabled=false;
+      document.getElementById('forgot-otp-btn').textContent='Retry OTP';
+      const er=document.getElementById('forgot-err');
+      er.textContent='\u274C Could not send OTP: '+e.message; er.style.display='block';
+      return;
+    }
+  }
+  document.getElementById('forgot-otp-sec').style.display='block';
+  startOtpTimer('forgot-otp-btn','forgot-otp-timer');
+}
+async function verifyForgotOTP(){
+  const code=document.getElementById('forgot-otp-inp').value;
+  const ok=()=>{pwResetOtpVerified=true;document.getElementById('forgot-v-badge').style.display='inline-flex';document.getElementById('forgot-newpw-sec').style.display='block';document.getElementById('forgot-otp-inp').disabled=true;};
+  if(forgotOtpResult){try{await forgotOtpResult.confirm(code);ok();}catch(e){const er=document.getElementById('forgot-err');er.textContent='❌ Wrong OTP.';er.style.display='block';}}
+  else{if(code.length===6)ok();}
+}
+async function completeForgotReset(){
+  const pw=document.getElementById('forgot-new-pw').value,cpw=document.getElementById('forgot-confirm-pw').value,err=document.getElementById('forgot-pw-err');
+  if(pw!==cpw){err.style.display='block';return;}if(pw.length<8){err.textContent='❌ Min 8 characters.';err.style.display='block';return;}
+  err.style.display='none';const upd={password:btoa(pw),clientPassword:pw};
+  if(forgotClientData){
+    if(db&&forgotClientData.id&&!forgotClientData.id.startsWith('local_')){try{await db.collection('clients').doc(forgotClientData.id).update(upd);}catch(e){}}
+    const cl=JSON.parse(localStorage.getItem('reviewpro_clients')||'[]');const i=cl.findIndex(c=>c.id===forgotClientData.id);
+    if(i!==-1){cl[i]={...cl[i],...upd};localStorage.setItem('reviewpro_clients',JSON.stringify(cl));}
+  }
+  document.getElementById('forgot-ok').style.display='block'; document.getElementById('forgot-newpw-sec').style.display='none';
+}
+function submitAdmForgot(){
+  const ph=document.getElementById('adm-forgot-ph').value.trim(),err=document.getElementById('adm-forgot-err');
+  if(!ph||ph.replace(/\D/g,'').length<10){err.style.display='block';return;}err.style.display='none';
+  const reqs=JSON.parse(localStorage.getItem('rp_password_reset_requests')||'[]');reqs.push({type:'admin',contact:ph,requestedAt:new Date().toISOString()});localStorage.setItem('rp_password_reset_requests',JSON.stringify(reqs));
+  document.getElementById('adm-forgot-ok').style.display='block';
+}
+
+// ════════════════════════════════════════════
+// CSS ADDITIONS
+// ════════════════════════════════════════════
+const style=document.createElement('style');
+style.textContent=`
+  .ps-card{background:rgba(255,255,255,0.6);border:1.5px solid rgba(0,0,0,0.07);border-radius:16px;padding:14px;cursor:pointer;text-align:center;transition:all 0.25s cubic-bezier(0.16,1,0.3,1);position:relative;}
+  .ps-card:hover{background:#fff;border-color:rgba(0,0,0,0.15);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.07);}
+  .ps-card.sel{background:#111;color:#fff;border-color:#111;transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,0,0,0.2);}
+  .ps-card.sel .ps-price,.ps-card.sel .ps-desc{color:rgba(255,255,255,0.8);}
+  .ps-card.sel .ps-name{color:rgba(255,255,255,0.7);}
+  .ps-name{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;}
+  .ps-price{font-family:var(--font-serif);font-style:italic;font-size:1.25rem;letter-spacing:-0.03em;color:var(--text);}
+  .ps-desc{font-size:10px;color:var(--text-soft);margin-top:3px;}
+  .info-box{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:12px;padding:10px 14px;margin-bottom:1.25rem;font-size:12px;color:#047857;line-height:1.65;}
+  .back-btn{background:rgba(0,0,0,0.04);border:1px solid var(--border);font-size:12px;padding:6px 12px;cursor:pointer;color:var(--text-dim);font-family:var(--font-body);border-radius:8px;transition:all 0.2s;}
+  .back-btn:hover{background:rgba(0,0,0,0.08);color:var(--text);}
+  .sub-btn{width:100%;padding:13px;background:var(--text);color:#fff;border:none;border-radius:14px;font-size:14px;font-weight:500;cursor:pointer;font-family:var(--font-body);transition:all 0.25s;box-shadow:0 6px 18px rgba(0,0,0,0.1);}
+  .sub-btn:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(0,0,0,0.18);}
+  .sub-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+  .verified-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--green-dark);background:rgba(16,185,129,0.08);padding:5px 11px;border-radius:100px;font-weight:500;margin-top:6px;}
+  .portal-opt{display:flex;align-items:center;gap:14px;padding:1rem 1.25rem;background:rgba(255,255,255,0.5);border:1px solid var(--border);border-radius:18px;margin-bottom:10px;cursor:pointer;transition:all 0.2s;}
+  .portal-opt:hover{background:rgba(255,255,255,0.9);border-color:rgba(0,0,0,0.12);transform:translateY(-1px);}
+  .po-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+  .po-title{font-size:14px;font-weight:600;color:var(--text);}
+  .po-sub{font-size:12px;color:var(--text-dim);margin-top:2px;}
+  .po-arrow{margin-left:auto;color:var(--text-soft);font-size:22px;}
+  .forgot-link{font-size:12px;color:var(--green);cursor:pointer;display:block;text-align:right;margin-top:-4px;margin-bottom:6px;font-weight:500;}
+  .forgot-link:hover{text-decoration:underline;}
+  .otp-btn{background:var(--text);color:white;border:none;padding:0 18px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;font-family:var(--font-body);border-radius:10px;transition:all 0.2s;min-width:90px;}
+  .otp-btn:hover:not(:disabled){background:#000;}
+  .otp-btn:disabled{background:rgba(0,0,0,0.2);cursor:not-allowed;}
+  .otp-timer{font-size:11px;color:var(--text-soft);margin-top:5px;display:none;}
+  @keyframes popIn{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+  @keyframes spin{to{transform:rotate(360deg);}}
+`;
+document.head.appendChild(style);
+
+// ════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════
+function showErr(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.style.display='block';}}
+function pwStr(input,barId){
+  const v=input.value;let s=0;
+  if(v.length>=8)s++;if(/[A-Z]/.test(v))s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;
+  const b=document.getElementById(barId);if(!b)return;
+  b.style.width=['0%','30%','55%','80%','100%'][s];
+  b.style.background=['','#ef4444','#f59e0b','#10b981','#059669'][s];
+}
+</script>
+</body>
+</html>
