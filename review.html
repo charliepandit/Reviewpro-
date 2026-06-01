@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#ffffff">
+<title>Share Your Experience — ReviewPro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html{height:100%;}
+body{
+  font-family:'Barlow',sans-serif;
+  font-size:15px;
+  background:#f0f4f8;
+  color:#111;
+  -webkit-font-smoothing:antialiased;
+  min-height:100%;
+}
+
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  z-index:0;
+  background:linear-gradient(135deg,#e8f5f0 0%,#f5f0e8 100%);
+  pointer-events:none;
+}
+
+.wrap{
+  position:relative;
+  z-index:1;
+  max-width:540px;
+  margin:0 auto;
+  padding:16px 16px 60px;
+}
+
+.top-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.brand{display:flex;align-items:center;gap:8px;}
+.brand-mark{
+  width:30px;height:30px;border-radius:8px;
+  background:#111;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:13px;
+  flex-shrink:0;
+}
+.brand-name{font-family:'Instrument Serif',serif;font-style:italic;font-size:18px;letter-spacing:-0.04em;}
+.wa-btn{
+  background:#25D366;color:#fff;
+  border:none;border-radius:100px;
+  padding:7px 14px;font-size:12px;font-weight:600;
+  font-family:'Barlow',sans-serif;
+  text-decoration:none;display:inline-flex;align-items:center;gap:5px;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+
+.card{
+  background:#fff;
+  border:1.5px solid rgba(0,0,0,0.09);
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:14px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.06);
+}
+.card-title{
+  font-family:'Instrument Serif',serif;
+  font-style:italic;
+  font-size:1.3rem;
+  letter-spacing:-0.03em;
+  margin-bottom:6px;
+}
+.card-sub{font-size:13px;color:rgba(0,0,0,0.55);line-height:1.6;}
+
+.shop-card{background:#fff;border:1.5px solid rgba(0,0,0,0.09);border-radius:16px;padding:20px;margin-bottom:14px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
+.shop-av{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;}
+.shop-name{font-family:'Instrument Serif',serif;font-style:italic;font-size:1.45rem;letter-spacing:-0.04em;margin-bottom:3px;}
+.shop-meta{font-size:12px;color:rgba(0,0,0,0.4);}
+
+.steps{display:flex;gap:6px;margin-bottom:16px;}
+.step-seg{height:4px;flex:1;background:rgba(0,0,0,0.08);border-radius:4px;transition:background 0.3s;}
+.step-seg.done{background:#111;}
+.step-seg.active{background:#10b981;}
+
+.screen{display:none;}
+.screen.active{display:block;}
+
+.form-group{margin-bottom:16px;}
+.form-label{display:block;font-weight:500;font-size:14px;margin-bottom:8px;color:#111;}
+.form-input, .form-textarea, .form-select{
+  width:100%;
+  padding:11px 13px;
+  border:1.5px solid rgba(0,0,0,0.12);
+  border-radius:10px;
+  font-family:'Barlow',sans-serif;
+  font-size:14px;
+  -webkit-appearance:none;
+  appearance:none;
+  outline:none;
+  transition:border-color 0.2s;
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus{
+  border-color:#10b981;
+  box-shadow:0 0 0 3px rgba(16,185,129,0.08);
+}
+.form-textarea{resize:vertical;min-height:80px;}
+.form-select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23111' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 12px center;
+  padding-right:36px;
+}
+
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:15px;
+  font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;
+  border:none;border-radius:14px;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  -webkit-appearance:none;
+  transition:opacity 0.15s,transform 0.15s;
+  position:relative;z-index:10;
+}
+.btn:active{opacity:0.85;transform:scale(0.98);}
+.btn-dark{background:#111;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,0.18);}
+.btn-green{background:linear-gradient(135deg,#10b981,#059669);color:#fff;box-shadow:0 4px 16px rgba(16,185,129,0.32);}
+.btn-outline{background:#fff;border:1.5px solid rgba(0,0,0,0.14);color:#111;}
+.btn-sm{padding:10px 14px;width:auto;font-size:13px;}
+.btn:disabled{opacity:0.45;pointer-events:none;}
+
+.rating-stars{display:flex;justify-content:center;gap:8px;margin:16px 0;}
+.star-btn{
+  background:none;border:none;outline:none;padding:8px;
+  cursor:pointer;font-size:2.8rem;line-height:1;
+  color:#d1d5db;transition:transform 0.12s,color 0.12s;
+  -webkit-tap-highlight-color:transparent;
+  -webkit-appearance:none;
+  touch-action:manipulation;
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:48px;min-height:48px;position:relative;z-index:10;
+}
+.star-btn:active{transform:scale(0.9);}
+.star-btn.lit-1{color:#ef4444;}
+.star-btn.lit-2{color:#f97316;}
+.star-btn.lit-3{color:#eab308;}
+.star-btn.lit-4{color:#84cc16;}
+.star-btn.lit-5{color:#10b981;}
+
+.radio-group{display:flex;flex-direction:column;gap:10px;}
+.radio-option{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;
+  border:1.5px solid rgba(0,0,0,0.12);
+  border-radius:10px;
+  cursor:pointer;
+  transition:border-color 0.2s,background 0.2s;
+  position:relative;z-index:10;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.radio-option:active{opacity:0.85;}
+.radio-option.selected{
+  border-color:#10b981;
+  background:#f0faf6;
+}
+.radio-circle{
+  width:18px;height:18px;border:2px solid rgba(0,0,0,0.2);
+  border-radius:50%;flex-shrink:0;
+  transition:all 0.2s;
+}
+.radio-option.selected .radio-circle{
+  border-color:#10b981;
+  background:#10b981;
+  box-shadow:inset 0 0 0 3px #fff;
+}
+
+.review-preview{
+  background:#f9fafb;border:1.5px solid rgba(0,0,0,0.08);
+  border-radius:12px;padding:14px;
+  font-size:13px;line-height:1.75;color:#111;
+  margin-bottom:14px;white-space:pre-wrap;font-family:'Barlow',sans-serif;
+}
+
+.info-box{background:#f0faf6;border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:10px 13px;font-size:12px;color:#047857;line-height:1.65;margin-bottom:12px;}
+.err-msg{font-size:12px;color:#dc2626;font-weight:500;display:none;margin-bottom:10px;}
+.footer{text-align:center;padding:20px 0 0;font-size:11px;color:rgba(0,0,0,0.35);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top-nav">
+    <div class="brand">
+      <div class="brand-mark">R</div>
+      <div class="brand-name">ReviewPro</div>
+    </div>
+    <a href="https://wa.me/919988789921" class="wa-btn">💬 Support</a>
+  </div>
+
+  <div class="shop-card" id="shop-card">
+    <div class="shop-av" id="shop-av">?</div>
+    <div class="shop-name" id="shop-name">Loading…</div>
+    <div class="shop-meta" id="shop-meta"></div>
+  </div>
+
+  <div class="steps">
+    <div class="step-seg active" id="seg-1"></div>
+    <div class="step-seg" id="seg-2"></div>
+    <div class="step-seg" id="seg-3"></div>
+    <div class="step-seg" id="seg-4"></div>
+  </div>
+
+  <!-- SCREEN: QUESTIONS -->
+  <div class="screen active" id="screen-questions">
+    <div class="card">
+      <div class="card-title">Tell Us About Your Visit ⭐</div>
+      <div class="card-sub">Help us create an authentic review. Your honest answers matter.</div>
+    </div>
+
+    <!-- Q1: Rating -->
+    <div class="card">
+      <div class="form-label">How was your overall experience?</div>
+      <div class="rating-stars" id="rating-stars">
+        <button class="star-btn" id="star-1" data-v="1" type="button">★</button>
+        <button class="star-btn" id="star-2" data-v="2" type="button">★</button>
+        <button class="star-btn" id="star-3" data-v="3" type="button">★</button>
+        <button class="star-btn" id="star-4" data-v="4" type="button">★</button>
+        <button class="star-btn" id="star-5" data-v="5" type="button">★</button>
+      </div>
+      <div class="err-msg" id="err-rating">Please select a rating.</div>
+    </div>
+
+    <!-- Q2: What did you buy? -->
+    <div class="card">
+      <div class="form-label">What did you purchase or experience?</div>
+      <input class="form-input" id="q-product" placeholder="e.g., Sofa set, Haircut, Biryani, etc." type="text" maxlength="60">
+      <div class="form-label" style="margin-top:12px;font-size:12px;color:var(--text-dim);">Be specific — helps create authentic reviews</div>
+    </div>
+
+    <!-- Q3: Staff Experience -->
+    <div class="card">
+      <div class="form-label">How was the staff?</div>
+      <div class="radio-group" id="staff-options">
+        <div class="radio-option" data-val="excellent">
+          <div class="radio-circle"></div>
+          <div><strong>Excellent</strong> — Very helpful, professional, attentive</div>
+        </div>
+        <div class="radio-option" data-val="good">
+          <div class="radio-circle"></div>
+          <div><strong>Good</strong> — Helpful and friendly</div>
+        </div>
+        <div class="radio-option" data-val="okay">
+          <div class="radio-circle"></div>
+          <div><strong>Okay</strong> — Did their job, nothing special</div>
+        </div>
+        <div class="radio-option" data-val="poor">
+          <div class="radio-circle"></div>
+          <div><strong>Poor</strong> — Unhelpful or rude</div>
+        </div>
+      </div>
+      <div class="err-msg" id="err-staff">Please select staff experience.</div>
+    </div>
+
+    <!-- Q4: What specifically impressed or disappointed? -->
+    <div class="card">
+      <div class="form-label">What did you like or dislike most? (Optional)</div>
+      <textarea class="form-textarea" id="q-comment" placeholder="e.g., Loved the color options, fast delivery. Wish there were more sizes available." maxlength="150"></textarea>
+      <div class="form-label" style="margin-top:8px;font-size:11px;color:var(--text-dim);">Max 150 chars. This makes reviews more genuine!</div>
+    </div>
+
+    <button class="btn btn-dark" id="btn-generate" type="button">Generate My Review →</button>
+  </div>
+
+  <!-- SCREEN: REVIEW PREVIEW -->
+  <div class="screen" id="screen-preview">
+    <div class="card">
+      <div class="card-title">Your Review ✨</div>
+      <div class="card-sub">This is what will appear on Google Maps. Feel free to customize it!</div>
+    </div>
+
+    <div class="review-preview" id="review-text"></div>
+
+    <div class="card">
+      <div class="form-label">Edit your review (optional)</div>
+      <textarea class="form-textarea" id="edit-review" maxlength="250"></textarea>
+    </div>
+
+    <button class="btn btn-green" id="btn-post" type="button">Post to Google Maps →</button>
+    <button class="btn btn-outline" id="btn-back" type="button">← Back & Edit Answers</button>
+  </div>
+
+  <!-- SCREEN: DONE -->
+  <div class="screen" id="screen-done">
+    <div class="card" style="text-align:center;">
+      <div style="font-size:3.5rem;margin-bottom:10px;">🎉</div>
+      <div class="card-title">Review Posted!</div>
+      <div class="card-sub" style="margin-bottom:16px;">Thank you for your honest feedback. Your review helps other customers find great businesses!</div>
+    </div>
+
+    <div class="info-box">Your review is copied. Paste it in the Google Maps box and tap Post.</div>
+
+    <button class="btn btn-green" id="btn-maps" type="button">📍 Go to Google Maps</button>
+    <button class="btn btn-outline btn-sm" id="btn-restart" type="button" style="width:100%;margin-top:8px;">Write Another Review</button>
+  </div>
+
+  <!-- SCREEN: ERROR -->
+  <div class="screen" id="screen-error">
+    <div class="card" style="text-align:center;">
+      <div style="font-size:3rem;margin-bottom:10px;">🔗</div>
+      <div class="card-title">Unable to Load</div>
+      <div class="card-sub" id="err-detail">Could not load shop details. Please scan the QR code again or contact support.</div>
+      <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px;">
+        <button class="btn btn-dark" type="button" onclick="location.reload()">🔄 Retry</button>
+        <a href="https://wa.me/919988789921" class="btn btn-outline" style="text-decoration:none;">💬 Support</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Powered by <strong>ReviewPro</strong> · <a href="https://wa.me/919988789921" style="color:inherit;">Support</a></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script>
+'use strict';
+
+const FB_CFG = {
+  apiKey:            "AIzaSyBvASlX9I_kondIPPJF9z0X7A9oGzY1Wus",
+  authDomain:        "reviewpro-b66c9.firebaseapp.com",
+  projectId:         "reviewpro-b66c9",
+  storageBucket:     "reviewpro-b66c9.firebasestorage.app",
+  messagingSenderId: "831538269584",
+  appId:             "1:831538269584:web:64227a659b88189c66b715"
+};
+let db = null;
+try {
+  if (!firebase.apps.length) firebase.initializeApp(FB_CFG);
+  db = firebase.firestore();
+} catch(e) { console.warn('Firebase:', e.message); }
+
+const S = {
+  clientId: null, client: null,
+  rating: 0, product: '', staffExp: '', comment: '',
+  generatedReview: '', mapsUrl: null,
+};
+
+// ── SHOW SCREEN ──
+function show(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('screen-' + name);
+  if (el) el.classList.add('active');
+  const map = {questions:1, preview:2, done:3};
+  const cur = map[name] || 0;
+  for (let i = 1; i <= 4; i++) {
+    const seg = document.getElementById('seg-' + i);
+    if (!seg) continue;
+    seg.classList.toggle('done',   i < cur);
+    seg.classList.toggle('active', i === cur);
+  }
+}
+
+function populateShop(c) {
+  const av = (c.name||'S').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('shop-av').textContent   = av;
+  document.getElementById('shop-name').textContent = c.qrName || c.name || 'Your Shop';
+  document.getElementById('shop-meta').textContent = [c.city, c.category].filter(Boolean).join(' · ');
+  const pid = (c.placeId || '').trim();
+  if (pid) S.mapsUrl = `https://search.google.com/local/writereview?placeid=${pid}`;
+}
+
+// ── INIT ──
+async function init() {
+  const p = new URLSearchParams(window.location.search);
+  S.clientId = p.get('id') || p.get('clientId') || p.get('shop');
+
+  if (p.get('n')) {
+    S.client = {
+      id:       S.clientId || 'url',
+      name:     decodeURIComponent(p.get('n')),
+      city:     p.get('c')   ? decodeURIComponent(p.get('c'))   : '',
+      category: p.get('cat') ? decodeURIComponent(p.get('cat')) : '',
+      language: p.get('l')   ? decodeURIComponent(p.get('l'))   : 'en',
+      placeId:  p.get('p')   ? decodeURIComponent(p.get('p'))   : '',
+    };
+    populateShop(S.client);
+    show('questions');
+    if (db && S.clientId) {
+      db.collection('clients').doc(S.clientId).get()
+        .then(snap => { if (snap && snap.exists) { S.client = {...snap.data(), id:snap.id}; populateShop(S.client); } })
+        .catch(() => {});
+    }
+    return;
+  }
+
+  if (!S.clientId) { show('error'); return; }
+  if (db) {
+    try {
+      const snap = await Promise.race([
+        db.collection('clients').doc(S.clientId).get(),
+        new Promise((_,rej) => setTimeout(() => rej(new Error('timeout')), 7000))
+      ]);
+      if (snap && snap.exists) S.client = {...snap.data(), id:snap.id};
+    } catch(e) { console.warn('Firestore:', e.message); }
+  }
+  if (!S.client) {
+    try {
+      const all = JSON.parse(localStorage.getItem('reviewpro_clients') || '[]');
+      S.client = all.find(c => c.id === S.clientId) || null;
+    } catch(e) {}
+  }
+  if (!S.client) {
+    const ed = document.getElementById('err-detail');
+    if (ed) ed.textContent = 'Shop not found (ref: ' + S.clientId + '). Please scan the QR again.';
+    show('error');
+    return;
+  }
+  populateShop(S.client);
+  show('questions');
+}
+
+// ── RATING ──
+function setRating(v) {
+  S.rating = v;
+  for (let i = 1; i <= 5; i++) {
+    const btn = document.getElementById('star-' + i);
+    if (btn) btn.className = 'star-btn' + (i <= v ? ' lit-' + v : '');
+  }
+  document.getElementById('err-rating').style.display = 'none';
+}
+
+// ── RADIO SELECTION ──
+function wireRadios() {
+  document.querySelectorAll('.radio-option').forEach(opt => {
+    opt.addEventListener('click', function(e) {
+      e.preventDefault();
+      const group = this.parentElement;
+      group.querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
+      this.classList.add('selected');
+      S.staffExp = this.getAttribute('data-val');
+      document.getElementById('err-staff').style.display = 'none';
+    });
+    opt.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      const group = this.parentElement;
+      group.querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
+      this.classList.add('selected');
+      S.staffExp = this.getAttribute('data-val');
+      document.getElementById('err-staff').style.display = 'none';
+    });
+  });
+}
+
+// ── GENERATE REVIEW FROM ANSWERS ──
+async function generateReview() {
+  S.rating = parseInt(document.querySelector('.star-btn.lit-1, .star-btn.lit-2, .star-btn.lit-3, .star-btn.lit-4, .star-btn.lit-5')?.getAttribute('data-v') || '0');
+  S.product = document.getElementById('q-product').value.trim();
+  S.comment = document.getElementById('q-comment').value.trim();
+
+  let valid = true;
+  if (!S.rating) {
+    document.getElementById('err-rating').style.display = 'block';
+    valid = false;
+  }
+  if (!S.staffExp) {
+    document.getElementById('err-staff').style.display = 'block';
+    valid = false;
+  }
+  if (!valid) return;
+
+  // Build review from answers
+  S.generatedReview = buildReviewFromAnswers(S.rating, S.product, S.staffExp, S.comment, S.client);
+
+  // Show preview
+  document.getElementById('review-text').textContent = S.generatedReview;
+  document.getElementById('edit-review').value = S.generatedReview;
+  show('preview');
+}
+
+function buildReviewFromAnswers(rating, product, staffExp, comment, client) {
+  const shop = client?.name || 'this shop';
+  const city = client?.city || '';
+  const cityStr = city ? ` in ${city}` : '';
+
+  let base = '';
+  
+  if (rating === 5) {
+    const openers = [
+      `${shop} is amazing${cityStr}!`,
+      `Absolutely loved ${shop}${cityStr}!`,
+      `Best experience at ${shop}${cityStr}!`,
+      `${shop} exceeded expectations${cityStr}!`,
+      `Highly recommend ${shop}${cityStr}!`,
+    ];
+    base = openers[Math.floor(Math.random() * openers.length)];
+    
+    if (product) base += ` The ${product} was perfect.`;
+    
+    if (staffExp === 'excellent') {
+      base += ` Staff were incredibly helpful and professional.`;
+    } else if (staffExp === 'good') {
+      base += ` Staff were friendly and knowledgeable.`;
+    }
+    
+    if (comment) base += ` ${comment}`;
+    base += ` Will definitely come back!`;
+  } 
+  else if (rating === 4) {
+    const openers = [
+      `Good experience at ${shop}${cityStr}.`,
+      `Satisfied with ${shop}${cityStr}.`,
+      `${shop} is reliable${cityStr}.`,
+      `Would recommend ${shop}${cityStr}.`,
+    ];
+    base = openers[Math.floor(Math.random() * openers.length)];
+    
+    if (product) base += ` The ${product} was good quality.`;
+    
+    if (staffExp === 'excellent') {
+      base += ` Staff were very helpful.`;
+    } else if (staffExp === 'good') {
+      base += ` Staff were friendly and cooperative.`;
+    }
+    
+    if (comment) base += ` ${comment}`;
+    base += ` Worth visiting!`;
+  }
+  else if (rating === 3) {
+    const openers = [
+      `Average experience at ${shop}${cityStr}.`,
+      `${shop} was decent${cityStr}.`,
+      `Mixed feelings about ${shop}${cityStr}.`,
+    ];
+    base = openers[Math.floor(Math.random() * openers.length)];
+    
+    if (product) base += ` The ${product} was okay.`;
+    
+    if (staffExp === 'excellent') {
+      base += ` Staff were helpful.`;
+    } else if (staffExp === 'good') {
+      base += ` Service was decent.`;
+    }
+    
+    if (comment) base += ` ${comment}`;
+    base += ` Could improve in some areas.`;
+  }
+  else if (rating === 2) {
+    const openers = [
+      `Disappointed with ${shop}${cityStr}.`,
+      `${shop} needs improvement${cityStr}.`,
+      `Below expectations at ${shop}${cityStr}.`,
+    ];
+    base = openers[Math.floor(Math.random() * openers.length)];
+    
+    if (product) base += ` The ${product} quality was not great.`;
+    
+    if (staffExp === 'poor') {
+      base += ` Staff could be more attentive.`;
+    } else {
+      base += ` Service could be better.`;
+    }
+    
+    if (comment) base += ` ${comment}`;
+    base += ` Hoping for improvements.`;
+  }
+  else if (rating === 1) {
+    const openers = [
+      `Poor experience at ${shop}${cityStr}.`,
+      `Very disappointed with ${shop}${cityStr}.`,
+      `${shop} was not acceptable${cityStr}.`,
+    ];
+    base = openers[Math.floor(Math.random() * openers.length)];
+    
+    if (product) base += ` The ${product} was not good.`;
+    
+    if (staffExp === 'poor') {
+      base += ` Staff were unhelpful.`;
+    }
+    
+    if (comment) base += ` ${comment}`;
+    base += ` Would not recommend.`;
+  }
+
+  return base;
+}
+
+async function postReview() {
+  const text = document.getElementById('edit-review').value.trim();
+  if (!text) {
+    alert('Please write or keep your review.');
+    return;
+  }
+
+  // Save to Firestore
+  try {
+    if (db) {
+      db.collection('reviews').add({
+        clientId: S.clientId,
+        rating: S.rating,
+        review: text,
+        product: S.product,
+        staffExp: S.staffExp,
+        comment: S.comment,
+        createdAt: new Date().toISOString(),
+        posted: false,
+        shopName: S.client?.name||'',
+        city: S.client?.city||'',
+      }).then(() => {
+        if (S.clientId) {
+          db.collection('clients').doc(S.clientId).update({
+            reviewsGenerated: firebase.firestore.FieldValue.increment(1),
+            'analytics.totalReviews': firebase.firestore.FieldValue.increment(1),
+          }).catch(()=>{});
+        }
+      }).catch(()=>{});
+    }
+  } catch(e){}
+
+  // Copy to clipboard
+  try { await navigator.clipboard.writeText(text); } catch(e){}
+
+  // Show done
+  show('done');
+}
+
+function openMaps() {
+  if (!S.mapsUrl) {
+    alert('Google Maps link not configured. Your review is copied — you can paste it manually.');
+    return;
+  }
+  try { navigator.clipboard.writeText(document.getElementById('edit-review').value); } catch(e){}
+  window.location.href = S.mapsUrl;
+}
+
+function restart() {
+  S.rating = 0; S.product = ''; S.staffExp = ''; S.comment = '';
+  S.generatedReview = '';
+  document.getElementById('q-product').value = '';
+  document.getElementById('q-comment').value = '';
+  document.querySelectorAll('.star-btn').forEach(b => b.className = 'star-btn');
+  document.querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
+  show('questions');
+}
+
+function wireButtons() {
+  // Stars
+  for (let v = 1; v <= 5; v++) {
+    const btn = document.getElementById('star-' + v);
+    if (!btn) continue;
+    (function(val) {
+      btn.addEventListener('click',    function(){ setRating(val); });
+      btn.addEventListener('touchend', function(e){ e.preventDefault(); setRating(val); });
+    })(v);
+  }
+  
+  // Generate
+  const genBtn = document.getElementById('btn-generate');
+  if (genBtn) {
+    genBtn.addEventListener('click',    function(){ generateReview(); });
+    genBtn.addEventListener('touchend', function(e){ e.preventDefault(); generateReview(); });
+  }
+
+  // Post
+  const postBtn = document.getElementById('btn-post');
+  if (postBtn) {
+    postBtn.addEventListener('click',    function(){ postReview(); });
+    postBtn.addEventListener('touchend', function(e){ e.preventDefault(); postReview(); });
+  }
+
+  // Back
+  const backBtn = document.getElementById('btn-back');
+  if (backBtn) {
+    backBtn.addEventListener('click',    function(){ show('questions'); });
+    backBtn.addEventListener('touchend', function(e){ e.preventDefault(); show('questions'); });
+  }
+
+  // Maps
+  const mapsBtn = document.getElementById('btn-maps');
+  if (mapsBtn) {
+    mapsBtn.addEventListener('click',    function(){ openMaps(); });
+    mapsBtn.addEventListener('touchend', function(e){ e.preventDefault(); openMaps(); });
+  }
+
+  // Restart
+  const restartBtn = document.getElementById('btn-restart');
+  if (restartBtn) {
+    restartBtn.addEventListener('click',    function(){ restart(); });
+    restartBtn.addEventListener('touchend', function(e){ e.preventDefault(); restart(); });
+  }
+}
+
+function boot() {
+  wireButtons();
+  wireRadios();
+  init().catch(function(e) {
+    console.error('init error:', e);
+    show('error');
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', boot);
+} else {
+  boot();
+}
+</script>
+</body>
+</html>
