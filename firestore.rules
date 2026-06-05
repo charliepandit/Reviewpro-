@@ -1,0 +1,129 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── HELPER FUNCTIONS ────────────────────────────────────────────────────
+
+    // Only the fields that the Smart Review Engine V4 customer flow may touch
+    function isReviewCounterUpdate() {
+      let allowed = ['reviewsGenerated'];
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(allowed);
+    }
+
+    // Validate that a client document has all required fields on creation
+    function validClientCreate() {
+      let d = request.resource.data;
+      return d.keys().hasAll(['id', 'name', 'owner', 'city', 'language', 'status'])
+          && d.name is string && d.name.size() > 0
+          && d.owner is string
+          && d.status in ['active', 'trial', 'expired', 'inactive'];
+    }
+
+    // ─── CLIENTS ─────────────────────────────────────────────────────────────
+    // Public read — review.html needs to load the business profile unauthenticated.
+    //
+    // CREATE: allowed unauthenticated because the platform uses custom auth
+    // (username + phone OTP), not Firebase Auth. The registration page signs in
+    // anonymously as a best-effort before writing, but the rule must not block
+    // registrations that arrive before anonymous sign-in completes.
+    // validClientCreate() enforces required fields to prevent junk documents.
+    //
+    // UPDATE: authenticated users may update any field.
+    //         Unauthenticated (customer review flow) may ONLY bump reviewsGenerated.
+    //
+    // DELETE: authenticated only.
+    match /clients/{clientId} {
+      allow read: if true;
+
+      allow create: if validClientCreate();
+
+      allow update: if (request.auth != null)
+                    || isReviewCounterUpdate();
+
+      allow delete: if request.auth != null;
+    }
+
+    // ─── REVIEWS ─────────────────────────────────────────────────────────────
+    // Customers create reviews anonymously; only authenticated users can
+    // read, update or delete them (admin / client dashboard).
+    match /reviews/{reviewId} {
+      allow create: if true
+                    && request.resource.data.keys().hasAll(['clientId', 'rating', 'createdAt'])
+                    && request.resource.data.rating is int
+                    && request.resource.data.rating >= 1
+                    && request.resource.data.rating <= 5;
+      allow read, update, delete: if request.auth != null;
+    }
+
+    // ─── SUBSCRIPTIONS ───────────────────────────────────────────────────────
+    // Registration creates a subscription document unauthenticated.
+    match /subscriptions/{docId} {
+      allow create: if request.resource.data.keys().hasAll(['clientId', 'plan', 'status']);
+      allow read, update, delete: if request.auth != null;
+    }
+
+    // ─── COUPONS ─────────────────────────────────────────────────────────────
+    // Public read so registration page can validate coupon codes.
+    match /coupons/{couponId} {
+      allow read: if true;
+      allow create, write, delete: if request.auth != null;
+    }
+
+    // ─── NOTIFICATIONS ───────────────────────────────────────────────────────
+    // Registration writes a new_signup notification unauthenticated.
+    // Restrict unauthenticated creates to new_signup type only.
+    // All reads, updates, and deletes remain admin-only.
+    match /notifications/{docId} {
+      allow create: if (request.auth != null)
+                    || (request.resource.data.type == 'new_signup'
+                        && request.resource.data.keys().hasAll(['type','clientId','clientName','plan']));
+      allow read, update, delete: if request.auth != null;
+    }
+
+    // ─── OTP LOGS ────────────────────────────────────────────────────────────
+    match /otpLogs/{docId} {
+      allow read, write, delete: if request.auth != null;
+    }
+
+    // ─── PLACE IDs ───────────────────────────────────────────────────────────
+    // Public read so review.html can resolve place IDs.
+    match /placeIds/{docId} {
+      allow read: if true;
+      allow create, write, delete: if request.auth != null;
+    }
+
+    // ─── ANALYTICS ───────────────────────────────────────────────────────────
+    match /analytics/{docId} {
+      allow read, write, delete: if request.auth != null;
+    }
+
+    // ─── PLAN SETTINGS ───────────────────────────────────────────────────────
+    // Public read so registration / review pages can check plan limits.
+    match /planSettings/{docId} {
+      allow read: if true;
+      allow write, delete: if request.auth != null;
+    }
+
+    // ─── REVIEW SETTINGS ─────────────────────────────────────────────────────
+    match /reviewSettings/{docId} {
+      allow read, write, delete: if request.auth != null;
+    }
+
+    // ─── REVIEW HISTORY ──────────────────────────────────────────────────────
+    match /reviewHistory/{docId} {
+      allow read, write, delete: if request.auth != null;
+    }
+
+    // ─── QR CODES ────────────────────────────────────────────────────────────
+    match /qrCodes/{docId} {
+      allow read, write, delete: if request.auth != null;
+    }
+
+    // ─── CATCH-ALL ───────────────────────────────────────────────────────────
+    // Any collection not explicitly listed above requires authentication.
+    match /{document=**} {
+      allow read, write, delete: if request.auth != null;
+    }
+
+  }
+}
