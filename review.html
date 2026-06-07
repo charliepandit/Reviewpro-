@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rate Your Experience — ReviewPro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{
+  --bg:#ffffff;
+  --bg-secondary:#f7f7f7;
+  --card:rgba(255,255,255,0.65);
+  --border:rgba(0,0,0,0.06);
+  --text:#111111;
+  --text-dim:rgba(0,0,0,0.55);
+  --text-soft:rgba(0,0,0,0.35);
+  --green:#10b981;
+  --green-soft:rgba(16,185,129,0.08);
+  --amber:#f59e0b;
+  --red:#dc2626;
+  --font-body:'Barlow',sans-serif;
+  --font-serif:'Instrument Serif',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  font-family:var(--font-body);
+  font-size:15px;
+  font-weight:400;
+  color:var(--text);
+  background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:1rem;
+  overflow-x:hidden;
+  position:relative;
+}
+
+/* Ambient gradient orbs */
+.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0;opacity:0.5;}
+.orb-1{width:500px;height:500px;background:radial-gradient(circle,rgba(16,185,129,0.18),transparent 70%);top:-180px;left:-180px;animation:float1 20s ease-in-out infinite;}
+.orb-2{width:450px;height:450px;background:radial-gradient(circle,rgba(245,158,11,0.12),transparent 70%);bottom:-160px;right:-160px;animation:float2 25s ease-in-out infinite;}
+@keyframes float1{0%,100%{transform:translate(0,0);}50%{transform:translate(60px,40px);}}
+@keyframes float2{0%,100%{transform:translate(0,0);}50%{transform:translate(-50px,-30px);}}
+
+.serif{font-family:var(--font-serif);font-style:italic;letter-spacing:-0.04em;font-weight:400;}
+
+/* LIQUID GLASS */
+.liquid-glass{
+  background:rgba(255,255,255,0.65);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(0,0,0,0.06);
+  box-shadow:0 10px 40px rgba(0,0,0,0.04),inset 0 1px 1px rgba(255,255,255,0.7);
+  position:relative;
+  overflow:hidden;
+  border-radius:28px;
+}
+.liquid-glass::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  padding:1px;
+  background:linear-gradient(180deg,rgba(255,255,255,0.8) 0%,rgba(255,255,255,0.3) 50%,rgba(255,255,255,0.7) 100%);
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  pointer-events:none;
+}
+
+/* Card layout */
+.card{
+  width:100%;
+  max-width:460px;
+  position:relative;
+  z-index:2;
+  animation:cardIn 0.9s cubic-bezier(0.16,1,0.3,1);
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(24px);filter:blur(10px);}to{opacity:1;transform:translateY(0);filter:blur(0);}}
+
+.card-header{
+  padding:2.25rem 1.75rem 1.5rem;
+  text-align:center;
+  position:relative;
+  background:rgba(255,255,255,0.4);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.shop-initials{
+  width:64px;
+  height:64px;
+  background:linear-gradient(135deg,#111111 0%,#333333 100%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  font-weight:600;
+  color:#fff;
+  margin:0 auto 1rem;
+  border-radius:18px;
+  font-family:var(--font-body);
+  box-shadow:0 8px 24px rgba(0,0,0,0.15);
+  letter-spacing:0.02em;
+}
+.shop-name{
+  font-family:var(--font-serif);
+  font-style:italic;
+  font-size:1.75rem;
+  letter-spacing:-0.04em;
+  color:var(--text);
+  margin-bottom:6px;
+  line-height:1.1;
+}
+.shop-sub{font-size:13px;color:var(--text-dim);font-weight:400;letter-spacing:0.01em;}
+
+.card-body{padding:1.75rem;}
+.screen{display:none;animation:fadeIn 0.5s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* EXPIRED */
+.expired-wrap{text-align:center;padding:1.5rem 0.5rem;}
+.expired-icon{font-size:3rem;margin-bottom:1rem;}
+.expired-title{font-family:var(--font-serif);font-style:italic;font-size:1.5rem;color:var(--red);margin-bottom:8px;letter-spacing:-0.03em;}
+.expired-sub{font-size:14px;color:var(--text-dim);line-height:1.7;}
+
+/* WELCOME */
+.welcome-wrap{text-align:center;padding:0.25rem 0 1rem;}
+.welcome-emoji{font-size:3rem;margin-bottom:0.75rem;display:inline-block;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.welcome-title{font-family:var(--font-serif);font-style:italic;font-size:1.875rem;letter-spacing:-0.04em;margin-bottom:10px;line-height:1.1;}
+.welcome-sub{font-size:14px;color:var(--text-dim);line-height:1.6;font-weight:400;}
+.steps-preview{
+  display:flex;
+  justify-content:space-between;
+  background:rgba(255,255,255,0.5);
+  backdrop-filter:blur(10px);
+  border:1px solid var(--border);
+  padding:1rem;
+  margin:1.5rem 0;
+  gap:8px;
+  border-radius:18px;
+}
+.ps-item{text-align:center;flex:1;}
+.ps-icon{font-size:1.25rem;margin-bottom:4px;}
+.ps-text{font-size:11px;color:var(--text-dim);font-weight:500;letter-spacing:0.01em;}
+.ps-divider{color:rgba(0,0,0,0.15);display:flex;align-items:center;font-size:16px;}
+
+/* STEP BAR */
+.step-bar{display:flex;gap:5px;margin-bottom:1.5rem;}
+.step-seg{height:3px;flex:1;background:rgba(0,0,0,0.08);border-radius:6px;transition:all 0.4s ease;}
+.step-seg.done{background:var(--text);}
+.step-seg.active{background:var(--green);box-shadow:0 0 12px rgba(16,185,129,0.4);}
+
+.q-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:var(--green);margin-bottom:8px;}
+.q-text{font-family:var(--font-serif);font-style:italic;font-size:1.5rem;color:var(--text);margin-bottom:1.5rem;line-height:1.2;letter-spacing:-0.03em;}
+
+/* OPTIONS */
+.options{display:flex;flex-direction:column;gap:10px;}
+.opt-btn{
+  background:rgba(255,255,255,0.55);
+  backdrop-filter:blur(10px);
+  border:1px solid var(--border);
+  padding:14px 16px;
+  font-size:14px;
+  font-weight:500;
+  color:var(--text);
+  cursor:pointer;
+  text-align:left;
+  transition:all 0.2s ease;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-family:var(--font-body);
+  border-radius:16px;
+}
+.opt-btn:hover{
+  background:rgba(255,255,255,0.85);
+  border-color:rgba(0,0,0,0.12);
+  transform:translateY(-1px);
+  box-shadow:0 4px 12px rgba(0,0,0,0.04);
+}
+.opt-btn.selected{
+  background:var(--text);
+  color:#fff;
+  border-color:var(--text);
+  box-shadow:0 6px 18px rgba(0,0,0,0.18);
+}
+.opt-icon{
+  width:34px;
+  height:34px;
+  background:rgba(255,255,255,0.9);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+  flex-shrink:0;
+  border-radius:10px;
+  border:1px solid var(--border);
+}
+.opt-btn.selected .opt-icon{
+  background:rgba(255,255,255,0.15);
+  border-color:rgba(255,255,255,0.2);
+}
+
+/* STARS */
+.star-row{display:flex;gap:6px;justify-content:center;margin-top:1.25rem;}
+.star{
+  font-size:46px;
+  cursor:pointer;
+  color:rgba(0,0,0,0.12);
+  transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  line-height:1;
+  user-select:none;
+}
+.star:hover{transform:scale(1.15);}
+.star.lit{
+  color:#f59e0b;
+  text-shadow:0 0 20px rgba(245,158,11,0.45);
+  animation:starPop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes starPop{0%{transform:scale(0.85);}50%{transform:scale(1.25);}100%{transform:scale(1);}}
+.rating-label{
+  text-align:center;
+  font-size:14px;
+  color:var(--text-dim);
+  margin-top:1rem;
+  min-height:20px;
+  font-weight:500;
+  letter-spacing:0.01em;
+}
+
+/* BUTTONS */
+.cta-btn{
+  width:100%;
+  padding:15px;
+  background:var(--text);
+  color:#fff;
+  border:none;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  margin-top:1.5rem;
+  transition:all 0.25s ease;
+  font-family:var(--font-body);
+  opacity:0.35;
+  pointer-events:none;
+  border-radius:18px;
+  letter-spacing:0.01em;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+}
+.cta-btn.ready{opacity:1;pointer-events:all;}
+.cta-btn.ready:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(0,0,0,0.16);}
+.cta-btn.green{background:linear-gradient(135deg,#10b981,#059669);}
+
+/* GENERATING */
+.gen-wrap{text-align:center;padding:2rem 1rem;}
+.gen-orb{
+  width:88px;
+  height:88px;
+  margin:0 auto 1.5rem;
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.gen-orb::before,.gen-orb::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  border:2px solid transparent;
+}
+.gen-orb::before{
+  border-top-color:var(--text);
+  border-right-color:var(--text);
+  animation:spin 1.2s linear infinite;
+}
+.gen-orb::after{
+  border-bottom-color:rgba(16,185,129,0.6);
+  border-left-color:rgba(16,185,129,0.6);
+  animation:spin 1.6s linear infinite reverse;
+  inset:8px;
+}
+.gen-dot{
+  width:14px;
+  height:14px;
+  background:linear-gradient(135deg,#111,#444);
+  border-radius:50%;
+  animation:pulse 1.4s ease-in-out infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(0.7);opacity:0.5;}}
+.gen-title{
+  font-family:var(--font-serif);
+  font-style:italic;
+  font-size:1.5rem;
+  margin-bottom:8px;
+  letter-spacing:-0.03em;
+}
+.gen-sub{font-size:13px;color:var(--text-dim);margin-bottom:1.5rem;}
+.gen-tags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;}
+.gen-tag{
+  font-size:11px;
+  font-weight:500;
+  padding:6px 12px;
+  background:rgba(255,255,255,0.6);
+  border:1px solid var(--border);
+  color:var(--text-dim);
+  border-radius:100px;
+  letter-spacing:0.04em;
+  text-transform:uppercase;
+  animation:tagFlow 2s ease infinite;
+  opacity:0;
+}
+.gen-tag:nth-child(1){animation-delay:0.15s;}
+.gen-tag:nth-child(2){animation-delay:0.35s;}
+.gen-tag:nth-child(3){animation-delay:0.55s;}
+@keyframes tagFlow{0%{opacity:0;transform:translateY(6px);}25%,75%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-6px);}}
+
+/* REVIEW READY */
+.review-label{
+  font-size:11px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:0.12em;
+  color:var(--text-dim);
+  margin-bottom:10px;
+}
+.review-box{
+  background:rgba(255,255,255,0.7);
+  backdrop-filter:blur(14px);
+  border:1px solid var(--border);
+  padding:1.25rem 1.25rem 1rem;
+  margin-bottom:0.85rem;
+  position:relative;
+  border-radius:20px;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,0.7);
+}
+.review-box::before{
+  content:'"';
+  font-size:5rem;
+  line-height:1;
+  color:var(--green);
+  opacity:0.18;
+  position:absolute;
+  top:-6px;
+  left:14px;
+  font-family:Georgia,serif;
+}
+.review-textarea{
+  width:100%;
+  background:transparent;
+  border:none;
+  font-size:14.5px;
+  line-height:1.75;
+  color:var(--text);
+  resize:none;
+  font-family:var(--font-body);
+  padding-top:1.5rem;
+  outline:none;
+  min-height:120px;
+  font-weight:400;
+}
+.review-actions{display:flex;gap:8px;margin-bottom:0.85rem;}
+.small-btn{
+  flex:1;
+  padding:11px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,0.55);
+  backdrop-filter:blur(10px);
+  font-size:13px;
+  font-weight:500;
+  cursor:pointer;
+  font-family:var(--font-body);
+  transition:all 0.2s;
+  color:var(--text);
+  border-radius:14px;
+}
+.small-btn:hover{background:rgba(255,255,255,0.9);border-color:rgba(0,0,0,0.12);}
+
+.google-btn{
+  width:100%;
+  padding:15px;
+  background:#4285F4;
+  color:white;
+  border:none;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:0.75rem;
+  transition:all 0.25s;
+  font-family:var(--font-body);
+  border-radius:18px;
+  box-shadow:0 6px 18px rgba(66,133,244,0.25);
+}
+.google-btn:hover{background:#3367d6;transform:translateY(-1px);box-shadow:0 10px 24px rgba(66,133,244,0.32);}
+
+.instruction-box{
+  display:none;
+  background:rgba(245,158,11,0.08);
+  border-left:3px solid #f59e0b;
+  padding:12px 14px;
+  margin-bottom:10px;
+  font-size:13px;
+  color:#78350f;
+  line-height:1.65;
+  border-radius:10px;
+}
+
+/* DONE */
+.done-wrap{text-align:center;padding:2rem 0.5rem;}
+.done-icon{
+  font-size:3.5rem;
+  margin-bottom:1rem;
+  display:inline-block;
+  animation:pop 0.55s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes pop{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+.done-title{
+  font-family:var(--font-serif);
+  font-style:italic;
+  font-size:2rem;
+  margin-bottom:10px;
+  letter-spacing:-0.04em;
+  line-height:1.1;
+}
+.done-sub{font-size:14px;color:var(--text-dim);line-height:1.7;margin-bottom:1.5rem;}
+.done-badge{
+  display:inline-block;
+  background:var(--green-soft);
+  color:#047857;
+  padding:8px 22px;
+  font-size:13px;
+  font-weight:600;
+  border:1px solid rgba(16,185,129,0.2);
+  border-radius:100px;
+  letter-spacing:0.01em;
+}
+
+.powered-by{
+  text-align:center;
+  font-size:11px;
+  color:var(--text-soft);
+  padding:1.1rem 1rem;
+  border-top:1px solid var(--border);
+  margin-top:0;
+  background:rgba(255,255,255,0.35);
+  letter-spacing:0.05em;
+}
+.powered-by a{color:var(--text);text-decoration:none;font-weight:600;}
+.powered-by a:hover{text-decoration:underline;}
+
+/* REVIEW CARDS — 6-card layout */
+.review-cards-wrap{display:flex;flex-direction:column;gap:10px;margin-bottom:10px;}
+.review-card{
+  background:rgba(255,255,255,0.7);
+  backdrop-filter:blur(14px);
+  border:1.5px solid var(--border);
+  border-radius:18px;
+  padding:1rem 1.1rem 0.85rem;
+  position:relative;
+  cursor:pointer;
+  transition:all 0.22s ease;
+  box-shadow:0 2px 8px rgba(0,0,0,0.03);
+  overflow:hidden;
+}
+.review-card::before{
+  content:'"';
+  font-size:4rem;
+  line-height:1;
+  color:var(--green);
+  opacity:0.13;
+  position:absolute;
+  top:-4px;
+  left:10px;
+  font-family:Georgia,serif;
+}
+.review-card:hover{
+  background:rgba(255,255,255,0.95);
+  border-color:rgba(0,0,0,0.14);
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.08);
+}
+.review-card.used{
+  opacity:0.45;
+  pointer-events:none;
+}
+.rv-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  font-size:9px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.1em;
+  padding:3px 8px;
+  border-radius:100px;
+  margin-bottom:8px;
+}
+.rv-badge.short{background:rgba(99,102,241,0.08);color:#4f46e5;border:1px solid rgba(99,102,241,0.18);}
+.rv-badge.medium{background:rgba(16,185,129,0.08);color:#059669;border:1px solid rgba(16,185,129,0.18);}
+.rv-badge.detailed{background:rgba(245,158,11,0.1);color:#d97706;border:1px solid rgba(245,158,11,0.2);}
+.rv-text{
+  font-size:13.5px;
+  line-height:1.75;
+  color:var(--text);
+  padding-top:0.5rem;
+  font-weight:400;
+}
+.rv-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-top:10px;
+  padding-top:9px;
+  border-top:1px solid var(--border);
+}
+.rv-use-btn{
+  font-size:12px;
+  font-weight:600;
+  color:var(--text);
+  background:var(--text);
+  color:#fff;
+  border:none;
+  padding:7px 16px;
+  border-radius:100px;
+  cursor:pointer;
+  font-family:var(--font-body);
+  transition:all 0.2s;
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+.rv-use-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.2);}
+.rv-copy-btn{
+  font-size:12px;
+  font-weight:500;
+  color:var(--text-dim);
+  background:transparent;
+  border:1px solid var(--border);
+  padding:6px 12px;
+  border-radius:100px;
+  cursor:pointer;
+  font-family:var(--font-body);
+  transition:all 0.2s;
+}
+.rv-copy-btn:hover{background:rgba(0,0,0,0.04);}
+.rv-word-count{font-size:10px;color:var(--text-soft);letter-spacing:0.04em;}
+
+/* Smart Q multi-select */
+.opt-btn.multi-selected{
+  background:var(--text);
+  color:#fff;
+  border-color:var(--text);
+  box-shadow:0 6px 18px rgba(0,0,0,0.18);
+}
+.opt-btn.multi-selected .opt-icon{
+  background:rgba(255,255,255,0.15);
+  border-color:rgba(255,255,255,0.2);
+}
+.select-hint{font-size:11px;color:var(--text-soft);text-align:center;margin-top:8px;letter-spacing:0.02em;}
+
+@media(max-width:480px){
+  body{padding:0.5rem;}
+  .card-body{padding:1.5rem 1.25rem;}
+  .card-header{padding:2rem 1.25rem 1.25rem;}
+  .shop-name{font-size:1.5rem;}
+  .welcome-title,.q-text,.gen-title{font-size:1.35rem;}
+  .star{font-size:40px;}
+}
+</style>
+</head>
+<body>
+
+<!-- Ambient orbs -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<div class="card liquid-glass">
+  <div class="card-header">
+    <div class="shop-initials" id="shop-initials">⭐</div>
+    <div class="shop-name" id="shop-name">Loading...</div>
+    <div class="shop-sub" id="shop-sub">Please wait</div>
+  </div>
+  <div class="card-body">
+
+    <!-- EXPIRED -->
+    <div id="s-expired" class="screen">
+      <div class="expired-wrap">
+        <div class="expired-icon">🚫</div>
+        <div class="expired-title">Service Inactive</div>
+        <div class="expired-sub">This review service is currently inactive. Please contact the shop owner for assistance.</div>
+      </div>
+    </div>
+
+    <!-- WELCOME -->
+    <div id="s-welcome" class="screen">
+      <div class="welcome-wrap">
+        <div class="welcome-emoji">✨</div>
+        <div class="welcome-title">How was your visit?</div>
+        <div class="welcome-sub">Rate your experience — we'll craft the perfect review for you.</div>
+      </div>
+      <div class="steps-preview">
+        <div class="ps-item"><div class="ps-icon">⭐</div><div class="ps-text">Rate experience</div></div>
+        <div class="ps-divider">›</div>
+        <div class="ps-item"><div class="ps-icon">💬</div><div class="ps-text">What stood out</div></div>
+        <div class="ps-divider">›</div>
+        <div class="ps-item"><div class="ps-icon">✍️</div><div class="ps-text">AI writes it</div></div>
+      </div>
+      <button class="cta-btn ready" onclick="goTo('s-rating')">Start — Takes 20 seconds →</button>
+    </div>
+
+    <!-- STEP 1: RATING -->
+    <div id="s-rating" class="screen">
+      <div class="step-bar"><div class="step-seg active"></div><div class="step-seg"></div></div>
+      <div class="q-label">Step 1 of 2</div>
+      <div class="q-text">Overall, how was your experience?</div>
+      <div class="star-row" id="stars">
+        <span class="star" onclick="rate(1)">★</span>
+        <span class="star" onclick="rate(2)">★</span>
+        <span class="star" onclick="rate(3)">★</span>
+        <span class="star" onclick="rate(4)">★</span>
+        <span class="star" onclick="rate(5)">★</span>
+      </div>
+      <div class="rating-label" id="rating-label"></div>
+      <button class="cta-btn" id="btn-rating" onclick="goToSmartQ()">Next →</button>
+    </div>
+
+    <!-- STEP 2: SMART QUESTION -->
+    <div id="s-smart-q" class="screen">
+      <div class="step-bar"><div class="step-seg done"></div><div class="step-seg active"></div></div>
+      <div class="q-label">Step 2 of 2 · Select up to 3</div>
+      <div class="q-text">What stood out most during your experience?</div>
+      <div class="options" id="smart-options"></div>
+      <button class="cta-btn" id="btn-smart-q" onclick="generateReviews()">✨ Generate My Reviews →</button>
+    </div>
+
+    <!-- GENERATING -->
+    <div id="s-generating" class="screen">
+      <div class="gen-wrap">
+        <div class="gen-orb"><div class="gen-dot"></div></div>
+        <div class="gen-title">Crafting your reviews...</div>
+        <div class="gen-sub">Our AI is personalizing reviews for your experience</div>
+        <div class="gen-tags">
+          <div class="gen-tag">Understanding your business</div>
+          <div class="gen-tag">Personalizing tone</div>
+          <div class="gen-tag">Polishing words</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVIEW READY — 6 cards -->
+    <div id="s-review" class="screen">
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-dim);margin-bottom:12px;">Pick the review that feels right — tap to use it</div>
+      <div id="review-cards-container"></div>
+      <button class="cta-btn ready" id="btn-more-reviews" onclick="generateMoreReviews()" style="background:rgba(0,0,0,0.06);color:var(--text);border:1px solid var(--border);box-shadow:none;margin-top:4px;" onmouseover="this.style.background='rgba(0,0,0,0.1)'" onmouseout="this.style.background='rgba(0,0,0,0.06)'">🔄 Generate More Reviews</button>
+      <div style="text-align:center;font-size:11px;color:var(--text-soft);margin-top:8px;letter-spacing:0.02em;">Tap any review → copies automatically → paste on Google!</div>
+    </div>
+
+    <!-- DONE -->
+    <div id="s-done" class="screen">
+      <div class="done-wrap">
+        <div class="done-icon">🎉</div>
+        <div class="done-title">Thank you!</div>
+        <div class="done-sub">Your review means the world to us. It helps other customers find this shop and motivates the team to keep delivering their best.</div>
+        <div class="done-badge">⭐ You're a star customer</div>
+        <button class="cta-btn ready" id="done-google-btn" onclick="openGoogleFromDone()" style="margin-top:1.5rem;font-size:13px;padding:12px 24px;">
+          📝 Didn't open? Tap to open Google →
+        </button>
+      </div>
+    </div>
+
+  </div>
+  <div class="powered-by">Powered by <a href="https://www.up75.in" target="_blank">Review Pro</a></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+
+<script>
+// ════════════════════════════════════════════════════════════════════════
+// SMART REVIEW ENGINE V4 — Business-aware, persona-driven review generation
+// ════════════════════════════════════════════════════════════════════════
+const params = new URLSearchParams(window.location.search);
+const clientId = params.get('id');
+const ratingLabels = ['','Poor 😞','Below Average 😐','Average 🙂','Good 😊','Excellent! 🤩'];
+let shopConfig = null;
+let db;
+let currentRating = 0;
+let selectedExperiences = [];
+let generationCount = 0;
+
+// ── USED REVIEW PROTECTION ──
+function getUsedReviewHashes() {
+  try { return JSON.parse(localStorage.getItem('rp_used_'+clientId) || '[]'); } catch(e){ return []; }
+}
+function markReviewUsed(text) {
+  const hash = simpleHash(text);
+  const used = getUsedReviewHashes();
+  if (!used.includes(hash)) { used.push(hash); localStorage.setItem('rp_used_'+clientId, JSON.stringify(used.slice(-200))); }
+}
+function isReviewUsed(text) {
+  return getUsedReviewHashes().includes(simpleHash(text));
+}
+function simpleHash(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) { h = ((h << 5) - h) + str.charCodeAt(i); h |= 0; }
+  return Math.abs(h).toString(36);
+}
+
+// ── BUSINESS CONTEXT ──
+function getBusinessContext() {
+  if (!shopConfig) return {};
+  // Support both array (new) and comma-string (legacy) formats
+  const rawProds = shopConfig.products || shopConfig.catalogue || '';
+  const rawSvcs  = shopConfig.services || '';
+  const products = Array.isArray(rawProds) ? rawProds.filter(Boolean)
+    : rawProds.split(',').map(p=>p.trim()).filter(Boolean);
+  const services = Array.isArray(rawSvcs) ? rawSvcs.filter(Boolean)
+    : rawSvcs.split(',').map(s=>s.trim()).filter(Boolean);
+  return {
+    name: shopConfig.name || 'this business',
+    city: shopConfig.city || '',
+    masterCat: shopConfig.masterCat || '',
+    subCat: shopConfig.subCat || shopConfig.category || '',
+    businessType: shopConfig.businessType || 'Hybrid',
+    products,
+    services,
+    language: shopConfig.language || 'hinglish',
+    about: shopConfig.about || '',
+  };
+}
+
+// ── SMART QUESTION OPTIONS by business type ──
+const SMART_OPTIONS_MAP = {
+  // AUTOMOBILE
+  'Car Showroom':       { positive: [{icon:'🚗',label:'Test Drive Experience'},{icon:'🔧',label:'Vehicle Features'},{icon:'📦',label:'Delivery Process'},{icon:'💳',label:'Finance Assistance'},{icon:'👔',label:'Staff Support'},{icon:'📚',label:'Product Knowledge'},{icon:'🏷️',label:'Pricing & Value'},{icon:'🏢',label:'Showroom Ambiance'}], negative: [{icon:'⏱️',label:'Waiting Time'},{icon:'👔',label:'Staff Attitude'},{icon:'💰',label:'Price Negotiation'},{icon:'📋',label:'Documentation Process'}] },
+  'Bike Showroom':      { positive: [{icon:'🏍️',label:'Test Ride'},{icon:'⚙️',label:'Bike Features'},{icon:'📦',label:'Delivery'},{icon:'💳',label:'EMI Options'},{icon:'👔',label:'Staff Help'},{icon:'🏷️',label:'Pricing'},{icon:'🔧',label:'Accessories Available'},{icon:'🏢',label:'Showroom'}], negative: [{icon:'⏱️',label:'Wait Time'},{icon:'👔',label:'Staff'},{icon:'💰',label:'Pricing'},{icon:'📋',label:'Paperwork'}] },
+  'Car Service Center': { positive: [{icon:'🔧',label:'Service Quality'},{icon:'⏱️',label:'Quick Turnaround'},{icon:'👔',label:'Staff Behaviour'},{icon:'💰',label:'Transparent Billing'},{icon:'📞',label:'Updates & Communication'},{icon:'🧼',label:'Vehicle Cleanliness'},{icon:'🏢',label:'Facility'},{icon:'🛡️',label:'Warranty Handling'}], negative: [{icon:'⏱️',label:'Delay'},{icon:'💰',label:'Hidden Charges'},{icon:'📞',label:'Communication'},{icon:'🔧',label:'Repair Quality'}] },
+  // FOOD & DINING
+  'Restaurant':         { positive: [{icon:'🍽️',label:'Food Quality'},{icon:'👨‍🍳',label:'Taste & Freshness'},{icon:'🌿',label:'Variety of Dishes'},{icon:'👔',label:'Staff Service'},{icon:'🏠',label:'Ambiance'},{icon:'⏱️',label:'Fast Service'},{icon:'💰',label:'Value for Money'},{icon:'🧼',label:'Cleanliness'}], negative: [{icon:'🍽️',label:'Food Quality'},{icon:'⏱️',label:'Long Wait'},{icon:'💰',label:'Overpriced'},{icon:'🧼',label:'Hygiene'}] },
+  'Cafe':               { positive: [{icon:'☕',label:'Coffee Quality'},{icon:'🍰',label:'Snacks & Food'},{icon:'🏠',label:'Cozy Ambiance'},{icon:'📶',label:'WiFi & Seating'},{icon:'👔',label:'Friendly Staff'},{icon:'💰',label:'Good Value'},{icon:'🎵',label:'Music & Vibe'},{icon:'⏱️',label:'Quick Service'}], negative: [{icon:'☕',label:'Coffee'},{icon:'🏠',label:'Ambiance'},{icon:'💰',label:'Pricing'},{icon:'⏱️',label:'Wait Time'}] },
+  'Bakery':             { positive: [{icon:'🥐',label:'Freshness'},{icon:'🍰',label:'Taste'},{icon:'🌈',label:'Variety'},{icon:'🎂',label:'Custom Orders'},{icon:'💰',label:'Pricing'},{icon:'👔',label:'Staff'},{icon:'📦',label:'Packaging'},{icon:'🧼',label:'Hygiene'}], negative: [{icon:'🥐',label:'Freshness'},{icon:'🎂',label:'Custom Order'},{icon:'💰',label:'Pricing'},{icon:'⏱️',label:'Wait'}] },
+  // HEALTH & WELLNESS
+  'Dental Clinic':      { positive: [{icon:'👨‍⚕️',label:'Doctor Consultation'},{icon:'💊',label:'Treatment Quality'},{icon:'😌',label:'Comfort Level'},{icon:'👔',label:'Staff Behaviour'},{icon:'📅',label:'Appointment Process'},{icon:'🧼',label:'Cleanliness'},{icon:'💰',label:'Transparent Billing'},{icon:'🏥',label:'Modern Equipment'}], negative: [{icon:'😣',label:'Pain Management'},{icon:'⏱️',label:'Wait Time'},{icon:'💰',label:'High Cost'},{icon:'📅',label:'Appointment Availability'}] },
+  'Clinic':             { positive: [{icon:'👨‍⚕️',label:'Doctor Consultation'},{icon:'💊',label:'Diagnosis'},{icon:'👔',label:'Staff Care'},{icon:'🧼',label:'Cleanliness'},{icon:'⏱️',label:'Short Wait'},{icon:'📅',label:'Easy Appointments'},{icon:'💰',label:'Reasonable Fees'},{icon:'🏥',label:'Facility'}], negative: [{icon:'⏱️',label:'Long Wait'},{icon:'💰',label:'High Fees'},{icon:'📅',label:'Availability'},{icon:'👔',label:'Staff'}] },
+  'Gym / Fitness':      { positive: [{icon:'🏋️',label:'Equipment Quality'},{icon:'👨‍🏫',label:'Trainer'},{icon:'🏠',label:'Facility'},{icon:'🧼',label:'Cleanliness'},{icon:'💰',label:'Value'},{icon:'👥',label:'Community'},{icon:'📅',label:'Flexible Timings'},{icon:'🚿',label:'Locker Rooms'}], negative: [{icon:'🏋️',label:'Equipment'},{icon:'🏠',label:'Crowding'},{icon:'💰',label:'Fees'},{icon:'👨‍🏫',label:'Trainer'}] },
+  'Pharmacy':           { positive: [{icon:'💊',label:'Medicine Availability'},{icon:'👔',label:'Staff Knowledge'},{icon:'💰',label:'Fair Pricing'},{icon:'⏱️',label:'Quick Service'},{icon:'📋',label:'Prescription Handling'},{icon:'🧼',label:'Cleanliness'},{icon:'📦',label:'Home Delivery'},{icon:'🌙',label:'Extended Hours'}], negative: [{icon:'💊',label:'Stock'},{icon:'💰',label:'Pricing'},{icon:'⏱️',label:'Wait'},{icon:'👔',label:'Staff'}] },
+  // BEAUTY & PERSONAL CARE
+  'Salon':              { positive: [{icon:'✂️',label:'Haircut Quality'},{icon:'🎨',label:'Color & Styling'},{icon:'👔',label:'Stylist Expertise'},{icon:'😌',label:'Relaxing Experience'},{icon:'🧴',label:'Products Used'},{icon:'🏠',label:'Ambiance'},{icon:'💰',label:'Value for Money'},{icon:'⏱️',label:'On-Time Service'}], negative: [{icon:'✂️',label:'Result'},{icon:'💰',label:'Overpriced'},{icon:'⏱️',label:'Long Wait'},{icon:'👔',label:'Skill'}] },
+  'Spa':                { positive: [{icon:'💆',label:'Relaxation'},{icon:'🧴',label:'Product Quality'},{icon:'👔',label:'Therapist Skill'},{icon:'🏠',label:'Ambiance'},{icon:'🌿',label:'Treatments'},{icon:'😌',label:'Post-Spa Feel'},{icon:'💰',label:'Value'},{icon:'🧼',label:'Hygiene'}], negative: [{icon:'💆',label:'Experience'},{icon:'💰',label:'Pricing'},{icon:'⏱️',label:'Timing'},{icon:'🧴',label:'Products'}] },
+  // HOME & LIVING
+  'Furniture Showroom': { positive: [{icon:'🛋️',label:'Quality of Furniture'},{icon:'🎨',label:'Design Variety'},{icon:'👔',label:'Staff Guidance'},{icon:'📦',label:'Delivery'},{icon:'🔧',label:'Installation'},{icon:'💰',label:'Value for Money'},{icon:'🏢',label:'Showroom Display'},{icon:'🛡️',label:'Warranty'}], negative: [{icon:'🛋️',label:'Quality'},{icon:'📦',label:'Delivery Delay'},{icon:'💰',label:'Pricing'},{icon:'🔧',label:'Installation'}] },
+  'Interior Design':    { positive: [{icon:'🎨',label:'Creative Design'},{icon:'🤝',label:'Understanding Vision'},{icon:'📅',label:'Timely Completion'},{icon:'💰',label:'Budget Management'},{icon:'🔧',label:'Quality of Work'},{icon:'👔',label:'Professionalism'},{icon:'💡',label:'Innovative Ideas'},{icon:'🧱',label:'Material Quality'}], negative: [{icon:'📅',label:'Delays'},{icon:'💰',label:'Cost Overrun'},{icon:'🎨',label:'Result vs Vision'},{icon:'🔧',label:'Workmanship'}] },
+  // TRAVEL & HOSPITALITY
+  'Hotel':              { positive: [{icon:'🛏️',label:'Room Comfort'},{icon:'🍽️',label:'Food Quality'},{icon:'🧼',label:'Cleanliness'},{icon:'👔',label:'Staff Behaviour'},{icon:'📍',label:'Location'},{icon:'✅',label:'Check-In Experience'},{icon:'🏊',label:'Amenities'},{icon:'💰',label:'Value for Money'}], negative: [{icon:'🛏️',label:'Room Condition'},{icon:'🍽️',label:'Food'},{icon:'🧼',label:'Hygiene'},{icon:'👔',label:'Staff'}] },
+  'Resort':             { positive: [{icon:'🌴',label:'Resort Experience'},{icon:'🏊',label:'Pool & Amenities'},{icon:'🍽️',label:'Food'},{icon:'🛏️',label:'Room Comfort'},{icon:'👔',label:'Hospitality'},{icon:'🌅',label:'Views & Location'},{icon:'🎯',label:'Activities'},{icon:'💰',label:'Value'}], negative: [{icon:'🌴',label:'Facilities'},{icon:'🍽️',label:'Food'},{icon:'💰',label:'Overpriced'},{icon:'⏱️',label:'Check-In'}] },
+  // EDUCATION
+  'Coaching Institute': { positive: [{icon:'📚',label:'Teaching Quality'},{icon:'👨‍🏫',label:'Faculty Expertise'},{icon:'📋',label:'Study Material'},{icon:'📊',label:'Results & Outcomes'},{icon:'🕐',label:'Schedule Flexibility'},{icon:'💻',label:'Online Support'},{icon:'🏢',label:'Facility'},{icon:'💰',label:'Fee Structure'}], negative: [{icon:'📚',label:'Content Quality'},{icon:'👨‍🏫',label:'Faculty'},{icon:'📊',label:'Results'},{icon:'💰',label:'High Fees'}] },
+  // ELECTRONICS & TECH
+  'Mobile Shop':        { positive: [{icon:'📱',label:'Product Variety'},{icon:'👔',label:'Staff Knowledge'},{icon:'💰',label:'Good Pricing'},{icon:'🔧',label:'After-Sales Support'},{icon:'🛡️',label:'Genuine Products'},{icon:'⚡',label:'Quick Service'},{icon:'📦',label:'Accessories'},{icon:'🔄',label:'Exchange Deals'}], negative: [{icon:'📱',label:'Authenticity'},{icon:'💰',label:'Overpriced'},{icon:'🔧',label:'After-Sales'},{icon:'👔',label:'Staff'}] },
+  // FASHION & APPAREL
+  'Clothing Store':     { positive: [{icon:'👗',label:'Variety & Collection'},{icon:'🎨',label:'Latest Trends'},{icon:'✅',label:'Fitting & Quality'},{icon:'👔',label:'Staff Help'},{icon:'💰',label:'Value for Money'},{icon:'🏢',label:'Store Ambiance'},{icon:'🔄',label:'Return Policy'},{icon:'🎁',label:'Packaging'}], negative: [{icon:'👗',label:'Quality'},{icon:'💰',label:'Pricing'},{icon:'📏',label:'Sizing'},{icon:'👔',label:'Staff'}] },
+  'Jewellery Shop':     { positive: [{icon:'💍',label:'Collection & Designs'},{icon:'✨',label:'Quality of Jewellery'},{icon:'👔',label:'Staff Assistance'},{icon:'💰',label:'Fair Pricing'},{icon:'🛡️',label:'Authenticity'},{icon:'🎁',label:'Packaging'},{icon:'📜',label:'Certification'},{icon:'🏢',label:'Store'}], negative: [{icon:'💰',label:'Pricing'},{icon:'✨',label:'Quality'},{icon:'📜',label:'Authenticity'},{icon:'👔',label:'Staff'}] },
+  // DEFAULT fallbacks
+  'default_product':    { positive: [{icon:'📦',label:'Product Quality'},{icon:'🎨',label:'Variety & Options'},{icon:'👔',label:'Staff Help'},{icon:'💰',label:'Value for Money'},{icon:'📦',label:'Packaging'},{icon:'🚀',label:'Delivery'},{icon:'🛡️',label:'After-Sales'},{icon:'🏢',label:'Store Experience'}], negative: [{icon:'📦',label:'Product Quality'},{icon:'💰',label:'Pricing'},{icon:'👔',label:'Staff'},{icon:'⏱️',label:'Wait Time'}] },
+  'default_service':    { positive: [{icon:'⭐',label:'Service Quality'},{icon:'👔',label:'Staff Behaviour'},{icon:'⏱️',label:'Punctuality'},{icon:'💰',label:'Value for Money'},{icon:'🤝',label:'Professionalism'},{icon:'📞',label:'Communication'},{icon:'✅',label:'Problem Resolution'},{icon:'🔄',label:'Follow-Up'}], negative: [{icon:'⭐',label:'Service Quality'},{icon:'⏱️',label:'Delays'},{icon:'💰',label:'High Cost'},{icon:'📞',label:'Communication'}] },
+  'default_hybrid':     { positive: [{icon:'🏆',label:'Overall Experience'},{icon:'📦',label:'Product Quality'},{icon:'⭐',label:'Service'},{icon:'👔',label:'Staff'},{icon:'💰',label:'Value'},{icon:'⏱️',label:'Efficiency'},{icon:'🏢',label:'Ambiance'},{icon:'🔄',label:'After-Sales'}], negative: [{icon:'📦',label:'Quality'},{icon:'👔',label:'Staff'},{icon:'💰',label:'Pricing'},{icon:'⏱️',label:'Wait'}] },
+};
+
+function getSmartOptions() {
+  const biz = getBusinessContext();
+  const isPositive = currentRating >= 3;
+  const subCat = biz.subCat;
+  const key = subCat && SMART_OPTIONS_MAP[subCat] ? subCat
+    : biz.businessType === 'Product Based' ? 'default_product'
+    : biz.businessType === 'Service Based' ? 'default_service'
+    : 'default_hybrid';
+  const pool = SMART_OPTIONS_MAP[key] || SMART_OPTIONS_MAP['default_hybrid'];
+  return isPositive ? (pool.positive || pool) : (pool.negative || pool.positive || pool);
+}
+
+// ── REVIEW GENERATION VIA CLAUDE API ──
+async function callClaudeAPI(prompt) {
+  const cfg = (typeof REVIEW_ENGINE_CONFIG !== 'undefined') ? REVIEW_ENGINE_CONFIG : {};
+  const endpoint = cfg.apiEndpoint || 'https://api.anthropic.com/v1/messages';
+  const model    = cfg.model      || 'claude-sonnet-4-20250514';
+  const maxTok   = cfg.maxTokens  || 1000;
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model,
+      max_tokens: maxTok,
+      messages: [{ role: 'user', content: prompt }],
+    }),
+  });
+  const data = await response.json();
+  return data.content?.map(b => b.text || '').join('') || '';
+}
+
+function buildGenerationPrompt(biz, rating, experiences, language, generationRound) {
+  const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+  const mood = rating >= 4 ? 'positive' : rating === 3 ? 'balanced' : 'constructive (not harsh)';
+  const productsLine = biz.products.length ? `Products: ${biz.products.slice(0,5).join(', ')}` : '';
+  const servicesLine = biz.services.length ? `Services: ${biz.services.slice(0,5).join(', ')}` : '';
+  const experienceStr = experiences.length ? experiences.join(', ') : 'general experience';
+
+  const langInstructions = {
+    english: 'Write all reviews in natural, conversational English.',
+    hindi: 'Write all reviews in natural Hindi (Devanagari script). Avoid robotic translations.',
+    hinglish: 'Write all reviews in natural Hinglish — a mix of Hindi and English as spoken in everyday India. Use Romanized Hindi words naturally mixed with English. No Devanagari script.',
+  };
+  const lang = language.toLowerCase().startsWith('eng') ? 'english' : language.toLowerCase().includes('glish') ? 'hinglish' : 'hindi';
+  const langInst = langInstructions[lang] || langInstructions.hinglish;
+
+  const defaultPersonas = ['First-Time Buyer','Returning Customer','Family Customer','Working Professional','Premium Buyer','Budget-Conscious Buyer','Senior Customer','Young Professional'];
+  const personas = (typeof REVIEW_ENGINE_CONFIG !== 'undefined' && REVIEW_ENGINE_CONFIG.personas) ? REVIEW_ENGINE_CONFIG.personas : defaultPersonas;
+  const shuffledPersonas = [...personas].sort(() => Math.random() - 0.5);
+
+  return `You are a review generation engine. Generate exactly 6 Google reviews for a business.
+
+BUSINESS PROFILE:
+- Business Name: ${biz.name}
+- Category: ${biz.masterCat} › ${biz.subCat}
+- Business Type: ${biz.businessType}
+- City: ${biz.city || 'India'}
+- ${productsLine}
+- ${servicesLine}
+- Customer Rating: ${rating}/5 stars (${stars})
+- Customer's Highlighted Experiences: ${experienceStr}
+- Overall Tone: ${mood}
+- Generation Round: ${generationRound} (generate COMPLETELY DIFFERENT reviews from previous rounds)
+
+LANGUAGE: ${langInst}
+
+PERSONAS (use one per review, vary them):
+${shuffledPersonas.slice(0,6).map((p,i) => `Review ${i+1}: ${p} perspective`).join('\n')}
+
+REQUIRED STRUCTURE — Generate exactly 6 reviews:
+- Review 1: SHORT (1-2 sentences, ~20-35 words)
+- Review 2: SHORT (1-2 sentences, ~20-35 words)  
+- Review 3: MEDIUM (3-4 sentences, ~50-80 words)
+- Review 4: MEDIUM (3-4 sentences, ~50-80 words)
+- Review 5: DETAILED (5-6 sentences, ~90-130 words)
+- Review 6: DETAILED (5-6 sentences, ~90-130 words)
+
+RULES:
+1. Each review must feel like it was written by a REAL person, NOT AI
+2. Reference the specific products/services/experiences highlighted by the customer
+3. Vary vocabulary, structure, perspective, and focus across all 6 reviews
+4. Never start two reviews the same way
+5. For ${rating >= 4 ? 'positive reviews: express genuine satisfaction, mention specific highlights, recommend naturally' : rating === 3 ? 'balanced reviews: acknowledge what was good, note areas for improvement diplomatically' : 'constructive reviews: be polite and helpful, not harsh or aggressive'}
+6. Keep it authentic — customer should feel "yes, that is exactly what I wanted to write"
+7. Do NOT use marketing language. Write like a real customer.
+8. Incorporate the customer's specific experience areas naturally.
+9. Max 4-6 sentences for detailed, 1-2 for short.
+10. No emojis in the review text itself.
+
+OUTPUT FORMAT (JSON only, no markdown, no explanation):
+{"reviews":[{"text":"...","length":"short"},{"text":"...","length":"short"},{"text":"...","length":"medium"},{"text":"...","length":"medium"},{"text":"...","length":"detailed"},{"text":"...","length":"detailed"}]}`;
+}
+
+async function generateReviews() {
+  goTo('s-generating');
+  generationCount++;
+  const biz = getBusinessContext();
+  const lang = (shopConfig?.language || 'hinglish').toLowerCase();
+  const prompt = buildGenerationPrompt(biz, currentRating, selectedExperiences, lang, generationCount);
+
+  let reviews = [];
+  try {
+    const rawResponse = await callClaudeAPI(prompt);
+    const clean = rawResponse.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+    reviews = parsed.reviews || [];
+  } catch(e) {
+    // Fallback to template engine
+    reviews = buildFallbackReviews(biz, currentRating, selectedExperiences, lang);
+  }
+
+  // Filter out used reviews (try to get fresh ones)
+  const usedHashes = getUsedReviewHashes();
+  const freshReviews = reviews.filter(r => !usedHashes.includes(simpleHash(r.text)));
+  const displayReviews = freshReviews.length >= 3 ? freshReviews : reviews;
+
+  renderReviewCards(displayReviews.slice(0, 6));
+  goTo('s-review');
+}
+
+async function generateMoreReviews() {
+  goTo('s-generating');
+  generationCount++;
+  const biz = getBusinessContext();
+  const lang = (shopConfig?.language || 'hinglish').toLowerCase();
+  const prompt = buildGenerationPrompt(biz, currentRating, selectedExperiences, lang, generationCount);
+
+  let reviews = [];
+  try {
+    const rawResponse = await callClaudeAPI(prompt);
+    const clean = rawResponse.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+    reviews = parsed.reviews || [];
+  } catch(e) {
+    reviews = buildFallbackReviews(biz, currentRating, selectedExperiences, lang);
+  }
+
+  const usedHashes = getUsedReviewHashes();
+  const freshReviews = reviews.filter(r => !usedHashes.includes(simpleHash(r.text)));
+  const displayReviews = freshReviews.length >= 3 ? freshReviews : reviews;
+  renderReviewCards(displayReviews.slice(0, 6));
+  goTo('s-review');
+}
+
+function renderReviewCards(reviews) {
+  const container = document.getElementById('review-cards-container');
+  if (!reviews || reviews.length === 0) {
+    container.innerHTML = '<p style="color:var(--text-dim);font-size:14px;text-align:center;padding:1rem;">Unable to generate reviews. Please try again.</p>';
+    return;
+  }
+  container.innerHTML = `<div class="review-cards-wrap">${reviews.map((r, i) => {
+    const len = r.length || (i < 2 ? 'short' : i < 4 ? 'medium' : 'detailed');
+    const badgeLabel = len === 'short' ? '✦ Short' : len === 'medium' ? '◆ Medium' : '● Detailed';
+    const wordCount = r.text.trim().split(/\s+/).length;
+    return `<div class="review-card${isReviewUsed(r.text)?' used':''}" id="rv-card-${i}">
+      <div class="rv-badge ${len}">${badgeLabel}</div>
+      <div class="rv-text">${escHtml(r.text)}</div>
+      <div class="rv-footer">
+        <span class="rv-word-count">${wordCount} words</span>
+        <div style="display:flex;gap:6px;">
+          <button class="rv-copy-btn" onclick="copyReview(event,'${escAttr(r.text)}',${i})">📋 Copy</button>
+          <button class="rv-use-btn" onclick="useReview(event,'${escAttr(r.text)}',${i})">Use This →</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function escHtml(str) { return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escAttr(str) { return str.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,'\\n'); }
+
+function copyReview(event, text, idx) {
+  event.stopPropagation();
+  const realText = text.replace(/\\n/g,'\n').replace(/\\'/g,"'");
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(realText).then(() => {
+      const btn = event.target;
+      btn.textContent = '✅ Copied!';
+      setTimeout(() => btn.textContent = '📋 Copy', 2000);
+    });
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = realText; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    const btn = event.target;
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy', 2000);
+  }
+}
+
+function useReview(event, text, idx) {
+  event.stopPropagation();
+  const realText = text.replace(/\\n/g,'\n').replace(/\\'/g,"'");
+  markReviewUsed(realText);
+  // Copy to clipboard
+  const openGoogle = () => {
+    const placeId = shopConfig?.placeId || '';
+    const url = `https://search.google.com/local/writereview?placeid=${placeId}`;
+    // Mark card as used
+    const card = document.getElementById('rv-card-'+idx);
+    if (card) {
+      card.style.borderColor = '#10b981';
+      card.style.background = 'rgba(16,185,129,0.06)';
+      const useBtn = card.querySelector('.rv-use-btn');
+      if (useBtn) { useBtn.textContent = '✅ Opening Google...'; useBtn.disabled = true; }
+    }
+    setTimeout(() => {
+      window.open(url, '_blank');
+      goTo('s-done');
+    }, 1000);
+  };
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(realText).then(openGoogle).catch(() => { fallbackCopy(realText); openGoogle(); });
+  } else { fallbackCopy(realText); openGoogle(); }
+}
+
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+}
+
+// ── FALLBACK TEMPLATE ENGINE (when API is unavailable) ──
+const rand = arr => arr[Math.floor(Math.random() * arr.length)];
+
+function buildFallbackReviews(biz, rating, experiences, lang) {
+  const shop = biz.name;
+  const city = biz.city;
+  const expStr = experiences.length ? experiences.join(' aur ') : 'overall experience';
+  const prodList = biz.products.slice(0,2).join(', ') || 'the product';
+  const isPos = rating >= 4;
+  const isMed = rating === 3;
+
+  const tpl = {
+    english: {
+      short: isPos ? [
+        `Really happy with my experience at ${shop}${city?' in '+city:''}! ${expStr} was exceptional — highly recommend.`,
+        `${shop} exceeded my expectations. The ${expStr} made all the difference. Will definitely return.`,
+        `Great experience at ${shop}! ${experiences[0]||'Everything'} was top-notch. Highly recommended.`,
+      ] : isMed ? [
+        `Decent experience at ${shop}. ${experiences[0]||'Service'} was okay — some areas could improve.`,
+        `${shop} has potential. My visit was average — hoping for better next time.`,
+      ] : [
+        `My experience at ${shop} was below expectations. ${experiences[0]||'Some areas'} needs improvement.`,
+        `${shop} could do better. ${experiences[0]||'The service'} did not meet expectations this time.`,
+      ],
+      medium: isPos ? [
+        `I recently visited ${shop}${city?' in '+city:''} and was genuinely impressed. The ${expStr} stood out the most. Staff were professional and helpful throughout. I walked away completely satisfied and will recommend ${shop} to everyone I know.`,
+        `${shop} has become my go-to now. The ${experiences[0]||'quality'} is consistently good and the ${experiences[1]||'staff'} always make you feel welcome. Pricing is fair and the overall experience is worth every rupee. Would definitely visit again.`,
+      ] : isMed ? [
+        `Visited ${shop} recently — it was an okay experience overall. ${experiences[0]||'The service'} was decent but there is room for improvement. Pricing seemed fair for what was offered. Might consider visiting again if things improve.`,
+        `My experience at ${shop} was mixed. Some things were good, like ${experiences[0]||'the staff'}, but ${experiences[1]||'other aspects'} could use some work. Hopefully management will work on making it better.`,
+      ] : [
+        `I expected more from ${shop}. The ${experiences[0]||'service quality'} was disappointing and ${experiences[1]||'other aspects'} also needed work. I hope the management takes note and improves the customer experience soon.`,
+        `Sharing honest feedback about ${shop}. ${experiences[0]||'Quality'} was below standard during my visit. I understand everyone has off days, but improvements are clearly needed in key areas.`,
+      ],
+      detailed: isPos ? [
+        `I've been to ${shop}${city?' in '+city:''} a few times now and each visit gets better. This time, the ${expStr} particularly stood out. ${prodList ? 'I picked up '+prodList+' and the quality was exactly as expected.' : 'The product quality was excellent.'} The staff were incredibly knowledgeable and never pushy. I felt valued as a customer throughout the entire experience. If you're looking for a reliable place that delivers on its promises, ${shop} is absolutely worth visiting. Five stars without any hesitation.`,
+        `What sets ${shop} apart is their genuine commitment to the customer experience. From the moment I walked in, the ${experiences[0]||'staff behaviour'} was warm and professional. ${experiences[1]||'The overall setup'} was impressive too. ${prodList ? 'The '+prodList+' I purchased exceeded my expectations.' : 'Their products/services exceeded my expectations.'} I've recommended ${shop} to my friends and family and will continue to do so. In a market full of options, it's refreshing to find a place that truly cares. This is now my first choice.`,
+      ] : isMed ? [
+        `My visit to ${shop} was decent overall. The ${experiences[0]||'experience'} was satisfactory but I expected a bit more. ${experiences[1]||'Other aspects'} were average at best. The pricing was reasonable, which is the main positive. I think with a few improvements in customer service and quality consistency, this place could become a top choice. For now, it's an okay option if you're in the area.`,
+        `${shop} has the potential to be great but hasn't fully delivered yet. During my recent visit, ${experiences[0]||'some things'} impressed me while ${experiences[1]||'others'} fell short. I'd give it another chance hoping things improve. The location is convenient and pricing is fair, which helps. But overall, there's noticeable room for improvement before I'd call it a must-visit.`,
+      ] : [
+        `I'm sharing this constructive feedback hoping ${shop} can improve. My recent experience was disappointing in several ways — ${experiences.slice(0,2).join(' and ') || 'the service and quality'} both fell below the standard expected for this price point. I understand businesses have challenges, but consistent quality is what builds trust. I genuinely hope the management reads this and takes action. The potential is there, but execution needs significant work.`,
+        `Visited ${shop} with high expectations based on recommendations but came away underwhelmed. ${experiences[0]||'Quality'} was inconsistent and ${experiences[1]||'staff interaction'} left a lot to be desired. Sharing this feedback in the hope that it helps the team identify and fix the gaps. Not recommending at this point but open to revisiting if concrete improvements are made.`,
+      ],
+    },
+    hinglish: {
+      short: isPos ? [
+        `${shop} se ekdum mast experience raha! ${expStr} kaafi accha tha — seriously recommend karta hoon.`,
+        `${shop} ne expectations exceed kar diye. ${experiences[0]||'Sab kuch'} top-class tha. Zaroor jao!`,
+        `${city?city+' mein ':''} ${shop} best hai! ${expStr} pe toh wah wah kar diya meine.`,
+      ] : isMed ? [
+        `${shop} ka experience average raha. ${experiences[0]||'Kuch cheezein'} theek thin par improvements ho sakti hain.`,
+        `${shop} mein gaya tha — mixed feelings hain. Kuch acha tha, kuch nahi. Dekhte hain aage.`,
+      ] : [
+        `${shop} se disappointed raha. ${experiences[0]||'Service'} expected level pe nahi tha. Improvement ki zaroorat hai.`,
+        `Honest feedback: ${shop} mein ${experiences[0]||'quality'} pe dhyan dena hoga. Customer experience better hona chahiye.`,
+      ],
+      medium: isPos ? [
+        `${shop}${city?' '+city+' mein':''} gaya tha ${rand(['recently','last week','kal'])} — bilkul satisfied hoke aaya. ${expStr} toh ekdum kamaal tha. Staff bhi helpful aur polite the. Is price pe itna acha experience honestly nahi socha tha. Definitely wapas aaunga aur apne dosto ko bhi suggest karoon ga.`,
+        `${shop} ke baare mein pehle suna tha par is baar visit kiya — aur wah! ${experiences[0]||'Quality'} dekhke dil khush ho gaya. ${experiences[1]||'Staff'} bhi professional the. Value for money bilkul sahi hai. Ab toh regular customer ban gaya hoon.`,
+      ] : isMed ? [
+        `${shop} ka visit average raha. ${experiences[0]||'Kuch cheezein'} theek thin but ${experiences[1]||'baaki cheezein'} thodi disappointing rahi. Pricing fair hai jo ek positive hai. Umeed hai agla visit better hoga.`,
+        `Honestly mixed feelings hain ${shop} se. Kuch aspects acche the jaise ${experiences[0]||'staff'} but ${experiences[1]||'quality'} mein consistency chahiye. Improvements ho toh definitely recommend karoon ga.`,
+      ] : [
+        `${shop} se zyada umeed thi. ${experiences[0]||'Service'} expected level pe nahi tha aur ${experiences[1]||'quality'} bhi disappointing rahi. Constructively share kar raha hoon — umeed hai management notice karega.`,
+        `Honest feedback: ${shop} mein mere jaisi experience bahut logo ki ho sakti hai. ${experiences[0]||'Quality'} aur ${experiences[1]||'customer care'} pe kaam karna padega. Potential hai — bas execution improve karo.`,
+      ],
+      detailed: isPos ? [
+        `${shop}${city?' '+city+' mein':''} ${rand(['aaj','recently','last week'])} gaya tha — honestly sochta nahi tha itna acha experience hoga. ${expStr} toh sach mein outstanding tha. ${prodList ? prodList + ' liya — quality ekdum top-class hai.' : 'Jo bhi liya uski quality mast thi.'} Staff ne bina pressure ke sab explain kiya, koi rush nahi. Price bhi fair tha — koi hidden charges nahi. Ghar aake family ko bhi dikhaya toh unhe bhi pasand aaya. Ab toh ${shop} mera first choice hai is category mein. Highly recommend karta hoon — regret nahi hoga.`,
+        `${shop} ka naam sunne ke baad finally visit kiya — aur expectation se zyada mila. Pehli baat toh ${experiences[0]||'overall atmosphere'} kaafi impressive tha. ${experiences[1]||'Staff ka behaviour'} bhi excellent tha — patient, knowledgeable aur friendly. ${prodList ? prodList + ' ki quality dekhke satisfied ho gaya.' : 'Jo purchase kiya uski quality se khush hoon.'} Value for money toh bilkul sahi hai — same quality ke liye kahin aur zyada dena padta. Apne sab dosto ko pehle hi suggest kar diya hai. 5 stars confidently!`,
+      ] : isMed ? [
+        `${shop} mein visit kiya tha ${rand(['kal','pichle hafte','recently'])} — okay experience raha overall. ${experiences[0]||'Kuch aspects'} acche the par ${experiences[1]||'baaki cheezein'} mein improvement ki gunjaish hai. Pricing reasonable hai — yeh ek plus point hai. Staff helpful tha mostly. Lagta hai thoda aur dhyan dene ki zaroorat hai customer experience pe. Fir bhi ek aur chance dene ka man hai — umeed hai next visit better hoga.`,
+        `Mixed review hai meri ${shop} ke liye. Jo accha tha: ${experiences[0]||'location aur setup'}. Jo improve ho sakta hai: ${experiences[1]||'consistency aur quality'}. Overall average experience raha. Is price pe thoda zyada expect karta tha. Suggestions hain management ke liye — agar implement hon toh definitely better hoga. Abhi ke liye neutral recommendation.`,
+      ] : [
+        `${shop} mein gaya tha — experience expected se neeche raha. ${experiences[0]||'Quality'} pe serious dhyan dena padega aur ${experiences[1]||'customer service'} bhi improve karna hoga. Yeh feedback criticism nahi hai — genuinely chahta hoon ki ${shop} better bane. Potential hai yahan — bas execution mein kuch khamiyan hain. Management se request hai ki in areas pe kaam karen. Next visit pe better experience ki umeed hogi.`,
+        `Constructive feedback share kar raha hoon ${shop} ke baare mein. ${experiences.slice(0,2).join(' aur ')||'Service aur quality'} dono hi is visit mein disappointing rahi. Samajh sakta hoon ki har din best day nahi hota — but consistency zaroori hai. Agar improvements ki gayi toh definitely revisit karoon ga. Filhaal recommend karna mushkil hai — hope hai ki team is feedback ko seriously legi.`,
+      ],
+    },
+    hindi: {
+      short: isPos ? [
+        `${shop} में बेहतरीन अनुभव रहा! ${expStr} वाकई कमाल था — ज़रूर जाएं।`,
+        `${shop} ने अपेक्षाएं पूरी कर दीं। ${experiences[0]||'सब कुछ'} एकदम बढ़िया था।`,
+      ] : isMed ? [
+        `${shop} का अनुभव ठीकठाक रहा। ${experiences[0]||'कुछ चीजें'} बेहतर हो सकती थीं।`,
+      ] : [
+        `${shop} से निराशा हुई। ${experiences[0]||'सेवा'} अपेक्षित स्तर पर नहीं थी।`,
+      ],
+      medium: isPos ? [
+        `${shop}${city?' '+city+' में':''} हाल ही में गया था — बेहद संतुष्ट होकर लौटा। ${expStr} विशेष रूप से प्रभावशाली रहा। कर्मचारी भी सहायक और विनम्र थे। निश्चित रूप से दोबारा आऊंगा और सभी को सुझाव दूंगा।`,
+        `${shop} का अनुभव शानदार रहा। ${experiences[0]||'गुणवत्ता'} देखकर मन प्रसन्न हो गया। ${experiences[1]||'कर्मचारी'} भी बहुत सहयोगी थे। पैसों का सही मूल्य मिला।`,
+      ] : isMed ? [
+        `${shop} का दौरा ठीकठाक रहा। ${experiences[0]||'कुछ पहलू'} अच्छे थे लेकिन ${experiences[1]||'अन्य क्षेत्रों'} में सुधार की गुंजाइश है। मूल्य निर्धारण उचित था।`,
+      ] : [
+        `${shop} से अधिक अपेक्षाएं थीं। ${experiences[0]||'सेवा'} निराशाजनक रही। रचनात्मक प्रतिक्रिया के रूप में साझा कर रहा हूं — उम्मीद है प्रबंधन ध्यान देगा।`,
+      ],
+      detailed: isPos ? [
+        `${shop}${city?' '+city+' में':''} जाना एक यादगार अनुभव रहा। ${expStr} विशेष रूप से अविस्मरणीय था। ${prodList ? prodList + ' की गुणवत्ता एकदम उत्कृष्ट थी।' : 'उत्पाद/सेवा की गुणवत्ता बेमिसाल थी।'} कर्मचारी बेहद ज्ञानवान और विनम्र थे — बिना किसी दबाव के सब समझाया। मूल्य निर्धारण पारदर्शी और उचित था। घर आकर परिवार को भी बताया, सभी प्रभावित हुए। अब ${shop} मेरी पहली पसंद है। पूरे मन से सिफारिश करता हूं।`,
+      ] : isMed ? [
+        `${shop} का दौरा मिला-जुला अनुभव रहा। ${experiences[0]||'कुछ पहलू'} सराहनीय थे जबकि ${experiences[1]||'अन्य क्षेत्रों'} में सुधार की आवश्यकता है। मूल्य निर्धारण उचित है जो एक सकारात्मक पहलू है। प्रबंधन से अनुरोध है कि ग्राहक अनुभव पर और ध्यान दें। आशा है अगली बार बेहतर अनुभव होगा।`,
+      ] : [
+        `${shop} के बारे में रचनात्मक प्रतिक्रिया साझा करना चाहता हूं। ${experiences.slice(0,2).join(' और ')||'गुणवत्ता और सेवा'} दोनों ही इस बार निराशाजनक रहे। यह आलोचना नहीं है — वास्तव में चाहता हूं कि ${shop} बेहतर बने। यहां संभावना है — बस क्रियान्वयन में सुधार की जरूरत है। आशा है प्रबंधन इस प्रतिक्रिया को गंभीरता से लेगा।`,
+      ],
+    },
+  };
+  const langKey = lang.startsWith('eng') ? 'english' : lang.includes('glish') ? 'hinglish' : 'hindi';
+  const t = tpl[langKey] || tpl.hinglish;
+
+  const result = [];
+  const add = (arr, length) => { const v = rand(arr); if (v) result.push({ text: v, length }); };
+  add(t.short, 'short'); add(t.short, 'short');
+  add(t.medium, 'medium'); add(t.medium, 'medium');
+  add(t.detailed, 'detailed'); add(t.detailed, 'detailed');
+  return result;
+}
+
+// ── LOAD CLIENT ──
+async function loadClient() {
+  if (!clientId) { showExpired(); return; }
+  try {
+    if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);  // B05 FIX: guard against double-init
+    db = firebase.firestore();
+    const doc = await db.collection('clients').doc(clientId).get();
+    if (doc.exists) { shopConfig = { ...doc.data(), id: doc.id }; }
+    else { throw new Error('not found'); }
+  } catch(e) {
+    const clients = JSON.parse(localStorage.getItem('reviewpro_clients') || '[]');
+    shopConfig = clients.find(c => c.id === clientId);
+  }
+  if (!shopConfig) { showExpired(); return; }
+  const today = new Date().toISOString().split('T')[0];
+  if (shopConfig.expiryDate && shopConfig.expiryDate < today) { showExpired(); return; }
+  if (shopConfig.status !== 'active') { showExpired(); return; }
+
+  const name = shopConfig.name || 'Shop';
+  const initials = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('shop-initials').textContent = initials;
+  document.getElementById('shop-name').textContent = name;
+  const subCat = shopConfig.subCat || shopConfig.category || 'Business';
+  document.getElementById('shop-sub').textContent = subCat + (shopConfig.city ? ' · ' + shopConfig.city : '');
+  document.title = `Rate Your Experience — ${name}`;
+  trackReview();
+  goTo('s-welcome');
+}
+
+function showExpired() {
+  document.getElementById('shop-initials').textContent = '🚫';
+  document.getElementById('shop-name').textContent = 'Service Inactive';
+  document.getElementById('shop-sub').textContent = 'Contact shop owner';
+  goTo('s-expired');
+}
+
+async function trackReview() {
+  if (!db || !clientId || clientId.startsWith('local_')) {
+    const clients = JSON.parse(localStorage.getItem('reviewpro_clients') || '[]');
+    const idx = clients.findIndex(c=>c.id===clientId);
+    if (idx !== -1) { clients[idx].reviewsGenerated = (clients[idx].reviewsGenerated||0)+1; localStorage.setItem('reviewpro_clients', JSON.stringify(clients)); }
+    return;
+  }
+  try { await db.collection('clients').doc(clientId).update({ reviewsGenerated: firebase.firestore.FieldValue.increment(1) }); } catch(e) {}
+}
+
+// ── NAV ──
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function rate(n) {
+  currentRating = n;
+  document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',i<n));
+  document.getElementById('rating-label').textContent = ratingLabels[n];
+  document.getElementById('btn-rating').classList.add('ready');
+}
+
+function goToSmartQ() {
+  if (!currentRating) return;
+  selectedExperiences = [];
+  buildSmartOptions();
+  goTo('s-smart-q');
+}
+
+function buildSmartOptions() {
+  const container = document.getElementById('smart-options');
+  const opts = getSmartOptions();
+  container.innerHTML = opts.map((opt, i) =>
+    `<button class="opt-btn" data-idx="${i}" onclick="toggleSmartOpt(this,'${opt.label.replace(/'/g,"\\'")}')">
+      <span class="opt-icon">${opt.icon}</span>${opt.label}
+    </button>`
+  ).join('') + `<div class="select-hint" id="select-hint">Select up to 3 options</div>`;
+  // Smart question is ready immediately (customer can skip selection)
+  document.getElementById('btn-smart-q').classList.add('ready');
+}
+
+function toggleSmartOpt(btn, label) {
+  const already = selectedExperiences.includes(label);
+  if (already) {
+    selectedExperiences = selectedExperiences.filter(e => e !== label);
+    btn.classList.remove('multi-selected');
+  } else {
+    if (selectedExperiences.length >= 3) {
+      const hint = document.getElementById('select-hint');
+      if (hint) { hint.textContent = '⚠ Maximum 3 options selected'; hint.style.color = 'var(--amber)'; setTimeout(() => { hint.textContent='Select up to 3 options'; hint.style.color=''; }, 1500); }
+      return;
+    }
+    selectedExperiences.push(label);
+    btn.classList.add('multi-selected');
+  }
+}
+
+function openGoogleFromDone() {
+  const placeId = shopConfig?.placeId || '';
+  if (!placeId) { alert('Google review link not available — ask the shop owner for the direct review link.'); return; }
+  window.open(`https://search.google.com/local/writereview?placeid=${placeId}`, '_blank');
+}
+
+// ── INIT ──
+loadClient();
+</script>
+</body>
+</html>
