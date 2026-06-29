@@ -1,0 +1,76 @@
+# ═══════════════════════════════════════════════════════════
+# robots.txt — ReviewPro (up75.in)
+# ═══════════════════════════════════════════════════════════
+
+# ── Block all bots from sensitive pages ──────────────────
+User-agent: *
+Disallow: /admin.html
+Disallow: /admin/
+Disallow: /client.html
+Disallow: /review.html
+Disallow: /firebase-config.js
+Disallow: /place-id-server.js
+Disallow: /api/
+Disallow: /config/
+Disallow: /*.json$
+Disallow: /*.js$
+Disallow: /node_modules/
+
+# ── Allow indexing of public pages only ──────────────────
+Allow: /index.html
+Allow: /index
+Allow: /$
+
+# ── Allow Google to index your main landing page ─────────
+User-agent: Googlebot
+Disallow: /admin.html
+Disallow: /client.html
+Disallow: /review.html
+Disallow: /firebase-config.js
+Disallow: /api/
+Allow: /index.html
+Allow: /$
+
+# ── Block AI training bots ───────────────────────────────
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: Omgilibot
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
+# ── Block aggressive scrapers ────────────────────────────
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+# ── Sitemap ──────────────────────────────────────────────
+Sitemap: https://up75.in/sitemap.xml
